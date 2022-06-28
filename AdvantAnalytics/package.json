@@ -1,9 +1,0 @@
-{
-  "name": "com.advant.analytics",
-  "version": "1.0.3",
-  "displayName": "Advant Analytics",
-  "unity": "2020.3",
-  "publishConfig": {
-    "registry": "http://localhost:4873"
-  }
-}
