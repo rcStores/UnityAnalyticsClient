@@ -5,7 +5,7 @@ using RosUtils;
 
 using System;
 using System.Collections.Generic;
-using UnityEngine; // only here
+using UnityEngine; 
 using UnityEngine.iOS;
 
 
@@ -21,6 +21,10 @@ namespace Advant
             _backend = new Backend();
             _cacheHolder = new CacheScheduledHolder(_backend);
         }
+		
+		public static void Foo()
+		{
+		}
 
         public static void Init(string endpointsPathBase)
         {
