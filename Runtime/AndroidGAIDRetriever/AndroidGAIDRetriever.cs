@@ -1,10 +1,10 @@
-
 using System;
 using UnityEngine;
 
 namespace RosUtils
 {
-public static class AndroidGAIDRetriever
+#if UNITY_ANDROID
+internal static class AndroidGAIDRetriever
 {
 	public static void GetAsync(System.Action<string> cb)
 	{
@@ -24,33 +24,17 @@ public static class AndroidGAIDRetriever
 		{
 			_cb = cb;
 		}
-
-		/// <summary>
-		/// Overriding because sometimes OnGAIDReceived(AndroidJavaObject) was called.
-		/// Reason why - unknown.
-		/// </summary>
-		public override AndroidJavaObject Invoke(string methodName, object[] args)
-		{
-			if (methodName == "OnGAIDReceived" && args.Length > 0 && args[0] is string gaid)
-			{
-				OnGAIDReceived(gaid);
-				return null;
-			}
-			try
-			{
-				return base.Invoke(methodName, args);
-			}
-			catch (Exception e)
-			{
-				Debug.Log($"Unknown proxy method: {e.Message}\n{e.StackTrace}");
-				return null;
-			}
-		}
-
+		
 		public void OnGAIDReceived(string gaid)
 		{
 			_cb?.Invoke(gaid);
 		}
+		
+		public void OnGAIDReceived(AndroidJavaObject obj)
+		{
+			_cb.Invoke(null);
+		}
 	}
 }
+#endif
 }

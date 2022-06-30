@@ -1,5 +1,6 @@
 using Advant.Http;
 using Advant.Data.Models;
+using Advant.Logging;
 
 using System.Threading.Tasks;
 using UnityEngine;
@@ -16,7 +17,8 @@ namespace Advant.Data
         private const int SENDING_INTERVAL = 120000; // 2 min in ms
         private const int GET_ID_RETRY_INTERVAL = 15000; 
 
-        private long _userId = -1;
+		private const string USER_ID_PREF = "UserId";
+        private long _userId;
 
         private readonly Backend _backend;
 
@@ -37,7 +39,7 @@ namespace Advant.Data
         public CacheScheduledHolder(Backend backend)
         {
             _backend = backend;
-
+			_userId = Convert.ToInt64(PlayerPrefs.GetInt(USER_ID_PREF, -1));
             if (!Directory.Exists(SERIALIZATION_PATH))
             {
                 Directory.CreateDirectory(SERIALIZATION_PATH);
@@ -75,22 +77,23 @@ namespace Advant.Data
 
         public async Task StartAsync(Identifier identifier)
         {
-            Debug.Log("Start scheduler. Getting user id...");
+            Logger.Log("Start scheduler. Getting user id...");
 
             while (await _backend.GetOrCreateUserIdAsync(identifier) is var userId)
             {
                 if (userId == -1)
                 {
                     await Task.Delay(GET_ID_RETRY_INTERVAL);
-                    Debug.Log("retry");
+                    Logger.Log("retry");
                 }
                 else
                 {
                     _userId = userId;
+					PlayerPrefs.SetInt(USER_ID_PREF, Convert.ToInt32(_userId));
                     break;
                 }
             }
-            Debug.Log("Success. Start sending task");
+            Logger.Log("Success. Start sending task");
             RunSendingLoop(_userId);
         }
 
@@ -115,7 +118,7 @@ namespace Advant.Data
             }
             catch (SerializationException e)
             {
-                Debug.Log("Failed to serialize. Reason: " + e.Message);
+                Logger.Log("Failed to serialize. Reason: " + e.Message);
             }
             finally
             {
@@ -177,13 +180,13 @@ namespace Advant.Data
                 
                 if (hasPropertiesSendingSucceeded)
                 {
-                    Debug.Log("Clear properties");
+                    Logger.Log("Clear properties");
                     _gameProperties.Clear();
                 }
 
                 if (hasEventsSendingSucceeded)
                 {
-                    Debug.Log("Clear events");
+                    Logger.Log("Clear events");
                     _gameEvents.Clear();
                 }
 

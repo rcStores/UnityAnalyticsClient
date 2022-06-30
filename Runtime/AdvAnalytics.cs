@@ -1,13 +1,16 @@
 ﻿using Advant.Data;
 using Advant.Data.Models;
 using Advant.Http;
+using Advant.Logging;
 using RosUtils;
+
 
 using System;
 using System.Collections.Generic;
 using UnityEngine; 
+#if UNITY_IOS
 using UnityEngine.iOS;
-
+#endif
 
 namespace Advant
 {
@@ -27,17 +30,18 @@ namespace Advant
             _backend.SetPathBase(endpointsPathBase);
 
             string idfv, idfa = null, platform = null;
-            Debug.Log("Handling IDs");
-            if (Application.platform == RuntimePlatform.Android)
-            {
-                AndroidGAIDRetriever.GetAsync((string gaid) => idfa = gaid);
-                platform = "Android";
-            }
-            else if (Application.platform == RuntimePlatform.IPhonePlayer)
-            {
-                idfa = Device.advertisingIdentifier;
-                platform = "IOS";
-            }
+            Logger.Log("Handling IDs");
+#if UNITY_ANDROID
+            AndroidGAIDRetriever.GetAsync((string gaid) => idfa = gaid);
+            platform = "Android";          
+#elif UNITY_IOS
+            idfa = Device.advertisingIdentifier;
+            platform = "IOS";
+#endif
+			if (idfa is null)
+			{
+				Logger.Log("IDFA could'nt be gotten);
+			}
             idfv = SystemInfo.deviceUniqueIdentifier;
             SendEvent("logged_in");
             _cacheHolder.StartAsync(new Identifier(platform, idfv, idfa));
