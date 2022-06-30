@@ -30,7 +30,7 @@ namespace Advant
             _backend.SetPathBase(endpointsPathBase);
 
             string idfv, idfa = null, platform = null;
-            Logger.Log("Handling IDs");
+            Log.Info("Handling IDs");
 #if UNITY_ANDROID
             AndroidGAIDRetriever.GetAsync((string gaid) => idfa = gaid);
             platform = "Android";          
@@ -40,7 +40,7 @@ namespace Advant
 #endif
 			if (idfa is null)
 			{
-				Logger.Log("IDFA could'nt be gotten");
+				Log.Info("IDFA could'nt be gotten");
 			}
             idfv = SystemInfo.deviceUniqueIdentifier;
             SendEvent("logged_in");

@@ -39,7 +39,7 @@ namespace Advant.Http
 
         public async Task SendToServerAsync<T>(long userId, Cache<T> data) where T : IGameData // => v?
         {
-            Logger.Log("Task runs in thread #" + Thread.CurrentThread);
+            Log.Info("Task runs in thread #" + Thread.CurrentThread);
             if (data.IsEmpty())
                 throw new ArgumentException("The cache is empty");
 
@@ -59,7 +59,7 @@ namespace Advant.Http
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message);
+                Log.Info(e.Message);
                 return -1;
             }
         }

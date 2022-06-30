@@ -77,14 +77,14 @@ namespace Advant.Data
 
         public async Task StartAsync(Identifier identifier)
         {
-            Logger.Log("Start scheduler. Getting user id...");
+            Log.Info("Start scheduler. Getting user id...");
 
             while (await _backend.GetOrCreateUserIdAsync(identifier) is var userId)
             {
                 if (userId == -1)
                 {
                     await Task.Delay(GET_ID_RETRY_INTERVAL);
-                    Logger.Log("retry");
+                    Log.Info("retry");
                 }
                 else
                 {
@@ -93,7 +93,7 @@ namespace Advant.Data
                     break;
                 }
             }
-            Logger.Log("Success. Start sending task");
+            Log.Info("Success. Start sending task");
             RunSendingLoop(_userId);
         }
 
@@ -118,7 +118,7 @@ namespace Advant.Data
             }
             catch (SerializationException e)
             {
-                Logger.Log("Failed to serialize. Reason: " + e.Message);
+                Log.Info("Failed to serialize. Reason: " + e.Message);
             }
             finally
             {
@@ -180,13 +180,13 @@ namespace Advant.Data
                 
                 if (hasPropertiesSendingSucceeded)
                 {
-                    Logger.Log("Clear properties");
+                    Log.Info("Clear properties");
                     _gameProperties.Clear();
                 }
 
                 if (hasEventsSendingSucceeded)
                 {
-                    Logger.Log("Clear events");
+                    Log.Info("Clear events");
                     _gameEvents.Clear();
                 }
 
