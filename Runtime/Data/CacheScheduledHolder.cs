@@ -155,7 +155,7 @@ namespace Advant.Data
 
         private async void RunSendingLoop(long userId)
         {
-            while (true)
+            while (Application.isPlaying)
             {
                 await Task.Delay(SENDING_INTERVAL);
 
