@@ -38,9 +38,11 @@ namespace Advant
             Log.Info("Handling IDs");
 
 #if UNITY_EDITOR && DEBUG_ANAL
+			Debug.Log("DEBUG_ANAL");
             InitImpl(new Identifier(platform: "Android", "DEBUG", "DEBUG"));
 			
 #elif UNITY_EDITOR
+			Debug.Log("RETURN FROM INIT");
 			return;
 			
 #elif UNITY_ANDROID
