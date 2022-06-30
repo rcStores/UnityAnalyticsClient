@@ -40,7 +40,7 @@ namespace Advant
 #endif
 			if (idfa is null)
 			{
-				Logger.Log("IDFA could'nt be gotten);
+				Logger.Log("IDFA could'nt be gotten");
 			}
             idfv = SystemInfo.deviceUniqueIdentifier;
             SendEvent("logged_in");

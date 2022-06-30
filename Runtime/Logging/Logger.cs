@@ -1,4 +1,6 @@
-#define ENABLE_LOGS UNITY_EDITOR
+#if UNITY_EDITOR
+#define ENABLE_LOGS
+#endif
 
 using System.Diagnostics;
 
