@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 
-namespace Logging
+namespace Advant.Logging
 {
     internal static class Logger
     {
