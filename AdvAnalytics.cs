@@ -39,7 +39,6 @@ namespace Advant
                 platform = "IOS";
             }
             idfv = SystemInfo.deviceUniqueIdentifier;
-            Debug.Log("Set logging event");
             SendEvent("logged_in");
             _cacheHolder.StartAsync(new Identifier(platform, idfv, idfa));
         }
