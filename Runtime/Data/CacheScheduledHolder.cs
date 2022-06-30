@@ -79,7 +79,7 @@ namespace Advant.Data
         {
             Log.Info("Start scheduler. Getting user id...");
 
-            while (await _backend.GetOrCreateUserIdAsync(identifier) is var userId)
+            while (await _backend.GetOrCreateUserIdAsync(identifier) is var userId && Application.isPlaying)
             {
                 if (userId == -1)
                 {
