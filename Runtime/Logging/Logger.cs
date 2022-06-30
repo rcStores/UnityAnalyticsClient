@@ -6,10 +6,10 @@ using System.Diagnostics;
 
 namespace Advant.Logging
 {
-    internal static class Logger
+    internal static class Log
     {
         [Conditional("ENABLE_LOGS")]
-        public static void Log(string logMsg)
+        public static void Info(string logMsg)
         {
             UnityEngine.Debug.Log(logMsg);
         }
