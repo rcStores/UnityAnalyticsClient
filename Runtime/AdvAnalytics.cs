@@ -4,7 +4,6 @@ using Advant.Http;
 using Advant.Logging;
 using RosUtils;
 
-
 using System;
 using System.Collections.Generic;
 using UnityEngine; 
@@ -38,7 +37,10 @@ namespace Advant
             string idfv = SystemInfo.deviceUniqueIdentifier;
             Log.Info("Handling IDs");
 
-#if UNITY_ANDROID
+#if UNITY_EDITOR && DEBUG_ANAL
+            InitImpl(new Identifier(platform: "Android", "DEBUG", "DEBUG");
+
+#elif UNITY_ANDROID
             AndroidGAIDRetriever.GetAsync((string gaid) => {
                 if (gaid is null)
 			    {
