@@ -22,6 +22,10 @@ namespace Advant
             _cacheHolder = new CacheScheduledHolder(_backend);
         }
 		
+		public static void Foo()
+		{
+		}
+		
 		public static void Init(string endpointsPathBase)
         {
             _backend.SetPathBase(endpointsPathBase);
