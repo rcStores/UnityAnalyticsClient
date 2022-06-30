@@ -38,7 +38,7 @@ namespace Advant
             Log.Info("Handling IDs");
 
 #if UNITY_EDITOR && DEBUG_ANAL
-            InitImpl(new Identifier(platform: "Android", "DEBUG", "DEBUG");
+            InitImpl(new Identifier(platform: "Android", "DEBUG", "DEBUG"));
 
 #elif UNITY_ANDROID
             AndroidGAIDRetriever.GetAsync((string gaid) => {
