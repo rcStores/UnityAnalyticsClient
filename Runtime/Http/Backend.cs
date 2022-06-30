@@ -99,7 +99,7 @@ namespace Advant.Http
         }
     }
 
-    internal public enum RequestType
+    internal enum RequestType
     {
         GET = 0,
         POST = 1,
