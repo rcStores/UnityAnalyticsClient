@@ -1,4 +1,4 @@
 {
-	"name": "advant.analytics",
+	"name": "advant.analytics.editor",
     "includePlatforms": ["Editor"]
 }
