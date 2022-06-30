@@ -39,7 +39,7 @@ namespace Advant
 
 #if UNITY_EDITOR && DEBUG_ANAL
 			Debug.Log("DEBUG_ANAL");
-			if (!Application.isPlaying) return;
+			//if (!Application.isPlaying) return;
             InitImpl(new Identifier(platform: "Android", "DEBUG", "DEBUG"));
 			
 #elif UNITY_EDITOR
