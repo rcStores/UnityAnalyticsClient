@@ -25,26 +25,30 @@ namespace Advant
             _cacheHolder = new CacheScheduledHolder(_backend);
         }
 		
+		private static void InitImpl(Identifier id)
+		{
+            SendEvent("logged_in");
+            _cacheHolder.StartAsync(id);
+		}
+		
 		public static void Init(string endpointsPathBase)
         {
             _backend.SetPathBase(endpointsPathBase);
 
-            string idfv, idfa = null, platform = null;
+            string idfv = SystemInfo.deviceUniqueIdentifier;
             Log.Info("Handling IDs");
+
 #if UNITY_ANDROID
-            AndroidGAIDRetriever.GetAsync((string gaid) => idfa = gaid);
-            platform = "Android";          
+            AndroidGAIDRetriever.GetAsync((string gaid) => {
+                if (gaid is null)
+			    {
+				    Log.Info("GAID couldn't be received");
+			    }
+                InitImpl(new Identifier(platform: "Android", idfv, gaid));
+            });
 #elif UNITY_IOS
-            idfa = Device.advertisingIdentifier;
-            platform = "IOS";
+            InitImpl(new Identifier(platform: "IOS", idfv, Device.advertisingIdentifier));
 #endif
-			if (idfa is null)
-			{
-				Log.Info("IDFA could'nt be gotten");
-			}
-            idfv = SystemInfo.deviceUniqueIdentifier;
-            SendEvent("logged_in");
-            _cacheHolder.StartAsync(new Identifier(platform, idfv, idfa));
         }
 
         static public void SaveCacheLocally()
