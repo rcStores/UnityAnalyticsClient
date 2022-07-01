@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 
 
-public class GAIDRetriever {
+public class AdvantGAIDRetriever {
 
     public static void getGAID(Context unityContext, IGAIDReceiver receiver) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
