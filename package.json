@@ -3,7 +3,7 @@
   "version": "1.0.3",
   "displayName": "Advant Analytics",
   "unity": "2020.3",
-  "publishConfig": {
-    "registry": "http://localhost:4873"
+  "dependencies": {
+    "com.google.android.gms.ads.identifier": "18.0.1"
   }
-}
+  }
