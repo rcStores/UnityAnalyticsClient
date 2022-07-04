@@ -24,8 +24,6 @@ namespace Advant
             _cacheHolder = new CacheScheduledHolder(_backend);
         }
 		
-		public static void Foo() {}
-		
 		private static void InitImpl(Identifier id)
 		{
             SendEvent("logged_in");

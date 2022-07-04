@@ -27,11 +27,7 @@ namespace Advant.Data
         
         private bool _arePropertiesProcessing = false;
         private bool _areEventsProcessing = false;
-#if UNITY_ANDROID
-        private const string SERIALIZATION_PATH = Path.Combine(RosUtils.AndroidApiUtil.GetPersistentDataPath(), "CachedData");
-#elif UNITY_IOS
-        private const string SERIALIZATION_PATH = Path.Combine(Application.persistentDataPath, "CachedData");
-#endif
+
         private const string CACHED_EVENTS_FILE = "Events.dat";
         private const string CACHED_PROPERTIES_FILE = "Properties.dat";
 
@@ -41,14 +37,19 @@ namespace Advant.Data
 
         public CacheScheduledHolder(Backend backend)
         {
+#if UNITY_ANDROID
+            string serializationPath = Path.Combine(RosUtils.AndroidApiUtil.GetPersistentDataPath(), "CachedData");
+#elif UNITY_IOS
+            string serializationPath = Path.Combine(Application.persistentDataPath, "CachedData");
+#endif
             _backend = backend;
 			_userId = Convert.ToInt64(PlayerPrefs.GetInt(USER_ID_PREF, -1));
-            if (!Directory.Exists(SERIALIZATION_PATH))
+            if (!Directory.Exists(serializationPath))
             {
-                Directory.CreateDirectory(SERIALIZATION_PATH);
+                Directory.CreateDirectory(serializationPath);
             }
-            _eventsPath = Path.Combine(SERIALIZATION_PATH, CACHED_EVENTS_FILE);
-            _propsPath = Path.Combine(SERIALIZATION_PATH, CACHED_PROPERTIES_FILE);
+            _eventsPath = Path.Combine(serializationPath, CACHED_EVENTS_FILE);
+            _propsPath = Path.Combine(serializationPath, CACHED_PROPERTIES_FILE);
 
             _gameEvents = Deserialize<GameEvent>(_eventsPath);
             _gameProperties = Deserialize<GameProperty>(_propsPath);
