@@ -1,9 +1,9 @@
+#if UNITY_ANDROID
 using System;
 using UnityEngine;
 
 namespace RosUtils
 {
-#if UNITY_ANDROID
 internal static class AndroidGAIDRetriever
 {
 	public static void GetAsync(System.Action<string> cb)
@@ -36,5 +36,5 @@ internal static class AndroidGAIDRetriever
 		}
 	}
 }
-#endif
 }
+#endif
