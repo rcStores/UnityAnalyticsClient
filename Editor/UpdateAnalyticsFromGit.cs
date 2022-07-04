@@ -39,6 +39,4 @@ public class UpdateAnalyticsFromGit : MonoBehaviour
         }
     }
 }
-	//public static void Foo()
-	//{}
 }
