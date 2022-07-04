@@ -4,6 +4,7 @@ using Advant.Http;
 using Advant.Logging;
 #if UNITY_ANDROID
 using RosUtils;
+#endif
 
 using System;
 using System.Collections.Generic;
