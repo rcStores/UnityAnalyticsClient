@@ -9,7 +9,7 @@ public class UpdateAnalyticsFromGit : MonoBehaviour
 {
     private const string REPOSITORY_PATH = "https://github.com/rcStores/UnityAnalyticsClient.git";
 
-	static AddRequest _addRequest;
+	private static AddRequest _addRequest;
 	
     [MenuItem("Tools/Advant Analytics/Update SDK")]
     public static void UpdatePackage()
