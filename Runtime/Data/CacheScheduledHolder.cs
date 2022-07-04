@@ -38,10 +38,10 @@ namespace Advant.Data
         public CacheScheduledHolder(Backend backend)
         {
 			string serializationPath = null;
-#if UNITY_ANDROID && !UNITY_EDITOR
-            serializationPath = Path.Combine(RosUtils.AndroidApiUtil.GetPersistentDataPath(), "CachedData");
-#elif UNITY_IOS || UNITY_EDITOR
+#if UNITY_IOS || UNITY_EDITOR
             serializationPath = Path.Combine(Application.persistentDataPath, "CachedData");
+#else
+            serializationPath = Path.Combine(RosUtils.AndroidApiUtil.GetPersistentDataPath(), "CachedData");
 #endif
             _backend = backend;
 			_userId = Convert.ToInt64(PlayerPrefs.GetInt(USER_ID_PREF, -1));
