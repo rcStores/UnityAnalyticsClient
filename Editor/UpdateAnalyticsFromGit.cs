@@ -36,7 +36,8 @@ public class UpdateAnalyticsFromGit : MonoBehaviour
 					EditorApplication.UnlockReloadAssemblies();
 					s_AddRequest = null;
 					break;
-        }
+			}        
+		}
     }
 }
 }
