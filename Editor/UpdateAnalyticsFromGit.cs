@@ -5,16 +5,16 @@ using UnityEngine;
 using System.Threading.Tasks;
 
 
-public class UpdateAnalyticsFromGit : MonoBehaviour
+public static class UpdateAnalyticsFromGit
 {
-    private const string REPOSITORY_PATH = "https://github.com/rcStores/UnityAnalyticsClient.git";
+    private static readonly string _repositoryPath = "https://github.com/rcStores/UnityAnalyticsClient.git";
 
 	private static AddRequest _addRequest;
 	
     [MenuItem("Tools/Advant Analytics/Update SDK")]
     public static void UpdatePackage()
     {
-        _addRequest = Client.Add(REPOSITORY_PATH);
+        _addRequest = Client.Add(_repositoryPath);
 		EditorApplication.update += PackageRemovalProgress;
 		EditorApplication.LockReloadAssemblies();
     }
