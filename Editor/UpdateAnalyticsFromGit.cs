@@ -22,9 +22,4 @@ public class UpdateAnalyticsFromGit : MonoBehaviour
             Debug.Log(addRequest.Result.name + " was updated");
         }
     }
-	
-	public static void Foo()
-	{}
-    public static void Bar()
-    { }
 }

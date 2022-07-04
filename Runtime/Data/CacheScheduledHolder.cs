@@ -27,10 +27,13 @@ namespace Advant.Data
         
         private bool _arePropertiesProcessing = false;
         private bool _areEventsProcessing = false;
-
-        private readonly string SERIALIZATION_PATH = Path.Combine(Application.dataPath, "CachedData");
-        private readonly string CACHED_EVENTS_FILE = "Events.dat";
-        private readonly string CACHED_PROPERTIES_FILE = "Properties.dat";
+#if UNITY_ANDROID
+        private const string SERIALIZATION_PATH = Path.Combine(RosUtils.AndroidApiUtil.GetPersistentDataPath(), "CachedData");
+#elif UNITY_IOS
+        private const string SERIALIZATION_PATH = Path.Combine(Application.persistentDataPath, "CachedData");
+#endif
+        private const string CACHED_EVENTS_FILE = "Events.dat";
+        private const string CACHED_PROPERTIES_FILE = "Properties.dat";
 
         private readonly string _propsPath;
         private readonly string _eventsPath;
