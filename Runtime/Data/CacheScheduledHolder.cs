@@ -83,7 +83,8 @@ namespace Advant.Data
         public async Task StartAsync(Identifier identifier)
         {
             Log.Info("Start scheduler. Getting user id...");
-
+			
+			identifier.UserId = _userId;
             while (await _backend.GetOrCreateUserIdAsync(identifier) is var userId && Application.isPlaying)
             {
                 if (userId == -1)
