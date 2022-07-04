@@ -2,6 +2,7 @@
 using Advant.Data.Models;
 using Advant.Http;
 using Advant.Logging;
+#if UNITY_ANDROID
 using RosUtils;
 
 using System;
