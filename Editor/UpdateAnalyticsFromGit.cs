@@ -9,14 +9,9 @@ public class UpdateAnalyticsFromGit : MonoBehaviour
     private const string REPOSITORY_PATH = "https://github.com/rcStores/UnityAnalyticsClient.git";
 
     [MenuItem("Tools/Advant Analytics/Update SDK")]
-    public static void UpdatePackage()
+    public static async Task UpdatePackage()
     {
-        //Client.Remove(REPOSITORY_PATH);
-        var addRequest = Client.Add(REPOSITORY_PATH);
-        while (addRequest.Status == StatusCode.InProgress)
-        {
-            Task.Yield();
-        }
+        var addRequest = await Task.Run(() => Client.Add(REPOSITORY_PATH));
 
         if (addRequest.Status == StatusCode.Failure)
         {
