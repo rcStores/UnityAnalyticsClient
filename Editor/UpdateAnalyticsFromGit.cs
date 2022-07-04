@@ -21,17 +21,17 @@ public class UpdateAnalyticsFromGit : MonoBehaviour
 	
 	static void PackageRemovalProgress() 
 	{
-		if (s_AddRequest?.IsCompleted) {
-			switch (s_RemRequest.Status) {
+		if (s_AddRequest.IsCompleted) {
+			switch (s_AddRequest.Status) {
 				case StatusCode.Failure:
-					throw new UnityException("Error while updating analytics SDK: " + addRequest.Error.message);
+					throw new UnityException("Error while updating analytics SDK: " + s_AddRequest.Error.message);
 					break;
  
 				case StatusCode.InProgress:
 				break;
  
 				case StatusCode.Success:
-					Debug.Log(addRequest.Result.name + " was updated");
+					Debug.Log(s_AddRequest.Result.name + " was updated");
 					EditorApplication.update -= PackageRemovalProgress;
 					//EditorApplication.UnlockReloadAssemblies();
 					s_AddRequest = null;
