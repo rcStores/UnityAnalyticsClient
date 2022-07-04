@@ -16,7 +16,7 @@ public class UpdateAnalyticsFromGit : MonoBehaviour
     {
         s_AddRequest = Client.Add(REPOSITORY_PATH);
 		EditorApplication.update += PackageRemovalProgress;
-		//EditorApplication.LockReloadAssemblies();
+		EditorApplication.LockReloadAssemblies();
     }
 	
 	static void PackageRemovalProgress() 
@@ -33,12 +33,12 @@ public class UpdateAnalyticsFromGit : MonoBehaviour
 				case StatusCode.Success:
 					Debug.Log(s_AddRequest.Result.name + " was updated");
 					EditorApplication.update -= PackageRemovalProgress;
-					//EditorApplication.UnlockReloadAssemblies();
+					EditorApplication.UnlockReloadAssemblies();
 					s_AddRequest = null;
 					break;
         }
     }
 }
-	public static void Foo()
-	{}
+	//public static void Foo()
+	//{}
 }
