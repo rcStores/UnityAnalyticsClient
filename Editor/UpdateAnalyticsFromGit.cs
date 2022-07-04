@@ -9,35 +9,37 @@ public class UpdateAnalyticsFromGit : MonoBehaviour
 {
     private const string REPOSITORY_PATH = "https://github.com/rcStores/UnityAnalyticsClient.git";
 
-	static AddRequest s_AddRequest;
+	static AddRequest _addRequest;
 	
     [MenuItem("Tools/Advant Analytics/Update SDK")]
     public static void UpdatePackage()
     {
-        s_AddRequest = Client.Add(REPOSITORY_PATH);
+        _addRequest = Client.Add(REPOSITORY_PATH);
 		EditorApplication.update += PackageRemovalProgress;
 		EditorApplication.LockReloadAssemblies();
     }
 	
-	static void PackageRemovalProgress() 
+	private static void PackageRemovalProgress() 
 	{
-		if (s_AddRequest.IsCompleted) {
-			switch (s_AddRequest.Status) {
+		if (_addRequest.IsCompleted) 
+		{
+			switch (_addRequest.Status) 
+			{
 				case StatusCode.Failure:
-					throw new UnityException("Error while updating analytics SDK: " + s_AddRequest.Error.message);
+					throw new UnityException("Error while updating analytics SDK: " + _addRequest.Error.message);
 					break;
  
 				case StatusCode.InProgress:
-				break;
+					break;
  
 				case StatusCode.Success:
-					Debug.Log(s_AddRequest.Result.name + " was updated");
+					Debug.Log(_addRequest.Result.name + " was updated");
 					EditorApplication.update -= PackageRemovalProgress;
 					EditorApplication.UnlockReloadAssemblies();
-					s_AddRequest = null;
+					_addRequest = null;
 					break;
 			}        
 		}
     }
 }
-}
+
