@@ -40,7 +40,7 @@ namespace Advant
 			return;
 			
 #elif UNITY_ANDROID
-            AndroidGAIDRetriever.GetAsync((string gaid) => {
+            GAIDRetriever.GetAsync((string gaid) => {
                 if (gaid is null)
 			    {
 				    Log.Info("GAID couldn't be received");
