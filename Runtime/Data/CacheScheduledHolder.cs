@@ -96,7 +96,6 @@ namespace Advant.Data
                 else
                 {
                     _userId = response.UserId;
-					Put(GameProperty.Create("id", _userId));
 					PlayerPrefs.SetInt(USER_ID_PREF, Convert.ToInt32(_userId));
 					UpdateAppInstallationDetails(response.IsUserNew);
                     break;
@@ -112,16 +111,17 @@ namespace Advant.Data
 			{
 				Put(GameProperty.Create("first_install_date", DateTime.UtcNow.ToUniversalTime()));
 				Put(GameProperty.Create("last_install_date", DateTime.UtcNow.ToUniversalTime()));
-				Put(GameProperty.Create("current_app_vers", Application.version));
-			}
+				Put(GameProperty.Create("current_game_vers", Application.version));
+                PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
+            }
 			else 
 			{
 				string appVersion = PlayerPrefs.GetString(APP_VERSION_PREF);
-				if (appVersion != null && appVersion != Application.version)
+				if (appVersion != "" && appVersion != Application.version)
 				{
 					Put(GameProperty.Create("last_update_date", DateTime.UtcNow.ToUniversalTime()));
 				}
-				else if (appVersion is null)
+				else if (appVersion == "")
 				{
 					Put(GameProperty.Create("last_install_date", DateTime.UtcNow.ToUniversalTime()));	
 				}
