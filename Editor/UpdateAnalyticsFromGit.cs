@@ -26,6 +26,9 @@ public static class UpdateAnalyticsFromGit
 			switch (_addRequest.Status) 
 			{
 				case StatusCode.Failure:
+					EditorApplication.update -= PackageRemovalProgress;
+					EditorApplication.UnlockReloadAssemblies();
+					_addRequest = null;
 					throw new UnityException("Error while updating analytics SDK: " + _addRequest.Error.message);
 
 				case StatusCode.InProgress:
