@@ -18,6 +18,7 @@ namespace Advant.Data
         private const int GET_ID_RETRY_INTERVAL = 15000; 
 
 		private const string USER_ID_PREF = "UserId";
+        private const string APP_VERSION_PREF = "AppVersion";
         private long _userId;
 
         private readonly Backend _backend;
@@ -41,7 +42,7 @@ namespace Advant.Data
 #if UNITY_IOS || UNITY_EDITOR
             serializationPath = Path.Combine(Application.persistentDataPath, "CachedData");
 #else
-            serializationPath = Path.Combine(RosUtils.AndroidApiUtil.GetPersistentDataPath(), "CachedData");
+            serializationPath = Path.Combine(AndroidUtils.ApiUtil.GetPersistentDataPath(), "CachedData");
 #endif
             _backend = backend;
 			_userId = Convert.ToInt64(PlayerPrefs.GetInt(USER_ID_PREF, -1));
@@ -85,24 +86,50 @@ namespace Advant.Data
             Log.Info("Start scheduler. Getting user id...");
 			
 			identifier.UserId = _userId;
-            while (await _backend.GetOrCreateUserIdAsync(identifier) is var userId && Application.isPlaying)
+            while (await _backend.GetOrCreateUserIdAsync(identifier) is var response && Application.isPlaying)
             {
-                if (userId == -1)
+                if (response.UserId == -1)
                 {
                     await Task.Delay(GET_ID_RETRY_INTERVAL);
                     Log.Info("retry");
                 }
                 else
                 {
-                    _userId = userId;
+                    _userId = response.UserId;
+					Put(GameProperty.Create("id", _userId));
 					PlayerPrefs.SetInt(USER_ID_PREF, Convert.ToInt32(_userId));
+					UpdateAppInstallationDetails(response.IsUserNew);
                     break;
                 }
             }
             Log.Info("Success. Start sending task");
             RunSendingLoop(_userId);
         }
-
+		
+		private void UpdateAppInstallationDetails(bool isUserNew)
+		{
+			if (isUserNew) 
+			{
+				Put(GameProperty.Create("first_install_date", DateTime.UtcNow.ToUniversalTime()));
+				Put(GameProperty.Create("last_install_date", DateTime.UtcNow.ToUniversalTime()));
+				Put(GameProperty.Create("current_app_vers", Application.version));
+			}
+			else 
+			{
+				string appVersion = PlayerPrefs.GetString(APP_VERSION_PREF);
+				if (appVersion != null && appVersion != Application.version)
+				{
+					Put(GameProperty.Create("last_update_date", DateTime.UtcNow.ToUniversalTime()));
+				}
+				else if (appVersion is null)
+				{
+					Put(GameProperty.Create("last_install_date", DateTime.UtcNow.ToUniversalTime()));	
+				}
+				Put(GameProperty.Create("current_app_vers", Application.version));
+				PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
+			}
+		}
+		
         private void SerializeEvents()
         {
             Serialize(_eventsPath, _gameEvents);

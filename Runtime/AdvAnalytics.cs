@@ -3,7 +3,7 @@ using Advant.Data.Models;
 using Advant.Http;
 using Advant.Logging;
 #if UNITY_ANDROID
-using RosUtils;
+using AndroidUtils;
 #endif
 
 using System;
@@ -25,12 +25,6 @@ namespace Advant
             _backend = new Backend();
             _cacheHolder = new CacheScheduledHolder(_backend);
         }
-		
-		private static void InitImpl(Identifier id)
-		{
-            SendEvent("logged_in");
-            _cacheHolder.StartAsync(id);
-		}
 		
 		public static void Init(string endpointsPathBase)
         {
@@ -58,7 +52,7 @@ namespace Advant
 #endif
         }
 
-        static public void SaveCacheLocally()
+        public static void SaveCacheLocally()
         {
             _cacheHolder.SaveCacheLocally();
         }
@@ -82,5 +76,20 @@ namespace Advant
         {
             //return _backend.GetTester(_cahceScheduler.GetUserId());
         }
+		
+		private static void InitImpl(Identifier id)
+		{
+            SendEvent("logged_in");
+			SendUserDetails();
+            _cacheHolder.StartAsync(id);
+		}
+		
+		private static void SendUserDetails() 
+		{
+			_cacheHolder.Put(GameProperty.Create("cheater", false));
+			_cacheHolder.Put(GameProperty.Create("tester", false));
+			//_cacheHolder.Put(GameProperty.Create("country", value));
+			_cacheHolder.Put(GameProperty.Create("os", SystemInfo.operatingSystem));
+		}
     }
 }

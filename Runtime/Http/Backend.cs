@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using System.Threading;
+using SimpleJSON;
 
 namespace Advant.Http
 {
@@ -51,17 +52,22 @@ namespace Advant.Http
             return Convert.ToBoolean(ExecuteWebRequestAsync(_pathBase + GetTesterEndpoint + $"/{userId}", RequestType.GET));
         }
 
-        public async Task<long> GetOrCreateUserIdAsync(Identifier dto)
+        public async Task<UserIdResponse> GetOrCreateUserIdAsync(Identifier dto)
         {
+			var result = new UserIdResponse();
             try
             {
-                return Convert.ToInt64(await ExecuteWebRequestAsync(_pathBase + PutUserIdEndpoint, RequestType.PUT, dto.ToJson()));
+                var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_pathBase + PutUserIdEndpoint, RequestType.PUT, dto.ToJson()));
+                result.UserId = jsonNode["userId"];
+                result.IsUserNew = jsonNode["isUserNew"];
             }
             catch (Exception e)
             {
                 Log.Info(e.Message);
-                return -1;
+                result.UserId = -1;
             }
+            return result;
+            
         }
 
         private async Task<string> ExecuteWebRequestAsync(string path, RequestType type, string jsonData = null)

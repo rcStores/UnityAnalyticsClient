@@ -1,9 +1,9 @@
 #if UNITY_ANDROID
 using UnityEngine;
 
-namespace RosUtils
+namespace AndroidUtils
 {
-	public static class AndroidApiUtil
+	internal static class ApiUtil
 	{
 		public static int GetApiVersion()
 		{

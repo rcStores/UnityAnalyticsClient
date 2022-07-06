@@ -27,8 +27,7 @@ public static class UpdateAnalyticsFromGit
 			{
 				case StatusCode.Failure:
 					throw new UnityException("Error while updating analytics SDK: " + _addRequest.Error.message);
-					break;
- 
+
 				case StatusCode.InProgress:
 					break;
  

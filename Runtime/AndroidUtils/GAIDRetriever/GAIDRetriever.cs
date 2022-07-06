@@ -2,9 +2,9 @@
 using System;
 using UnityEngine;
 
-namespace RosUtils
+namespace AndroidUtils
 {
-internal static class AndroidGAIDRetriever
+internal static class GAIDRetriever
 {
 	public static void GetAsync(System.Action<string> cb)
 	{
