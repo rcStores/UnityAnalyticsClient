@@ -40,6 +40,7 @@ namespace Advant
 			return;
 			
 #elif UNITY_ANDROID
+            Debug.LogWarning("AdvAnalytics.Init()");
             GAIDRetriever.GetAsync((string gaid) => {
                 if (gaid is null)
 			    {
@@ -86,7 +87,8 @@ namespace Advant
 		
 		private static void SendUserDetails() 
 		{
-			_cacheHolder.Put(GameProperty.Create("cheater", false));
+            Debug.LogWarning("Send user details: " + SystemInfo.operatingSystem);
+            _cacheHolder.Put(GameProperty.Create("cheater", false));
 			_cacheHolder.Put(GameProperty.Create("tester", false));
 			//_cacheHolder.Put(GameProperty.Create("country", value));
 			_cacheHolder.Put(GameProperty.Create("os", SystemInfo.operatingSystem));
