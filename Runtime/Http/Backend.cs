@@ -35,6 +35,7 @@ namespace Advant.Http
 
         public void SetPathBase(string pathBase)
         {
+			// cache strings
             _pathBase = pathBase;
         }
 

@@ -81,7 +81,7 @@ namespace Advant.Data
             SerializeProperties();
         }
 
-        public async Task StartAsync(Identifier identifier)
+        public async Task StartAsync(Identifier identifier) // SendingAsync
         {
             Log.Info("Start scheduler. Getting user id...");
 			
@@ -105,10 +105,13 @@ namespace Advant.Data
             RunSendingLoop(_userId);
         }
 		
+		// aot compilation?
 		private void UpdateAppInstallationDetails(bool isUserNew)
 		{
+			Debug.Log("APP_VERSION = " + Application.version);
 			if (isUserNew) 
 			{
+				Debug.Log("Create properties for a new user");
 				Put(GameProperty.Create("first_install_date", DateTime.UtcNow.ToUniversalTime()));
 				Put(GameProperty.Create("last_install_date", DateTime.UtcNow.ToUniversalTime()));
 				Put(GameProperty.Create("current_game_vers", Application.version));
@@ -116,7 +119,9 @@ namespace Advant.Data
             }
 			else 
 			{
+				Debug.Log("Create properties for registered user");
 				string appVersion = PlayerPrefs.GetString(APP_VERSION_PREF);
+				Debug.Log("Cached app version: " + appVersion);
 				if (appVersion != "" && appVersion != Application.version)
 				{
 					Put(GameProperty.Create("last_update_date", DateTime.UtcNow.ToUniversalTime()));
@@ -125,7 +130,7 @@ namespace Advant.Data
 				{
 					Put(GameProperty.Create("last_install_date", DateTime.UtcNow.ToUniversalTime()));	
 				}
-				Put(GameProperty.Create("current_app_vers", Application.version));
+				Put(GameProperty.Create("current_game_vers", Application.version));
 				PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
 			}
 		}

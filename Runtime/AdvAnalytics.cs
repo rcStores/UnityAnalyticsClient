@@ -90,6 +90,7 @@ namespace Advant
 			_cacheHolder.Put(GameProperty.Create("tester", false));
 			//_cacheHolder.Put(GameProperty.Create("country", value));
 			_cacheHolder.Put(GameProperty.Create("os", SystemInfo.operatingSystem));
+			Debug.Log("User operating system: " + SystemInfo.operatingSystem);
 		}
     }
 }

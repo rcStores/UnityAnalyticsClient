@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 
 namespace Advant.Data.Models
 {
@@ -17,6 +18,7 @@ namespace Advant.Data.Models
 
         public static GameProperty Create<T>(string name, T value)
         {
+			Debug.Log($"Create property; name = {name}, value = {value}");
             return new GameProperty(name, value.ToString(), NativeTypesDescription[value.GetType()]);
         }
 
