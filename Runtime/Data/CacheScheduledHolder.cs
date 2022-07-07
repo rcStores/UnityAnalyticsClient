@@ -108,7 +108,7 @@ namespace Advant.Data
 		// aot compilation?
 		private void UpdateAppInstallationDetails(bool isUserNew)
 		{
-			Debug.Log("APP_VERSION = " + Application.version);
+			Debug.LogWarning("APP_VERSION = " + Application.version);
 			if (isUserNew) 
 			{
 				Debug.Log("Create properties for a new user");
@@ -119,9 +119,9 @@ namespace Advant.Data
             }
 			else 
 			{
-				Debug.Log("Create properties for registered user");
+				Debug.LogWarning("Create properties for registered user");
 				string appVersion = PlayerPrefs.GetString(APP_VERSION_PREF);
-				Debug.Log("Cached app version: " + appVersion);
+				Debug.LogWarning("Cached app version: " + appVersion);
 				if (appVersion != "" && appVersion != Application.version)
 				{
 					Put(GameProperty.Create("last_update_date", DateTime.UtcNow.ToUniversalTime()));
