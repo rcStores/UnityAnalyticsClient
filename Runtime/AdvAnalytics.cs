@@ -34,13 +34,15 @@ namespace Advant
             Log.Info("Handling IDs");
 
 #if UNITY_EDITOR && DEBUG_ANAL
+			Debug.LogWarning("[EDITOR] AdvAnalytics.Init()");
             InitImpl(new Identifier(platform: "IOS", "DEBUG", "DEBUG"));
 			
 #elif UNITY_EDITOR
+			Debug.LogWarning("[EDITOR w/o ANALYTIC DEBUG] AdvAnalytics.Init()");
 			return;
 			
 #elif UNITY_ANDROID
-            Debug.LogWarning("AdvAnalytics.Init()");
+            Debug.LogWarning("[ANDROID] AdvAnalytics.Init()");
             GAIDRetriever.GetAsync((string gaid) => {
                 if (gaid is null)
 			    {
@@ -49,6 +51,7 @@ namespace Advant
                 InitImpl(new Identifier(platform: "Android", idfv, gaid));
             });
 #elif UNITY_IOS
+			Debug.LogWarning("[IOS] AdvAnalytics.Init()");
             InitImpl(new Identifier(platform: "IOS", idfv, Device.advertisingIdentifier));
 #endif
         }
