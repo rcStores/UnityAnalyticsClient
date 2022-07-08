@@ -35,7 +35,7 @@ namespace Advant.Data.Models
 
         public void ToJson(long id, StringBuilder sb)
         {
-            string valueStr = type == EValueType.DateTime ? value.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture) : value.ToString();
+            string valueStr = type == EValueType.DateTime ? DateTime.Parse(value).ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture) : value.ToString();
             sb.Append($"{{\"user_id\":{id}, \"name\":\"{name}\", \"value\":\"{valueStr}\", \"type\":{(int)type}}}");
             Debug.Log("Property in JSON: " + sb);
         }
