@@ -86,7 +86,7 @@ namespace Advant.Data
             Log.Info("Start scheduler. Getting user id...");
 			
 			identifier.UserId = _userId;
-            while (await _backend.GetOrCreateUserIdAsync(identifier) is var response && Application.isPlaying)
+            while (await _backend.GetOrCreateUserIdAsync(identifier) is var response /*&& Application.isPlaying*/)
             {
                 if (response.UserId == -1)
                 {
