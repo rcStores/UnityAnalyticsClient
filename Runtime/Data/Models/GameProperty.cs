@@ -35,6 +35,7 @@ namespace Advant.Data.Models
         public void ToJson(long id, StringBuilder sb)
         {
             sb.Append($"{{\"user_id\":{id}, \"name\":\"{name}\", \"value\":\"{value}\", \"type\":{(int)type}}}");
+            Debug.Log("Property in JSON: " + sb);
         }
 
         public string Name => name;
