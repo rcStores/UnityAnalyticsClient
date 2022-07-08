@@ -11,11 +11,10 @@ using System.Runtime.Serialization;
 
 namespace Advant.Data
 {
-    [System.ComponentModel.DesignerCategory("Code")]
+    //[System.ComponentModel.DesignerCategory("Code")]
     internal class CacheScheduledHolder
     {
         private const int SENDING_INTERVAL = 120000; // 2 min in ms
-        private const int GET_ID_RETRY_INTERVAL = 15000; 
 
 		private const string USER_ID_PREF = "UserId";
         private const string APP_VERSION_PREF = "AppVersion";
@@ -35,8 +34,10 @@ namespace Advant.Data
         private readonly string _propsPath;
         private readonly string _eventsPath;
 
+        private readonly string _usersTable;
 
-        public CacheScheduledHolder(Backend backend)
+
+        public CacheScheduledHolder(string usersTableName, Backend backend)
         {
 			string serializationPath = null;
 #if UNITY_IOS || UNITY_EDITOR
@@ -55,6 +56,8 @@ namespace Advant.Data
 
             _gameEvents = Deserialize<GameEvent>(_eventsPath);
             _gameProperties = Deserialize<GameProperty>(_propsPath);
+
+            _usersTable = usersTableName;
         }
 
         public async void Put(GameProperty gameProperty)
@@ -81,29 +84,13 @@ namespace Advant.Data
             SerializeProperties();
         }
 
-        public async Task StartAsync(Identifier identifier) // SendingAsync
+        public async Task StartSendingDataAsync(long id) //Identifier identifier) // SendingAsync
         {
-            Log.Info("Start scheduler. Getting user id...");
-			Debug.Log("Start scheduler. Getting user id...");
-			
-			identifier.UserId = _userId;
-            while (await _backend.GetOrCreateUserIdAsync(identifier) is var response && Application.isPlaying)
-            {
-                if (response.UserId == -1)
-                {
-                    await Task.Delay(GET_ID_RETRY_INTERVAL);
-                    Log.Info("retry");
-                }
-                else
-                {
-                    _userId = response.UserId;
-					PlayerPrefs.SetInt(USER_ID_PREF, Convert.ToInt32(_userId));
-					UpdateAppInstallationDetails(response.IsUserNew);
-                    break;
-                }
-            }
-            Log.Info("Success. Start sending task");
-            RunSendingLoop(_userId);
+            //Log.Info("Start scheduler. Getting user id...");
+			Debug.Log("Start scheduler");
+            Debug.Assert(id != -1);
+
+            await RunSendingLoop(id);
         }
 		
 		// aot compilation?
@@ -113,9 +100,9 @@ namespace Advant.Data
 			if (isUserNew) 
 			{
 				Debug.Log("Create properties for a new user");
-				Put(GameProperty.Create("first_install_date", DateTime.UtcNow.ToUniversalTime()));
-				Put(GameProperty.Create("last_install_date", DateTime.UtcNow.ToUniversalTime()));
-				Put(GameProperty.Create("current_game_vers", Application.version));
+				Put(GameProperty.Create(_usersTable, "first_install_date", DateTime.UtcNow.ToUniversalTime()));
+				Put(GameProperty.Create(_usersTable, "last_install_date", DateTime.UtcNow.ToUniversalTime()));
+				Put(GameProperty.Create(_usersTable, "current_game_vers", Application.version));
                 PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
             }
 			else 
@@ -125,13 +112,13 @@ namespace Advant.Data
 				Debug.LogWarning("Cached app version: " + appVersion);
 				if (appVersion != "" && appVersion != Application.version)
 				{
-					Put(GameProperty.Create("last_update_date", DateTime.UtcNow.ToUniversalTime()));
+					Put(GameProperty.Create(_usersTable, "last_update_date", DateTime.UtcNow.ToUniversalTime()));
 				}
 				else if (appVersion == "")
 				{
-					Put(GameProperty.Create("last_install_date", DateTime.UtcNow.ToUniversalTime()));	
+					Put(GameProperty.Create(_usersTable, "last_install_date", DateTime.UtcNow.ToUniversalTime()));	
 				}
-				Put(GameProperty.Create("current_game_vers", Application.version));
+				Put(GameProperty.Create(_usersTable, "current_game_vers", Application.version));
 				PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
 			}
 		}
@@ -192,7 +179,7 @@ namespace Advant.Data
             return result;
         }
 
-        private async void RunSendingLoop(long userId)
+        private async Task RunSendingLoop(long userId)
         {
             while (Application.isPlaying)
             {

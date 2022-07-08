@@ -9,18 +9,18 @@ namespace Advant.Data.Models
     [Serializable]
     internal class GameProperty : IGameData
     {
-        private GameProperty(string name, string value, EValueType type) 
+        private GameProperty(string table, string name, string value, EValueType type) 
         {
-            user_id = -1;
-            this.name = name;
-            this.value = value;
-            this.type = type;
+			_table = table;
+            _name = name;
+            _value = value;
+            _type = type;
         }
 
-        public static GameProperty Create<T>(string name, T value)
+        public static GameProperty Create<T>(string tableName, string name, T value)
         {
 			Debug.Log($"Create property; name = {name}, value = {value}");
-            return new GameProperty(name, value.ToString(), NativeTypesDescription[value.GetType()]);
+            return new GameProperty(tableName, name, value.ToString(), NativeTypesDescription[value.GetType()]);
         }
 
         static readonly Dictionary<Type, EValueType> NativeTypesDescription = new Dictionary<Type, EValueType>()
@@ -35,16 +35,16 @@ namespace Advant.Data.Models
 
         public void ToJson(long id, StringBuilder sb)
         {
-            string valueStr = type == EValueType.DateTime ? DateTime.Parse(value).ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture) : value.ToString();
-            sb.Append($"{{\"user_id\":{id}, \"name\":\"{name}\", \"value\":\"{valueStr}\", \"type\":{(int)type}}}");
+            string valueStr = _type == EValueType.DateTime ? DateTime.Parse(_value).ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture) : _value.ToString();
+            sb.Append($"{{\"table\":\"{_table}\", \"user_id\":{id}, \"name\":\"{_name}\", \"value\":\"{valueStr}\", \"type\":{(int)_type}}}");
             Debug.Log("Property in JSON: " + sb);
         }
 
-        public string Name => name;
+        public string Name => _name;
 
-        public long user_id;
-        public string name;
-        public string value;
-        public EValueType type;
+		private string _table;
+        private string _name;
+        private string _value;
+        private EValueType _type;
     }
 }
