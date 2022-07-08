@@ -80,9 +80,16 @@ namespace Advant
 		
 		private static void InitImpl(Identifier id)
 		{
-            SendEvent("logged_in");
-			SendUserDetails();
-            _cacheHolder.StartAsync(id);
+			try 
+			{
+				SendEvent("logged_in");
+				SendUserDetails();
+				_cacheHolder.StartAsync(id);
+			}
+			catch (Exception e)
+			{
+				Debug.LogError("Error in Advant at InitImpl()");
+			}
 		}
 		
 		private static void SendUserDetails() 
