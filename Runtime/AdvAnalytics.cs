@@ -129,9 +129,10 @@ namespace Advant
             _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "cheater", false));
             _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "tester", false));
             //_cacheHolder.Put(GameProperty.Create("country", value));
-            _cacheHolder.Put(
-				GameProperty.Create(USERS_DATA_TABLE, "os", os),
-				SystemInfo.operatingSystem.Contains("Android") ? "android" : "ios");
+            _cacheHolder.Put(GameProperty.Create(
+				USERS_DATA_TABLE,
+				"os", 
+				SystemInfo.operatingSystem.Contains("Android") ? "android" : "ios"));
 
         }
     }
