@@ -78,7 +78,7 @@ namespace Advant.Data
             _gameEvents.Add(gameEvent);
 			if (_gameEvents.Count >= MAX_CACHE_COUNT) 
 			{
-				Debug.LogError("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
+				Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
 				_sendingCancellationSource?.Cancel();
 			}
         }
@@ -163,7 +163,7 @@ namespace Advant.Data
 					.ContinueWith(task => { });
 				await continuationTask;
 					
-				Debug.LogError("[ADVANAL] SENDING ANALYTICS DATA");
+				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 
                 bool hasPropertiesSendingSucceeded = true;
                 bool hasEventsSendingSucceeded = true;
