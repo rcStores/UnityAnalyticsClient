@@ -36,12 +36,12 @@ namespace Advant.Http
             if (data.IsEmpty())
                 throw new ArgumentException("The cache is empty");
 
-            await ExecuteWebRequestAsync(GameDataEndpoints[typeof(T)], RequestType.POST, data.ToJson(userId));
+            await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(T)], RequestType.POST, data.ToJson(userId));
         }
 
         public bool GetTester(long userId)
         {
-            return Convert.ToBoolean(ExecuteWebRequestAsync(GetTesterEndpoint + $"/{userId}", RequestType.GET));
+            return Convert.ToBoolean(ExecuteWebRequestAsync(_getTesterEndpoint + $"/{userId}", RequestType.GET));
         }
 
         public async Task<UserIdResponse> GetOrCreateUserIdAsync(Identifier dto)
@@ -49,7 +49,7 @@ namespace Advant.Http
 			var result = new UserIdResponse();
             try
             {
-                var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(PutUserIdEndpoint, RequestType.PUT, dto.ToJson()));
+                var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_putUserIdEndpoint, RequestType.PUT, dto.ToJson()));
                 result.UserId = jsonNode["userId"];
                 result.IsUserNew = jsonNode["isUserNew"];
             }
