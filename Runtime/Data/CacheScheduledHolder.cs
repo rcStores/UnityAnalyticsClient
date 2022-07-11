@@ -16,6 +16,7 @@ namespace Advant.Data
     internal class CacheScheduledHolder
     {
         private const int SENDING_INTERVAL = 90000; // 1.5 min in ms
+		private readonly CancellationTokenSource _sendingCancellationSource; 
 
 		private const string USER_ID_PREF = "UserId";
         private const string APP_VERSION_PREF = "AppVersion";
@@ -57,6 +58,8 @@ namespace Advant.Data
             _gameProperties = Deserialize<GameProperty>(_propsPath);
 
             _usersTable = usersTableName;
+			
+			_sendingCancellationSource = = new CancellationTokenSource();
         }
 
         public async void Put(GameProperty gameProperty)
@@ -75,6 +78,7 @@ namespace Advant.Data
                 await Task.Yield();
             }
             _gameEvents.Add(gameEvent);
+			if (_gameEvents.Count >= MAX_CACHE_COUNT) _sendingCancellationSource.Cancel();
         }
 
         public void SaveCacheLocally()
@@ -149,13 +153,10 @@ namespace Advant.Data
 
         private async Task RunSendingLoop(long userId)
         {
-			CancellationTokenSource source = new CancellationTokenSource();
+			
             while (Application.isPlaying)
             {
-                await Task.Delay(SENDING_INTERVAL, source.Token);
-				
-				if (_gameEvents.Count >= MAX_CACHE_COUNT) // properties don't come so intensively
-					source.Cancel();
+                await Task.Delay(SENDING_INTERVAL, _sendingCancellationSource.Token);
 					
 				Debug.Log("[ADVANAL] SENDING ANALYTICS DATA");
 
