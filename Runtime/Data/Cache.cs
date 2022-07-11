@@ -35,7 +35,7 @@ namespace Advant.Data
         {
             for (int i = 0; i < _data.Count; ++i)
             {
-                if (_data[i].Name == newElement.Name)
+                if (_data[i].Name == newElement.Name && data[i].Table == newElement.Table)
                 {
                     _data[i] = newElement;
                     return;

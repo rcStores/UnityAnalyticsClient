@@ -15,28 +15,22 @@ namespace Advant.Http
 {
     internal sealed class Backend
     {
-        private string _pathBase;
+        private const string PropertyEndpoint;
+        private const string EventEndpoint;
 
-        private const string PropertyEndpoint = "/AnalyticsData/SaveProperties";
-        private const string EventEndpoint = "/AnalyticsData/SaveEvents";
-
-        private readonly Dictionary<Type, string> GameDataEndpoints = new Dictionary<Type, string>()
-        {
-            { typeof(GameProperty), PropertyEndpoint },
-            { typeof(GameEvent), EventEndpoint }
-
-        };
+        private readonly Dictionary<Type, string> _gameDataEndpointsByType = new Dictionary<Type, string>();
         
-        private const string GetTesterEndpoint = "/AnalyticsData/GetTester";
-        private const string PutUserIdEndpoint = "/UserIds/GetOrCreateUserId";
-
+        private string _getTesterEndpoint;
+        private string _putUserIdEndpoint;
 
         public long UserId { get; private set; }
 
         public void SetPathBase(string pathBase)
         {
-			// cache strings
-            _pathBase = pathBase;
+			_getTesterEndpoint = pathBase + "/AnalyticsData/GetTester";
+			_putUserIdEndpoint = pathBase + "/UserIds/GetOrCreateUserId";
+			_gameDataEndpointsByType[typeof(GameProperty)] = pathBase + "/AnalyticsData/SaveProperties";
+			_gameDataEndpointsByType[typeof(GameEvent)] = pathBase + "/AnalyticsData/SaveEvents";
         }
 
         public async Task SendToServerAsync<T>(long userId, Cache<T> data) where T : IGameData // => v?
@@ -45,12 +39,12 @@ namespace Advant.Http
             if (data.IsEmpty())
                 throw new ArgumentException("The cache is empty");
 
-            await ExecuteWebRequestAsync(_pathBase + GameDataEndpoints[typeof(T)], RequestType.POST, data.ToJson(userId));
+            await ExecuteWebRequestAsync(GameDataEndpoints[typeof(T)], RequestType.POST, data.ToJson(userId));
         }
 
         public bool GetTester(long userId)
         {
-            return Convert.ToBoolean(ExecuteWebRequestAsync(_pathBase + GetTesterEndpoint + $"/{userId}", RequestType.GET));
+            return Convert.ToBoolean(ExecuteWebRequestAsync(GetTesterEndpoint + $"/{userId}", RequestType.GET));
         }
 
         public async Task<UserIdResponse> GetOrCreateUserIdAsync(Identifier dto)
@@ -58,7 +52,7 @@ namespace Advant.Http
 			var result = new UserIdResponse();
             try
             {
-                var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_pathBase + PutUserIdEndpoint, RequestType.PUT, dto.ToJson()));
+                var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(PutUserIdEndpoint, RequestType.PUT, dto.ToJson()));
                 result.UserId = jsonNode["userId"];
                 result.IsUserNew = jsonNode["isUserNew"];
             }

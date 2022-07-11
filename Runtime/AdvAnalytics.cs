@@ -22,7 +22,7 @@ namespace Advant
 
         private static readonly UserRegistrator _userRegistrator;
 		
-		private const string CUSTOM_PROPERTIES_TABLE = "custom_properies";
+		private const string CUSTOM_PROPERTIES_TABLE = "custom_properties";
 		private const string USERS_DATA_TABLE = "users";
 
         private const string APP_VERSION_PREF = "AppVersion";
@@ -43,15 +43,12 @@ namespace Advant
             Log.Info("Handling IDs");
 
 #if UNITY_EDITOR && DEBUG_ANAL
-			Debug.LogWarning("[EDITOR] AdvAnalytics.Init()");
             InitImplAsync(new Identifier(platform: "IOS", "DEBUG", "DEBUG"));
 			
 #elif UNITY_EDITOR
-			Debug.LogWarning("[EDITOR w/o ANALYTIC DEBUG] AdvAnalytics.Init()");
 			return;
 			
 #elif UNITY_ANDROID
-            Debug.LogWarning("[ANDROID] AdvAnalytics.Init()");
             GAIDRetriever.GetAsync((string gaid) => {
                 if (gaid is null)
 			    {
@@ -60,7 +57,6 @@ namespace Advant
                 InitImplAsync(new Identifier(platform: "Android", idfv, gaid));
             });
 #elif UNITY_IOS
-			Debug.LogWarning("[IOS] AdvAnalytics.Init()");
             InitImplAsync(new Identifier(platform: "IOS", idfv, Device.advertisingIdentifier));
 #endif
         }
@@ -99,20 +95,19 @@ namespace Advant
         
         private static void SendUserDetails(bool isUserNew)
         {
-            Debug.LogWarning("APP_VERSION = " + Application.version);
             if (isUserNew)
             {
-                Debug.Log("Create properties for a new user");
+                Log.Info("Create properties for a new user");
                 _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "first_install_date", DateTime.UtcNow.ToUniversalTime()));
                 _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "last_install_date", DateTime.UtcNow.ToUniversalTime()));
-                _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "current_game_vers", Application.version));
+				_cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "first_game_version", Application.version));
+                _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "current_game_version", Application.version));
                 PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
             }
             else
             {
-                Debug.LogWarning("Create properties for registered user");
+                Log.Info("Create properties for registered user");
                 string appVersion = PlayerPrefs.GetString(APP_VERSION_PREF);
-                Debug.LogWarning("Cached app version: " + appVersion);
                 if (appVersion != "" && appVersion != Application.version)
                 {
                     _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "last_update_date", DateTime.UtcNow.ToUniversalTime()));
@@ -121,11 +116,10 @@ namespace Advant
                 {
                     _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "last_install_date", DateTime.UtcNow.ToUniversalTime()));
                 }
-                _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "current_game_vers", Application.version));
+                _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "current_game_version", Application.version));
                 PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
             }
 
-            Debug.LogWarning("Send user details: " + SystemInfo.operatingSystem);
             _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "cheater", false));
             _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "tester", false));
             //_cacheHolder.Put(GameProperty.Create("country", value));

@@ -11,7 +11,6 @@ using System.Runtime.Serialization;
 
 namespace Advant.Data
 {
-    //[System.ComponentModel.DesignerCategory("Code")]
     internal class CacheScheduledHolder
     {
         private const int SENDING_INTERVAL = 120000; // 2 min in ms
@@ -35,7 +34,6 @@ namespace Advant.Data
         private readonly string _eventsPath;
 
         private readonly string _usersTable;
-
 
         public CacheScheduledHolder(string usersTableName, Backend backend)
         {
@@ -84,46 +82,15 @@ namespace Advant.Data
             SerializeProperties();
         }
 
-        public async Task StartSendingDataAsync(long id) //Identifier identifier) // SendingAsync
+        public async Task StartSendingDataAsync(long id)
         {
-            //Log.Info("Start scheduler. Getting user id...");
-			Debug.Log("Start scheduler");
+			Log.Info("Start scheduler");
             Debug.Assert(id != -1);
 
             await RunSendingLoop(id);
         }
 		
-		// aot compilation?
-		private void UpdateAppInstallationDetails(bool isUserNew)
-		{
-			Debug.LogWarning("APP_VERSION = " + Application.version);
-			if (isUserNew) 
-			{
-				Debug.Log("Create properties for a new user");
-				Put(GameProperty.Create(_usersTable, "first_install_date", DateTime.UtcNow.ToUniversalTime()));
-				Put(GameProperty.Create(_usersTable, "last_install_date", DateTime.UtcNow.ToUniversalTime()));
-				Put(GameProperty.Create(_usersTable, "current_game_vers", Application.version));
-                PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
-            }
-			else 
-			{
-				Debug.LogWarning("Create properties for registered user");
-				string appVersion = PlayerPrefs.GetString(APP_VERSION_PREF);
-				Debug.LogWarning("Cached app version: " + appVersion);
-				if (appVersion != "" && appVersion != Application.version)
-				{
-					Put(GameProperty.Create(_usersTable, "last_update_date", DateTime.UtcNow.ToUniversalTime()));
-				}
-				else if (appVersion == "")
-				{
-					Put(GameProperty.Create(_usersTable, "last_install_date", DateTime.UtcNow.ToUniversalTime()));	
-				}
-				Put(GameProperty.Create(_usersTable, "current_game_vers", Application.version));
-				PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
-			}
-		}
-		
-        private void SerializeEvents()
+		private void SerializeEvents()
         {
             Serialize(_eventsPath, _gameEvents);
         }
