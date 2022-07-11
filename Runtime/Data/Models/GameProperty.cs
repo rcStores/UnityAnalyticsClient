@@ -41,6 +41,7 @@ namespace Advant.Data.Models
         }
 
         public string Name => _name;
+		public string Table => _table;
 
 		private string _table;
         private string _name;

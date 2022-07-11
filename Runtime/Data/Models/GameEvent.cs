@@ -24,6 +24,7 @@ namespace Advant.Data.Models
         }
 
         public string Name => name;
+		public string Table => "_" + _name;
 
         public string name;
         public DateTime event_time;

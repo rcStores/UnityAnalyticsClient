@@ -7,6 +7,7 @@ namespace Advant.Data
     internal interface IGameData
     {
         string Name { get; }
+		string Table { get; }
         void ToJson(long id, StringBuilder sb);
     }
 
