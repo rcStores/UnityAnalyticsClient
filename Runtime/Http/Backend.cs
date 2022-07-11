@@ -15,9 +15,6 @@ namespace Advant.Http
 {
     internal sealed class Backend
     {
-        private const string PropertyEndpoint;
-        private const string EventEndpoint;
-
         private readonly Dictionary<Type, string> _gameDataEndpointsByType = new Dictionary<Type, string>();
         
         private string _getTesterEndpoint;
