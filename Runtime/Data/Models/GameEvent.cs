@@ -18,18 +18,18 @@ namespace Advant.Data.Models
 
         public void ToJson(long id, StringBuilder sb)
         {
-            sb.Append($"{{\"user_id\":{id}, \"name\":\"{name}\", \"event_time\":\"{event_time.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\", \"current_app_version\":\"{current_app_version}\", \"parameters\":"); 
-            parameters.ToJson(sb);
+            sb.Append($"{{\"user_id\":{id}, \"name\":\"{_name}\", \"event_time\":\"{_event_time.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\", \"current_app_version\":\"{_current_app_version}\", \"parameters\":"); 
+            _parameters.ToJson(sb);
             sb.Append('}');
         }
 
-        public string Name => name;
+        public string Name => _name;
 		public string Table => "_" + _name;
 
-        public string name;
-        public DateTime event_time;
-        public string current_app_version;
-        public Dictionary<string, object> parameters;
+        private string _name;
+        private DateTime _event_time;
+        private string _current_app_version;
+        private Dictionary<string, object> _parameters;
     }
 
     // ECS unity
