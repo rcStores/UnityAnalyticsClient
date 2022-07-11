@@ -13,7 +13,7 @@ namespace Advant.Data
 {
     internal class CacheScheduledHolder
     {
-        private const int SENDING_INTERVAL = 120000; // 2 min in ms
+        private const int SENDING_INTERVAL = 90000; // 1.5 min in ms
 
 		private const string USER_ID_PREF = "UserId";
         private const string APP_VERSION_PREF = "AppVersion";
