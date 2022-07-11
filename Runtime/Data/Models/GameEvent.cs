@@ -10,10 +10,10 @@ namespace Advant.Data.Models
     {
         public GameEvent(string name, DateTime eventTime, string currentAppVersion, Dictionary<string, object> parameters)
         {
-            this.name = name;
-            event_time = eventTime;
-            current_app_version = currentAppVersion;
-            this.parameters = parameters;
+            _name = name;
+            _event_time = eventTime;
+            _current_app_version = currentAppVersion;
+            _parameters = parameters;
         }
 
         public void ToJson(long id, StringBuilder sb)
