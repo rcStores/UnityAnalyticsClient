@@ -155,7 +155,7 @@ namespace Advant.Data
                 await Task.Delay(SENDING_INTERVAL, source.Token);
 				
 				if (_gameEvents.Count >= MAX_CACHE_COUNT) // properties don't come so intensively
-					source.Cancel;
+					source.Cancel();
 					
 				Debug.Log("[ADVANAL] SENDING ANALYTICS DATA");
 
