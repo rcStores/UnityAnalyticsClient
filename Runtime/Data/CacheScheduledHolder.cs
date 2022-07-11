@@ -58,8 +58,6 @@ namespace Advant.Data
             _gameProperties = Deserialize<GameProperty>(_propsPath);
 
             _usersTable = usersTableName;
-			
-			_sendingCancellationSource = new CancellationTokenSource();
         }
 
         public async void Put(GameProperty gameProperty)
@@ -78,7 +76,7 @@ namespace Advant.Data
                 await Task.Yield();
             }
             _gameEvents.Add(gameEvent);
-			if (_gameEvents.Count >= MAX_CACHE_COUNT) _sendingCancellationSource.Cancel();
+			if (_gameEvents.Count >= MAX_CACHE_COUNT) _sendingCancellationSource?.Cancel();
         }
 
         public void SaveCacheLocally()
@@ -156,6 +154,7 @@ namespace Advant.Data
 			
             while (Application.isPlaying)
             {
+				_sendingCancellationSource = new CancellationTokenSource();
                 await Task.Delay(SENDING_INTERVAL, _sendingCancellationSource.Token);
 					
 				Debug.LogError("[ADVANAL] SENDING ANALYTICS DATA");
