@@ -59,7 +59,7 @@ namespace Advant.Data
 
             _usersTable = usersTableName;
 			
-			_sendingCancellationSource = = new CancellationTokenSource();
+			_sendingCancellationSource = new CancellationTokenSource();
         }
 
         public async void Put(GameProperty gameProperty)
