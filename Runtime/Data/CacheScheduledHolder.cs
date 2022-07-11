@@ -17,7 +17,7 @@ namespace Advant.Data
 
 		private const string USER_ID_PREF = "UserId";
         private const string APP_VERSION_PREF = "AppVersion";
-        private long _userId;
+        private const int MAX_CACHE_COUNT = 10;
 
         private readonly Backend _backend;
 
@@ -148,9 +148,15 @@ namespace Advant.Data
 
         private async Task RunSendingLoop(long userId)
         {
+			CancellationTokenSource source = new CancellationTokenSource();
             while (Application.isPlaying)
             {
-                await Task.Delay(SENDING_INTERVAL);
+                await Task.Delay(SENDING_INTERVAL, source.Token);
+				
+				if (_gameEvents.Count >= MAX_CACHE_COUNT) // properties don't come so intensively
+					source.Cancel;
+					
+				Debug.Log("[ADVANAL] SENDING ANALYTICS DATA");
 
                 bool hasPropertiesSendingSucceeded = true;
                 bool hasEventsSendingSucceeded = true;
