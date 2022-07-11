@@ -158,7 +158,7 @@ namespace Advant.Data
             {
                 await Task.Delay(SENDING_INTERVAL, _sendingCancellationSource.Token);
 					
-				Debug.Log("[ADVANAL] SENDING ANALYTICS DATA");
+				Debug.LogError("[ADVANAL] SENDING ANALYTICS DATA");
 
                 bool hasPropertiesSendingSucceeded = true;
                 bool hasEventsSendingSucceeded = true;
