@@ -31,6 +31,7 @@ namespace Advant
 #endif
             _userPropertiesTableName = userPropertiesTableName;
             _backend = backend;
+			_userId = Convert.ToInt64(PlayerPrefs.GetInt(USER_ID_PREF, -1));
         }
 
         public UserRegistrator SetActionOnSuccess(Func<long, Task> func)

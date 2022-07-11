@@ -2,12 +2,14 @@ using Advant.Http;
 using Advant.Data.Models;
 using Advant.Logging;
 
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
+
 
 namespace Advant.Data
 {
@@ -44,7 +46,6 @@ namespace Advant.Data
             serializationPath = Path.Combine(AndroidUtils.ApiUtil.GetPersistentDataPath(), "CachedData");
 #endif
             _backend = backend;
-			_userId = Convert.ToInt64(PlayerPrefs.GetInt(USER_ID_PREF, -1));
             if (!Directory.Exists(serializationPath))
             {
                 Directory.CreateDirectory(serializationPath);

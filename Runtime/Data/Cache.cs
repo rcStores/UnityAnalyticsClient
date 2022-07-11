@@ -16,6 +16,8 @@ namespace Advant.Data
     {
         List<T> _data = new List<T>();
         StringBuilder _sb = new StringBuilder();
+		
+		public int Count { get => _data.Count; }
 
         public IList<T> Get()
         {
