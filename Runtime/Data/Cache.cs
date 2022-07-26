@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Advant.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,8 +15,28 @@ namespace Advant.Data
     [Serializable]
     internal class Cache<T> where T : IGameData
     {
-        List<T> _data = new List<T>();
-        StringBuilder _sb = new StringBuilder();
+        public Cache(IList<T> data)
+        {
+            if (typeof(T) == typeof(GameEvent))
+            {
+                _data = new List<T>(data);
+            }
+            else
+            {
+                _data = new List<T>
+                {
+                    Capacity = data.Count
+                };
+                foreach (var elem in data)
+                {
+                    AddUnique(elem);
+                }
+            }
+            _sb = new StringBuilder();
+        }
+
+        List<T> _data;
+        StringBuilder _sb;
 		
 		public int Count { get => _data.Count; }
 

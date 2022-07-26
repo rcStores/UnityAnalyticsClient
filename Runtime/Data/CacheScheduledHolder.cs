@@ -20,15 +20,16 @@ namespace Advant.Data
 
 		private const string USER_ID_PREF = "UserId";
         private const string APP_VERSION_PREF = "AppVersion";
-        private const int MAX_CACHE_COUNT = 10;
 
         private readonly Backend _backend;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
-        private readonly BlockingCollection<GameProperty> _gameProperties;
-        private readonly BlockingCollection<GameEvent> _gameEvents;
+        private readonly ConcurrentQueue<GameProperty> _gameProperties;
+        private readonly ConcurrentQueue<GameEvent> _gameEvents;
+        private const int MAX_CACHE_COUNT = 10;
+        private int _currentEventsCount = 0;
 
-        private readonly Cache<GameEvent> _tempEventsPool = new Cache<GameEvent>();
-        private readonly Cache<GameProperty> _tempPropertiesPool = new Cache<GameProperty>();
+        //private readonly Cache<GameEvent> _tempEventsPool = new Cache<GameEvent>();
+        //private readonly Cache<GameProperty> _tempPropertiesPool = new Cache<GameProperty>();
 
 
         private bool _arePropertiesProcessing = false;
@@ -66,11 +67,11 @@ namespace Advant.Data
 
         public async void Put(GameProperty gameProperty)
         {
-            while (_arePropertiesProcessing)
-            {
-                await Task.Yield();
-            }
-            _gameProperties.Add(gameProperty);
+            //while (_arePropertiesProcessing)
+            //{
+            //    await Task.Yield();
+            //}
+            _gameProperties.Enqueue(gameProperty);
         }
 
         public async void Put(GameEvent gameEvent)
@@ -79,16 +80,18 @@ namespace Advant.Data
             //{
             //    await Task.Yield();
             //}
-            while (!_gameEvents.TryAdd(gameEvent, TimeSpan.FromMilliseconds(100)))
-            {
-                await Task.Yield();
-            }
+            _gameEvents.Enqueue(gameEvent);
+            
+
+            Interlocked.Increment(ref _currentEventsCount);
 
             await _semaphore.WaitAsync();
-			if (_gameEvents.Count >= MAX_CACHE_COUNT && _sendingCancellationSource != null) 
+            if (_currentEventsCount >= MAX_CACHE_COUNT && _sendingCancellationSource != null) 
 			{
 				Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
 				_sendingCancellationSource.Cancel();
+                _sendingCancellationSource = null;
+                _currentEventsCount = 0;
 			}
             _semaphore.Release();
         }
@@ -117,7 +120,7 @@ namespace Advant.Data
             File.Delete(_propsPath);
         }
 
-        public void Serialize<T>(string filePath, BlockingCollection<T> data) where T : IGameData 
+        public void Serialize<T>(string filePath, ConcurrentQueue<T> data) where T : IGameData 
         {
             var fs = new FileStream(filePath, FileMode.OpenOrCreate);
 
@@ -136,23 +139,23 @@ namespace Advant.Data
             }
         }
 
-        public BlockingCollection<T> Deserialize<T>(string filePath) where T : IGameData
+        public ConcurrentQueue<T> Deserialize<T>(string filePath) where T : IGameData
         {
             if (!File.Exists(filePath))
             {
-                return new BlockingCollection<T>();
+                return new ConcurrentQueue<T>();
             }
 
             var fs = new FileStream(filePath, FileMode.Open);
-            BlockingCollection<T> result = null;
+            ConcurrentQueue<T> result = null;
             try
             {
                 BinaryFormatter formatter = new BinaryFormatter();
-                result = (BlockingCollection<T>)formatter.Deserialize(fs);
+                result = (ConcurrentQueue<T>)formatter.Deserialize(fs);
             }
             catch (SerializationException)
             {
-                return new BlockingCollection<T>();
+                return new ConcurrentQueue<T>();
             }
             finally
             {
@@ -170,7 +173,7 @@ namespace Advant.Data
             {
 				_sendingCancellationSource = new CancellationTokenSource();
 				var continuationTask = Task.Delay(SENDING_INTERVAL, _sendingCancellationSource.Token)
-					.ContinueWith(task => { _sendingCancellationSource = null; });
+					.ContinueWith(task => { });
 				await continuationTask;
 					
 				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
@@ -181,20 +184,14 @@ namespace Advant.Data
                 _arePropertiesProcessing = true;
                 _areEventsProcessing = true;
 
-                foreach (var gameEvent in _gameEvents.GetConsumingEnumerable())
-                {
-                    _tempEventsPool.Add(gameEvent);
-                }
-                foreach (var gameProperty in _gameProperties.GetConsumingEnumerable())
-                {
-                    _tempPropertiesPool.AddUnique(gameProperty);
-                }
+                var gameEvents = new Cache<GameEvent>(_gameEvents.ToArray());
+                var gameProperties = new Cache<GameProperty>(_gameProperties.ToArray());
 
                 Task propertiesSending = null, eventsSending = null;
                 try
                 {
-                    eventsSending =  _backend.SendToServerAsync(userId, _tempEventsPool);
-                    propertiesSending = _backend.SendToServerAsync(userId, _tempPropertiesPool);
+                    eventsSending =  _backend.SendToServerAsync(userId, gameEvents);
+                    propertiesSending = _backend.SendToServerAsync(userId, gameProperties);
                     await Task.WhenAll(propertiesSending, eventsSending);
                 }
                 catch (Exception)
@@ -205,14 +202,26 @@ namespace Advant.Data
                 
                 if (hasPropertiesSendingSucceeded)
                 {
-                    Log.Info("Clear properties");
-                    _tempPropertiesPool.Clear();
+                    Debug.LogWarning("[ADVANAL] Clear properties");
+                    foreach (var _ in gameProperties.Get())
+                    {
+                        if (!_gameProperties.TryDequeue(out var _))
+                        {
+                            Debug.LogWarning("[ADVANAL] GameProperty isn't taken from the queue");
+                        }
+                    }
                 }
 
                 if (hasEventsSendingSucceeded)
                 {
-                    Log.Info("Clear events");
-                    _tempEventsPool.Clear();
+                    Debug.LogWarning("[ADVANAL] Clear events");
+                    foreach (var _ in gameEvents.Get())
+                    {
+                        if (!_gameEvents.TryDequeue(out var _))
+                        {
+                            Debug.LogWarning("[ADVANAL] GameEvent isn't taken from the queue");
+                        }
+                    }
                 }
 
                 _arePropertiesProcessing = false;
