@@ -9,7 +9,7 @@ using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
-
+using System.Collections.Concurrent;
 
 namespace Advant.Data
 {
@@ -23,10 +23,14 @@ namespace Advant.Data
         private const int MAX_CACHE_COUNT = 10;
 
         private readonly Backend _backend;
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
+        private readonly BlockingCollection<GameProperty> _gameProperties;
+        private readonly BlockingCollection<GameEvent> _gameEvents;
 
-        private readonly Cache<GameProperty> _gameProperties;
-        private readonly Cache<GameEvent> _gameEvents;
-        
+        private readonly Cache<GameEvent> _tempEventsPool = new Cache<GameEvent>();
+        private readonly Cache<GameProperty> _tempPropertiesPool = new Cache<GameProperty>();
+
+
         private bool _arePropertiesProcessing = false;
         private bool _areEventsProcessing = false;
 
@@ -66,21 +70,27 @@ namespace Advant.Data
             {
                 await Task.Yield();
             }
-            _gameProperties.AddUnique(gameProperty);
+            _gameProperties.Add(gameProperty);
         }
 
         public async void Put(GameEvent gameEvent)
         {
-            while (_areEventsProcessing)
+            //while (_areEventsProcessing)
+            //{
+            //    await Task.Yield();
+            //}
+            while (!_gameEvents.TryAdd(gameEvent, TimeSpan.FromMilliseconds(100)))
             {
                 await Task.Yield();
             }
-            _gameEvents.Add(gameEvent);
-			if (_gameEvents.Count >= MAX_CACHE_COUNT) 
+
+            await _semaphore.WaitAsync();
+			if (_gameEvents.Count >= MAX_CACHE_COUNT && _sendingCancellationSource != null) 
 			{
 				Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
-				_sendingCancellationSource?.Cancel();
+				_sendingCancellationSource.Cancel();
 			}
+            _semaphore.Release();
         }
 
         public void SaveCacheLocally()
@@ -107,7 +117,7 @@ namespace Advant.Data
             File.Delete(_propsPath);
         }
 
-        public void Serialize<T>(string filePath, Cache<T> data) where T : IGameData 
+        public void Serialize<T>(string filePath, BlockingCollection<T> data) where T : IGameData 
         {
             var fs = new FileStream(filePath, FileMode.OpenOrCreate);
 
@@ -126,23 +136,23 @@ namespace Advant.Data
             }
         }
 
-        public Cache<T> Deserialize<T>(string filePath) where T : IGameData
+        public BlockingCollection<T> Deserialize<T>(string filePath) where T : IGameData
         {
             if (!File.Exists(filePath))
             {
-                return new Cache<T>();
+                return new BlockingCollection<T>();
             }
 
             var fs = new FileStream(filePath, FileMode.Open);
-            Cache<T> result = null;
+            BlockingCollection<T> result = null;
             try
             {
                 BinaryFormatter formatter = new BinaryFormatter();
-                result = (Cache<T>)formatter.Deserialize(fs);
+                result = (BlockingCollection<T>)formatter.Deserialize(fs);
             }
             catch (SerializationException)
             {
-                return new Cache<T>();
+                return new BlockingCollection<T>();
             }
             finally
             {
@@ -160,7 +170,7 @@ namespace Advant.Data
             {
 				_sendingCancellationSource = new CancellationTokenSource();
 				var continuationTask = Task.Delay(SENDING_INTERVAL, _sendingCancellationSource.Token)
-					.ContinueWith(task => { });
+					.ContinueWith(task => { _sendingCancellationSource = null; });
 				await continuationTask;
 					
 				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
@@ -171,11 +181,20 @@ namespace Advant.Data
                 _arePropertiesProcessing = true;
                 _areEventsProcessing = true;
 
+                foreach (var gameEvent in _gameEvents.GetConsumingEnumerable())
+                {
+                    _tempEventsPool.Add(gameEvent);
+                }
+                foreach (var gameProperty in _gameProperties.GetConsumingEnumerable())
+                {
+                    _tempPropertiesPool.AddUnique(gameProperty);
+                }
+
                 Task propertiesSending = null, eventsSending = null;
                 try
                 {
-                    eventsSending =  _backend.SendToServerAsync(userId, _gameEvents);
-                    propertiesSending = _backend.SendToServerAsync(userId, _gameProperties);
+                    eventsSending =  _backend.SendToServerAsync(userId, _tempEventsPool);
+                    propertiesSending = _backend.SendToServerAsync(userId, _tempPropertiesPool);
                     await Task.WhenAll(propertiesSending, eventsSending);
                 }
                 catch (Exception)
@@ -187,13 +206,13 @@ namespace Advant.Data
                 if (hasPropertiesSendingSucceeded)
                 {
                     Log.Info("Clear properties");
-                    _gameProperties.Clear();
+                    _tempPropertiesPool.Clear();
                 }
 
                 if (hasEventsSendingSucceeded)
                 {
                     Log.Info("Clear events");
-                    _gameEvents.Clear();
+                    _tempEventsPool.Clear();
                 }
 
                 _arePropertiesProcessing = false;
