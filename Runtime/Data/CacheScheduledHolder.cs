@@ -196,6 +196,8 @@ namespace Advant.Data
 
                 var gameEvents = new Cache<GameEvent>(_gameEvents.ToArray());
                 var gameProperties = new Cache<GameProperty>(_gameProperties.ToArray());
+				
+				Debug.LogWarning("[ADVANAL] BUFFER SNAPSHOT");
 
                 Task propertiesSending = null, eventsSending = null;
                 try
@@ -206,9 +208,15 @@ namespace Advant.Data
                 }
                 catch (Exception)
                 {
-                    hasPropertiesSendingSucceeded = !propertiesSending.IsFaulted;
-                    hasEventsSendingSucceeded = !eventsSending.IsFaulted;
+					Debug.LogWarning("[ADVANAL] Error while sending data: " + e.Message);
+                    
                 }
+				finally
+				{
+					Debug.LogWarning("[ADVANAL] Getting results of data sending...");
+					hasPropertiesSendingSucceeded = !propertiesSending.IsFaulted;
+                    hasEventsSendingSucceeded = !eventsSending.IsFaulted;
+				}
                 
                 if (hasPropertiesSendingSucceeded)
                 {
