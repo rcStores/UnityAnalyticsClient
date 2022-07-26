@@ -168,9 +168,11 @@ namespace Advant.Data
 
         private async Task RunSendingLoop(long userId)
         {
-			
-            while (Application.isPlaying)
+			while (true)		
             {
+#if UNITY_EDITOR
+				if (Application.isPlaying) return;
+#endif				
 				_sendingCancellationSource = new CancellationTokenSource();
 				var continuationTask = Task.Delay(SENDING_INTERVAL, _sendingCancellationSource.Token)
 					.ContinueWith(task => { });

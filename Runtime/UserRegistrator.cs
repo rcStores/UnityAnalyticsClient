@@ -45,6 +45,10 @@ namespace Advant
             identifier.UserId = _userId;
             while (await _backend.GetOrCreateUserIdAsync(identifier) is var response && Application.isPlaying)
             {
+#if UNITY_EDITOR
+				if (!Application.isPlaying)
+					return;
+#endif				
                 if (response.UserId == -1)
                 {
                     await Task.Delay(GET_ID_RETRY_INTERVAL);
