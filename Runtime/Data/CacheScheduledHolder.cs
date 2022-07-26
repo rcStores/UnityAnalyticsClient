@@ -206,7 +206,7 @@ namespace Advant.Data
                     propertiesSending = _backend.SendToServerAsync(userId, gameProperties);
                     await Task.WhenAll(propertiesSending, eventsSending);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
 					Debug.LogWarning("[ADVANAL] Error while sending data: " + e.Message);
                     
