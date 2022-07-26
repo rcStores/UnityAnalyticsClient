@@ -98,8 +98,16 @@ namespace Advant.Data
 
         public void SaveCacheLocally()
         {
-            SerializeEvents();
-            SerializeProperties();
+			try
+			{
+				Debug.LogWarning("[ADVANAL] Saving cache locally");
+				SerializeEvents();
+				SerializeProperties();
+			}
+			catch (Exception e)
+			{
+				Debug.LogWarning("Saving cache failure: " + e.Message);
+			}
         }
 
         public async Task StartSendingDataAsync(long id)
