@@ -43,11 +43,11 @@ namespace Advant
         public async Task<bool> RegistrateAsync(Identifier identifier)
         {
             identifier.UserId = _userId;
-            while (await _backend.GetOrCreateUserIdAsync(identifier) is var response && Application.isPlaying)
+            while (await _backend.GetOrCreateUserIdAsync(identifier) is var response)
             {
 #if UNITY_EDITOR
 				if (!Application.isPlaying)
-					return;
+					return false;
 #endif				
                 if (response.UserId == -1)
                 {
