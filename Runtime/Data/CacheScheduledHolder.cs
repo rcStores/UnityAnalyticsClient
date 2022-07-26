@@ -85,15 +85,15 @@ namespace Advant.Data
 
             Interlocked.Increment(ref _currentEventsCount);
 
-            await _semaphore.WaitAsync();
+            //await _semaphore.WaitAsync();
             if (_currentEventsCount >= MAX_CACHE_COUNT && _sendingCancellationSource != null) 
 			{
 				Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
 				_sendingCancellationSource.Cancel();
                 _sendingCancellationSource = null;
-                _currentEventsCount = 0;
+                //_currentEventsCount = 0;
 			}
-            _semaphore.Release();
+            //_semaphore.Release();
         }
 
         public void SaveCacheLocally()
@@ -239,6 +239,7 @@ namespace Advant.Data
                         {
                             Debug.LogWarning("[ADVANAL] GameEvent isn't taken from the queue");
                         }
+						Interlocked.Decrement(ref _currentEventsCount);
                     }
                 }
 
