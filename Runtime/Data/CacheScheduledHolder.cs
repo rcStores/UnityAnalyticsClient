@@ -86,13 +86,13 @@ namespace Advant.Data
             Interlocked.Increment(ref _currentEventsCount);
 
             //await _semaphore.WaitAsync();
-            if (_currentEventsCount >= MAX_CACHE_COUNT && _sendingCancellationSource != null) 
-			{
-				Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
-				_sendingCancellationSource.Cancel();
-                _sendingCancellationSource = null;
-                //_currentEventsCount = 0;
-			}
+            // if (_currentEventsCount >= MAX_CACHE_COUNT && _sendingCancellationSource != null) 
+			// {
+				// Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
+				// _sendingCancellationSource.Cancel();
+                // _sendingCancellationSource = null;
+                // //_currentEventsCount = 0;
+			// }
             //_semaphore.Release();
         }
 
