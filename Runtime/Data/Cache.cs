@@ -18,6 +18,7 @@ namespace Advant.Data
 		public Cache()
 		{
 			_data = new List<T>();
+			_sb = new StringBuilder();
 		}
 		
         public Cache(IList<T> data)
