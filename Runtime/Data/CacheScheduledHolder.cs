@@ -90,6 +90,7 @@ namespace Advant.Data
             //Interlocked.Increment(ref _currentEventsCount);
 		
             //await _semaphore.WaitAsync();
+			/*
              if (_gameEvents.Count >= MAX_CACHE_COUNT && !_areEventsProcessing) 
 			 {
 				 _areEventsProcessing = true;
@@ -98,7 +99,7 @@ namespace Advant.Data
 				 _sendingCancellationSource?.Cancel();
                  //_sendingCancellationSource = null;
                  //_currentEventsCount = 0;
-			 }
+			 } */
             //_semaphore.Release();
         }
 
@@ -185,7 +186,7 @@ namespace Advant.Data
 			while (true)		
             {
 #if UNITY_EDITOR
-				if (Application.isPlaying) return;
+				if (!Application.isPlaying) return;
 #endif				
 				_sendingCancellationSource = new CancellationTokenSource();
 				var continuationTask = Task.Delay(SENDING_INTERVAL, _sendingCancellationSource.Token)
