@@ -68,7 +68,7 @@ namespace Advant.Data
 
         public async void Put(GameProperty gameProperty)
         {
-            while (Volatile.Read(ref _areEventsProcessing)
+            while (Volatile.Read(ref _areEventsProcessing))
             {
                 await Task.Delay(Timespan.FromMilliseconds(100));
             }
