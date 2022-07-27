@@ -29,7 +29,7 @@ namespace Advant.Data.Models
         private string _name;
         private DateTime _event_time;
         private string _current_app_version;
-        private Dictionary<string, object> _parameters;
+        public Dictionary<string, object> _parameters;
     }
 
     // ECS unity

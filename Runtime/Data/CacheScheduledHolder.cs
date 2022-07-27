@@ -203,7 +203,7 @@ namespace Advant.Data
 				foreach (var e in gameEvents.Get())
 				{
 					Debug.LogWarning(e.Name);
-					foreach (var param in e.parameters)
+					foreach (var param in e._parameters)
 					{
 						Debug.Log(param.Key + "=" + param.Value);
 					}
