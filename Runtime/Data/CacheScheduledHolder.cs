@@ -87,7 +87,7 @@ namespace Advant.Data
             Interlocked.Increment(ref _currentEventsCount);
 
             await _semaphore.WaitAsync();
-             if (_currentEventsCount >= MAX_CACHE_COUNT && Volatile.Read(ref _areEventsProcessing)) 
+             if (_currentEventsCount >= MAX_CACHE_COUNT && !Volatile.Read(ref _areEventsProcessing)) 
 			 {
 				 Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
 				 _sendingCancellationSource.Cancel();
@@ -199,7 +199,11 @@ namespace Advant.Data
                 var gameEvents = new Cache<GameEvent>(_gameEvents.ToArray());
                 var gameProperties = new Cache<GameProperty>(_gameProperties.ToArray());
 				
-				Debug.LogWarning("[ADVANAL] BUFFER SNAPSHOT");
+				Debug.LogWarning("[ADVANAL] BUFFER SNAPSHOT\nEVENTS:\n");
+				foreach (var e in gameEvents)
+				{
+					Debug.LogWarning(e.name);
+				}
 
                 Task propertiesSending = null, eventsSending = null;
                 try
