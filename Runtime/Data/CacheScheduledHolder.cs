@@ -86,15 +86,16 @@ namespace Advant.Data
 
             Interlocked.Increment(ref _currentEventsCount);
 
-            await _semaphore.WaitAsync();
+            //await _semaphore.WaitAsync();
              if (_currentEventsCount >= MAX_CACHE_COUNT && !Volatile.Read(ref _areEventsProcessing)) 
 			 {
+				 Volatile.Write(ref _areEventsProcessing, true);
 				 Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
 				 _sendingCancellationSource.Cancel();
                  //_sendingCancellationSource = null;
                  //_currentEventsCount = 0;
 			 }
-            _semaphore.Release();
+            //_semaphore.Release();
         }
 
         public void SaveCacheLocally()
