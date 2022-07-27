@@ -10,6 +10,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using System.Linq;
 
 namespace Advant.Data
 {
