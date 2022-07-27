@@ -206,17 +206,17 @@ namespace Advant.Data
                 // var gameProperties = new Cache<GameProperty>(_gameProperties.ToArray());
 				
 				Debug.LogWarning("[ADVANAL] BUFFER SNAPSHOT\nEVENTS:\n");
-				// foreach (var e in _gameEvents.Get())
-				// {
-					// Debug.LogWarning(e.Name);
-					// if (e._parameters != null)
-					// {
-						// foreach (var param in e._parameters)
-						// {
-							// Debug.Log(param.Key + "=" + param.Value);
-						// }
-					// }
-				// }
+				foreach (var e in _gameEvents.Get())
+				{
+					Debug.LogWarning(e.Name);
+					if (e._parameters != null)
+					{
+						foreach (var param in e._parameters)
+						{
+							Debug.Log(param.Key + "=" + param.Value);
+						}
+					}
+				}
 
                 Task propertiesSending = null, eventsSending = null;
                 try
