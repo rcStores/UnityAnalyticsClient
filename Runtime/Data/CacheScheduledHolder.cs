@@ -70,7 +70,7 @@ namespace Advant.Data
         {
             while (Volatile.Read(ref _areEventsProcessing))
             {
-                await Task.Delay(Timespan.FromMilliseconds(100));
+                await Task.Delay(TimeSpan.FromMilliseconds(100));
             }
 			_gameProperties.AddUnique(gameProperty);
             //_gameProperties.Enqueue(gameProperty);
@@ -80,7 +80,7 @@ namespace Advant.Data
         {
             while (Volatile.Read(ref _areEventsProcessing))
             {
-				await Task.Delay(Timespan.FromMilliseconds(100));
+				await Task.Delay(TimeSpan.FromMilliseconds(100));
                 //await Task.Yield();
             }
 			//SpinWait.SpinUntil(() => Volatile.Read(ref _areEventsProcessing));

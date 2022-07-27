@@ -15,6 +15,8 @@ namespace Advant.Data
     [Serializable]
     internal class Cache<T> where T : IGameData
     {
+		public Cache() = default; 
+		
         public Cache(IList<T> data)
         {
             if (typeof(T) == typeof(GameEvent))
