@@ -87,10 +87,10 @@ namespace Advant.Data
 			_gameEvents.Add(gameEvent);
             //_gameEvents.Enqueue(gameEvent);
 
-            Interlocked.Increment(ref _currentEventsCount);
-
+            //Interlocked.Increment(ref _currentEventsCount);
+		
             //await _semaphore.WaitAsync();
-             if (_currentEventsCount >= MAX_CACHE_COUNT && !_areEventsProcessing) 
+             if (_gameEvents.Count >= MAX_CACHE_COUNT && !_areEventsProcessing) 
 			 {
 				 _areEventsProcessing = true;
 				 //Volatile.Write(ref _areEventsProcessing, true);
