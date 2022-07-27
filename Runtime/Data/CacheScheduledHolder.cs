@@ -77,24 +77,24 @@ namespace Advant.Data
 
         public async void Put(GameEvent gameEvent)
         {
-            //while (_areEventsProcessing)
-            //{
-            //    await Task.Yield();
-            //}
-			SpinWait.SpinUntil(() => Volatile.Read(ref _areEventsProcessing));
+            while (Volatile.Read(ref _areEventsProcessing))
+            {
+                await Task.Yield();
+            }
+			//SpinWait.SpinUntil(() => Volatile.Read(ref _areEventsProcessing));
             _gameEvents.Enqueue(gameEvent);
 
             Interlocked.Increment(ref _currentEventsCount);
 
-            //await _semaphore.WaitAsync();
-            // if (_currentEventsCount >= MAX_CACHE_COUNT && _sendingCancellationSource != null) 
-			// {
-				// Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
-				// _sendingCancellationSource.Cancel();
-                // _sendingCancellationSource = null;
-                // //_currentEventsCount = 0;
-			// }
-            //_semaphore.Release();
+            await _semaphore.WaitAsync();
+             if (_currentEventsCount >= MAX_CACHE_COUNT && Volatile.Read(ref _areEventsProcessing)) 
+			 {
+				 Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
+				 _sendingCancellationSource.Cancel();
+                 //_sendingCancellationSource = null;
+                 //_currentEventsCount = 0;
+			 }
+            _semaphore.Release();
         }
 
         public void SaveCacheLocally()
