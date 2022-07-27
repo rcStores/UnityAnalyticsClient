@@ -209,9 +209,12 @@ namespace Advant.Data
 				foreach (var e in _gameEvents.Get())
 				{
 					Debug.LogWarning(e.Name);
-					foreach (var param in e._parameters)
+					if (e._parameters != null)
 					{
-						Debug.Log(param.Key + "=" + param.Value);
+						foreach (var param in e._parameters)
+						{
+							Debug.Log(param.Key + "=" + param.Value);
+						}
 					}
 				}
 
