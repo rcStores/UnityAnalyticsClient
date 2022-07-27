@@ -203,6 +203,10 @@ namespace Advant.Data
 				foreach (var e in gameEvents.Get())
 				{
 					Debug.LogWarning(e.Name);
+					foreach (var param in e.parameters)
+					{
+						Debug.Log(param.Key + "=" + param.Value);
+					}
 				}
 
                 Task propertiesSending = null, eventsSending = null;
@@ -223,10 +227,9 @@ namespace Advant.Data
 					} 
 					else
 					{
-						eventsSending =  _backend.SendToServerAsync(userId, gameProperties);
+						propertiesSending =  _backend.SendToServerAsync(userId, gameProperties);
 					}
-                    
-                    propertiesSending = _backend.SendToServerAsync(userId, gameProperties);
+
                     await Task.WhenAll(new Task[] { eventsSending, propertiesSending }.Where(i => i != null));
                 }
                 catch (Exception e)
