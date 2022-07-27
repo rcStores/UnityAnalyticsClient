@@ -202,7 +202,7 @@ namespace Advant.Data
 				Debug.LogWarning("[ADVANAL] BUFFER SNAPSHOT\nEVENTS:\n");
 				foreach (var e in gameEvents.Get())
 				{
-					Debug.LogWarning(e.name);
+					Debug.LogWarning(e.Name);
 				}
 
                 Task propertiesSending = null, eventsSending = null;
