@@ -15,7 +15,10 @@ namespace Advant.Data
     [Serializable]
     internal class Cache<T> where T : IGameData
     {
-		public Cache() = default; 
+		public Cache()
+		{
+			_data = new List<T>();
+		}
 		
         public Cache(IList<T> data)
         {
