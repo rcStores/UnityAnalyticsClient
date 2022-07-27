@@ -80,8 +80,8 @@ namespace Advant.Data
             //{
             //    await Task.Yield();
             //}
+			SpinWait.SpinUntil(() => Volatile.Read(ref _areEventsProcessing));
             _gameEvents.Enqueue(gameEvent);
-            
 
             Interlocked.Increment(ref _currentEventsCount);
 
@@ -191,9 +191,10 @@ namespace Advant.Data
                 bool hasPropertiesSendingSucceeded = true;
                 bool hasEventsSendingSucceeded = true;
 
-                _arePropertiesProcessing = true;
-                _areEventsProcessing = true;
-
+                // _arePropertiesProcessing = true;
+                // _areEventsProcessing = true;
+				Volatile.Write(ref _areEventsProcessing, true);
+				
                 var gameEvents = new Cache<GameEvent>(_gameEvents.ToArray());
                 var gameProperties = new Cache<GameProperty>(_gameProperties.ToArray());
 				
@@ -202,9 +203,26 @@ namespace Advant.Data
                 Task propertiesSending = null, eventsSending = null;
                 try
                 {
-                    eventsSending =  _backend.SendToServerAsync(userId, gameEvents);
+					if (gameEvents.Count == 0)
+					{
+						Debug.LogWarning("Events buffer is empty");
+					} 
+					else
+					{
+						eventsSending =  _backend.SendToServerAsync(userId, gameEvents);
+					}
+					
+					if (gameProperties.Count == 0)
+					{
+						Debug.LogWarning("Properties buffer is empty");
+					} 
+					else
+					{
+						eventsSending =  _backend.SendToServerAsync(userId, gameProperties);
+					}
+                    
                     propertiesSending = _backend.SendToServerAsync(userId, gameProperties);
-                    await Task.WhenAll(propertiesSending, eventsSending);
+                    await Task.WhenAll(new Task[] { eventsSending, propertiesSending }.Where(i => i != null));
                 }
                 catch (Exception e)
                 {
@@ -242,9 +260,9 @@ namespace Advant.Data
 						Interlocked.Decrement(ref _currentEventsCount);
                     }
                 }
-
-                _arePropertiesProcessing = false;
-                _areEventsProcessing = false;
+				Volatile.Write(ref _areEventsProcessing, false);
+                // _arePropertiesProcessing = false;
+                // _areEventsProcessing = false;
             }
         }
     }
