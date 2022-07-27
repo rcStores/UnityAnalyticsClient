@@ -200,7 +200,7 @@ namespace Advant.Data
                 var gameProperties = new Cache<GameProperty>(_gameProperties.ToArray());
 				
 				Debug.LogWarning("[ADVANAL] BUFFER SNAPSHOT\nEVENTS:\n");
-				foreach (var e in gameEvents)
+				foreach (var e in gameEvents.Get())
 				{
 					Debug.LogWarning(e.name);
 				}
