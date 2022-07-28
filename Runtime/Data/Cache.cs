@@ -84,6 +84,11 @@ namespace Advant.Data
                 
             }
             string result = _sb.Replace(',', ']', _sb.Length - 1, 1).ToString();
+			Debug.LogWarning("Resulting cache:\n");
+			foreach (var word in result.Split(','));
+			{
+				Debug.LogWarning(word);
+			}
             _sb.Clear();
             return result;
         }

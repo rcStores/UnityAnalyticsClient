@@ -62,7 +62,7 @@ namespace Advant.Data.Models
                 sb.Remove(sb.Length - 1, 1);
             }
             sb.Append('}');
-			Debug.LogWarning("GameEvent JSON:\n" + sb);
+			//Debug.LogWarning("GameEvent JSON:\n" + sb);
         }
     }
 }
