@@ -72,7 +72,7 @@ namespace Advant.Http
                 await Task.Yield();
             if (request.responseCode != 201 && request.responseCode != 200)
             {
-				File.WriteAllText(Application.persistentDataPath, Encoding.UTF8.GetString(request.uploadHandler.data)));
+				File.WriteAllText(Application.persistentDataPath, Encoding.UTF8.GetString(request.uploadHandler.data));
 
                 throw new Exception(
 					"Http request failure. Response code: " + request.responseCode + 
