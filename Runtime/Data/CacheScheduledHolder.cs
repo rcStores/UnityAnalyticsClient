@@ -221,6 +221,11 @@ namespace Advant.Data
                 Task propertiesSending = null, eventsSending = null;
                 try
                 {
+                    if (_gameEvents == null || _gameProperties == null)
+                    {
+                        Debug.LogWarning("Cache instance(s) == null");
+                    }
+
 					if (_gameEvents.Count == 0)
 					{
 						Debug.LogWarning("Events buffer is empty");
@@ -244,9 +249,10 @@ namespace Advant.Data
                 catch (Exception e)
                 {
 					Debug.LogWarning("[ADVANAL] Error while sending data: " + e.Message);
-                    
+                    Debug.LogWarning("Stack trace: " + e.StackTrace);
+                    Debug.LogWarning("Source: " + e.Source);
                 }
-				finally
+                finally
 				{
 					Debug.LogWarning("[ADVANAL] Getting results of data sending...");
 					hasPropertiesSendingSucceeded = !propertiesSending.IsFaulted;
