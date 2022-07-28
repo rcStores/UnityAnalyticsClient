@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using System.Threading;
 using SimpleJSON;
+using System.IO;
 
 namespace Advant.Http
 {
@@ -71,6 +72,8 @@ namespace Advant.Http
                 await Task.Yield();
             if (request.responseCode != 201 && request.responseCode != 200)
             {
+				File.WriteAllText(Application.persistentDataPath, Encoding.UTF8.GetString(request.uploadHandler.data)));
+
                 throw new Exception(
 					"Http request failure. Response code: " + request.responseCode + 
 					"\nError: " + request.error +
@@ -108,3 +111,4 @@ namespace Advant.Http
         PUT = 2
     }
 }
+
