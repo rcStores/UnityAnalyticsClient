@@ -73,7 +73,7 @@ namespace Advant.Http
             {
                 throw new Exception(
 					"Http request failure. Response code: " + request.responseCode + 
-					"\nError: " + request.error
+					"\nError: " + request.error +
 					"\nDownload handler error (if any): " request.downloadHandler.error);
             }
             return request.downloadHandler.text;
