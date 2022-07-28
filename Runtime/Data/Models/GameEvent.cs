@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using UnityEngine;
 
 namespace Advant.Data.Models 
 {
@@ -61,6 +62,7 @@ namespace Advant.Data.Models
                 sb.Remove(sb.Length - 1, 1);
             }
             sb.Append('}');
+			Debug.LogWarning("GameEvent JSON:\n" + sb);
         }
     }
 }
