@@ -64,7 +64,7 @@ namespace Advant.Http
 
         private async Task<string> ExecuteWebRequestAsync(string path, RequestType type, string jsonData = null)
         {
-            var request = CreateRequest(path, type, jsonData);
+            using var request = CreateRequest(path, type, jsonData);
             var operation = request.SendWebRequest();
 
             while (!operation.isDone)
