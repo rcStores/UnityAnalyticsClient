@@ -75,7 +75,7 @@ namespace Advant.Http
 					"Http request failure. Response code: " + request.responseCode + 
 					"\nError: " + request.error +
 					"\nDownload handler error (if any): " + request.downloadHandler.error +
-					"\nUpdload handler data: " + Encoding.UTF8.GetString(req.uploadHandler.data));
+					"\nUpdload handler data: " + Encoding.UTF8.GetString(request.uploadHandler.data));
             }
             return request.downloadHandler.text;
         }
