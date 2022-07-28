@@ -71,7 +71,10 @@ namespace Advant.Http
                 await Task.Yield();
             if (request.responseCode != 201 && request.responseCode != 200)
             {
-                throw new Exception("Http request failure");
+                throw new Exception(
+					"Http request failure. Response code: " + request.responseCode + 
+					"\nError: " + request.error
+					"\nDownload handler error (if any): " request.downloadHandler.error);
             }
             return request.downloadHandler.text;
         }
