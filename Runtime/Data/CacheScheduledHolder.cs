@@ -91,15 +91,15 @@ namespace Advant.Data
 		
             //await _semaphore.WaitAsync();
 			
-             if (_currentEventsCount >= MAX_CACHE_COUNT && !_areEventsProcessing) 
-			 {
-				 _areEventsProcessing = true;
-				 //Volatile.Write(ref _areEventsProcessing, true);
-				 Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
-				 _sendingCancellationSource?.Cancel();
-                 //_sendingCancellationSource = null;
-                 //_currentEventsCount = 0;
-			 } 
+             // if (_currentEventsCount >= MAX_CACHE_COUNT && !_areEventsProcessing) 
+			 // {
+				 // _areEventsProcessing = true;
+				 // //Volatile.Write(ref _areEventsProcessing, true);
+				 // Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
+				 // _sendingCancellationSource?.Cancel();
+                 // //_sendingCancellationSource = null;
+                 // //_currentEventsCount = 0;
+			 // } 
             //_semaphore.Release();
         }
 
