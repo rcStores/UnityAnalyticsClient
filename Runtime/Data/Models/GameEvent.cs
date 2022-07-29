@@ -55,6 +55,7 @@ namespace Advant.Data.Models
 					else if (item.Value is bool b)
 					{
 						valueStr = item.Value.ToString().ToLower();
+					}
                     else
                     { 
                         valueStr = item.Value.ToString();
