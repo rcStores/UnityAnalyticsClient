@@ -142,7 +142,7 @@ namespace Advant.Data
             BinaryFormatter formatter = new BinaryFormatter();
             try
             {
-                formatter.Serialize(fs, data);
+                formatter.Serialize(fs, data.ToArray());
             }
             catch (SerializationException e)
             {
@@ -166,7 +166,7 @@ namespace Advant.Data
             try
             {
                 BinaryFormatter formatter = new BinaryFormatter();
-                result = (ConcurrentQueue<T>)formatter.Deserialize(fs);
+                result = new ConcurrentQueue<T>((IEnumerable<T>)formatter.Deserialize(fs)); //(ConcurrentQueue<T>)formatter.Deserialize(fs);
             }
             catch (SerializationException)
             {
