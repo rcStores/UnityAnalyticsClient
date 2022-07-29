@@ -68,10 +68,10 @@ namespace Advant.Data
 
         public async void Put(GameProperty gameProperty)
         {
-            while (_areEventsProcessing) //(Volatile.Read(ref _areEventsProcessing))
-            {
-                await Task.Delay(TimeSpan.FromMilliseconds(100));
-            }
+            // while (_areEventsProcessing) //(Volatile.Read(ref _areEventsProcessing))
+            // {
+                // await Task.Delay(TimeSpan.FromMilliseconds(100));
+            // }
 			//_gameProperties.AddUnique(gameProperty);
             _gameProperties.Enqueue(gameProperty);
         }
