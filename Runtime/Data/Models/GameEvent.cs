@@ -52,6 +52,9 @@ namespace Advant.Data.Models
                     {
                         valueStr = $"\"{((DateTime)item.Value).ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\"";
                     }
+					else if (item.Value is bool b)
+					{
+						valueStr = item.Value.ToString().ToLower();
                     else
                     { 
                         valueStr = item.Value.ToString();
