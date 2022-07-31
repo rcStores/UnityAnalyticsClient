@@ -88,7 +88,7 @@ namespace Advant.Data
 			//_gameEvents.Add(gameEvent);
             _gameEvents.Enqueue(gameEvent);
 
-            Interlocked.Increment(ref _currentEventsCount);
+            //Interlocked.Increment(ref _currentEventsCount);
 		
             //await _semaphore.WaitAsync();
 			
@@ -283,7 +283,7 @@ namespace Advant.Data
                         {
 							Debug.LogWarning("[ADVANAL] GameEvent isn't taken from the queue");
                         }
-						else Interlocked.Decrement(ref _currentEventsCount);
+						//else Interlocked.Decrement(ref _currentEventsCount);
                     }
                 }
 				Volatile.Write(ref _areEventsProcessing, false);
