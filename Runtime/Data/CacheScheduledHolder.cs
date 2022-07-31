@@ -256,8 +256,10 @@ namespace Advant.Data
                 finally
 				{
 					Debug.LogWarning("[ADVANAL] Getting results of data sending...");
-					hasPropertiesSendingSucceeded = !(propertiesSending?.IsFaulted);
-                    hasEventsSendingSucceeded = !(eventsSending?.IsFaulted);
+					hasPropertiesSendingSucceeded = propertiesSending == null ? 
+						false : !propertiesSending.IsFaulted;
+                    hasEventsSendingSucceeded = eventsSending == null ?
+						false : !eventsSending.IsFaulted;
 				}
                 
                 if (hasPropertiesSendingSucceeded)
