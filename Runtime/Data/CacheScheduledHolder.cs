@@ -88,19 +88,19 @@ namespace Advant.Data
 			//_gameEvents.Add(gameEvent);
             _gameEvents.Enqueue(gameEvent);
 
-            //Interlocked.Increment(ref _currentEventsCount);
+            Interlocked.Increment(ref _currentEventsCount);
 		
             //await _semaphore.WaitAsync();
 			
-             // if (_currentEventsCount >= MAX_CACHE_COUNT && !_areEventsProcessing) 
-			 // {
-				 // _areEventsProcessing = true;
-				 // //Volatile.Write(ref _areEventsProcessing, true);
-				 // Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
-				 // _sendingCancellationSource?.Cancel();
+			if (_currentEventsCount >= MAX_CACHE_COUNT && !_areEventsProcessing) 
+			{
+				_areEventsProcessing = true;
+				Volatile.Write(ref _areEventsProcessing, true);
+				Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
+				_sendingCancellationSource?.Cancel();
                  // //_sendingCancellationSource = null;
                  // //_currentEventsCount = 0;
-			 // } 
+			} 
             //_semaphore.Release();
         }
 
@@ -285,7 +285,7 @@ namespace Advant.Data
                         {
 							Debug.LogWarning("[ADVANAL] GameEvent isn't taken from the queue");
                         }
-						//else Interlocked.Decrement(ref _currentEventsCount);
+						else Interlocked.Decrement(ref _currentEventsCount);
                     }
                 }
 				Volatile.Write(ref _areEventsProcessing, false);
