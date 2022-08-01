@@ -30,10 +30,6 @@ namespace Advant.Data
         private const int MAX_CACHE_COUNT = 10;
         private int _currentEventsCount = 0;
 
-        //private readonly Cache<GameEvent> _tempEventsPool = new Cache<GameEvent>();
-        //private readonly Cache<GameProperty> _tempPropertiesPool = new Cache<GameProperty>();
-
-
         private bool _arePropertiesProcessing = false;
         private bool _areEventsProcessing = false;
 
@@ -69,28 +65,13 @@ namespace Advant.Data
 
         public async void Put(GameProperty gameProperty)
         {
-            // while (_areEventsProcessing) //(Volatile.Read(ref _areEventsProcessing))
-            // {
-                // await Task.Delay(TimeSpan.FromMilliseconds(100));
-            // }
-			//_gameProperties.AddUnique(gameProperty);
             _gameProperties.Enqueue(gameProperty);
         }
 
         public async void Put(GameEvent gameEvent)
         {
-            // while (_areEventsProcessing) //Volatile.Read(ref _areEventsProcessing))
-            // {
-				// await Task.Delay(TimeSpan.FromMilliseconds(100));
-                // //await Task.Yield();
-            // }
-			//SpinWait.SpinUntil(() => Volatile.Read(ref _areEventsProcessing));
-			//_gameEvents.Add(gameEvent);
             _gameEvents.Enqueue(gameEvent);
-
             Interlocked.Increment(ref _currentEventsCount);
-		
-            //await _semaphore.WaitAsync();
 			
 			if (_currentEventsCount >= MAX_CACHE_COUNT && !_areEventsProcessing) 
 			{
@@ -98,10 +79,7 @@ namespace Advant.Data
 				Volatile.Write(ref _areEventsProcessing, true);
 				Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
 				_sendingCancellationSource?.Cancel();
-                 // //_sendingCancellationSource = null;
-                 // //_currentEventsCount = 0;
 			} 
-            //_semaphore.Release();
         }
 
         public void SaveCacheLocally()
@@ -143,7 +121,7 @@ namespace Advant.Data
             BinaryFormatter formatter = new BinaryFormatter();
             try
             {
-                formatter.Serialize(fs, data.ToArray());
+                formatter.Serialize(fs, data);
             }
             catch (SerializationException e)
             {
@@ -167,7 +145,7 @@ namespace Advant.Data
             try
             {
                 BinaryFormatter formatter = new BinaryFormatter();
-                result = new ConcurrentQueue<T>((IEnumerable<T>)formatter.Deserialize(fs)); //(ConcurrentQueue<T>)formatter.Deserialize(fs);
+                result = (ConcurrentQueue<T>)formatter.Deserialize(fs);
             }
             catch (SerializationException)
             {
@@ -227,7 +205,7 @@ namespace Advant.Data
                         Debug.LogWarning("Cache instance(s) == null");
                     }
 
-					if (_gameEvents.Count == 0)
+					if (gameEvents.Count == 0)
 					{
 						Debug.LogWarning("Events buffer is empty");
 					} 
@@ -236,7 +214,7 @@ namespace Advant.Data
 						eventsSending =  _backend.SendToServerAsync(userId, gameEvents);
 					}
 					
-					if (_gameProperties.Count == 0)
+					if (gameProperties.Count == 0)
 					{
 						Debug.LogWarning("Properties buffer is empty");
 					} 
@@ -289,8 +267,6 @@ namespace Advant.Data
                     }
                 }
 				Volatile.Write(ref _areEventsProcessing, false);
-                // _arePropertiesProcessing = false;
-                //_areEventsProcessing = false;
             }
         }
     }
