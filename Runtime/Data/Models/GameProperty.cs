@@ -20,7 +20,7 @@ namespace Advant.Data.Models
         public static GameProperty Create<T>(string tableName, string name, T value)
         {
 			Debug.Log($"Create property; name = {name}, value = {value}");
-            return new GameProperty(tableName, name, value.ToString(), NativeTypesDescription[value.GetType()]);
+            return new GameProperty(tableName, name, value?.ToString(), NativeTypesDescription[value.GetType()]);
         }
 
         static readonly Dictionary<Type, EValueType> NativeTypesDescription = new Dictionary<Type, EValueType>()
@@ -35,8 +35,21 @@ namespace Advant.Data.Models
 
         public void ToJson(long id, StringBuilder sb)
         {
-            string valueStr = _type == EValueType.DateTime ? DateTime.Parse(_value).ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture) : _value.ToString();
-            sb.Append($"{{\"table\":\"{_table}\", \"user_id\":{id}, \"name\":\"{_name}\", \"value\":\"{valueStr}\", \"type\":{(int)_type}}}");
+            string valueStr; 
+			if (_type == EValueType.DateTime)
+			{
+				valueStr = $"\"{DateTime.Parse(_value).ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\"";
+			}
+			else if (_value is null)
+			{
+				valueStr = "null";
+			}
+			else
+			{
+				valueStr = $"\"{_value.ToString()}\"";
+			}
+				
+            sb.Append($"{{\"table\":\"{_table}\", \"user_id\":{id}, \"name\":\"{_name}\", \"value\":{valueStr}, \"type\":{(int)_type}}}");
             Debug.Log("Property in JSON: " + sb);
         }
 
