@@ -77,7 +77,7 @@ namespace Advant.Data
 			{
 				_areEventsProcessing = true;
 				Volatile.Write(ref _areEventsProcessing, true);
-				Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
+				//Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
 				_sendingCancellationSource?.Cancel();
 			} 
         }
@@ -86,7 +86,7 @@ namespace Advant.Data
         {
 			try
 			{
-				Debug.LogWarning("[ADVANAL] Saving cache locally");
+				//Debug.LogWarning("[ADVANAL] Saving cache locally");
 				SerializeEvents();
 				SerializeProperties();
 			}
@@ -172,7 +172,7 @@ namespace Advant.Data
 					.ContinueWith(task => { });
 				await continuationTask;
 					
-				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
+				//Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 
                 bool hasPropertiesSendingSucceeded = true;
                 bool hasEventsSendingSucceeded = true;
@@ -184,18 +184,18 @@ namespace Advant.Data
                  var gameEvents = new Cache<GameEvent>(_gameEvents.ToArray());
                  var gameProperties = new Cache<GameProperty>(_gameProperties.ToArray());
 				
-				Debug.LogWarning("[ADVANAL] BUFFER SNAPSHOT\nEVENTS:\n");
-				foreach (var e in gameEvents.Get())
-				{
-					Debug.LogWarning(e.Name);
-					if (e._parameters != null)
-					{
-						foreach (var param in e._parameters)
-						{
-							Debug.Log(param.Key + "=" + param.Value);
-						}
-					}
-				}
+				// Debug.LogWarning("[ADVANAL] BUFFER SNAPSHOT\nEVENTS:\n");
+				// foreach (var e in gameEvents.Get())
+				// {
+					// Debug.LogWarning(e.Name);
+					// if (e._parameters != null)
+					// {
+						// foreach (var param in e._parameters)
+						// {
+							// Debug.Log(param.Key + "=" + param.Value);
+						// }
+					// }
+				// }
 
                 Task propertiesSending = null, eventsSending = null;
                 try
@@ -227,9 +227,9 @@ namespace Advant.Data
                 }
                 catch (Exception e)
                 {
-					Debug.LogWarning("[ADVANAL] Error while sending data: " + e.Message);
-                    Debug.LogWarning("Stack trace: " + e.StackTrace);
-                    Debug.LogWarning("Source: " + e.Source);
+					// Debug.LogWarning("[ADVANAL] Error while sending data: " + e.Message);
+                    // Debug.LogWarning("Stack trace: " + e.StackTrace);
+                    // Debug.LogWarning("Source: " + e.Source);
                 }
                 finally
 				{

@@ -19,7 +19,7 @@ namespace Advant.Data.Models
 
         public static GameProperty Create<T>(string tableName, string name, T value)
         {
-			Debug.Log($"Create property; name = {name}, value = {value}");
+			//Debug.Log($"Create property; name = {name}, value = {value}");
             return new GameProperty(tableName, name, value?.ToString(), NativeTypesDescription[value.GetType()]);
         }
 
@@ -50,7 +50,7 @@ namespace Advant.Data.Models
 			}
 				
             sb.Append($"{{\"table\":\"{_table}\", \"user_id\":{id}, \"name\":\"{_name}\", \"value\":{valueStr}, \"type\":{(int)_type}}}");
-            Debug.Log("Property in JSON: " + sb);
+            //Debug.Log("Property in JSON: " + sb);
         }
 
         public string Name => _name;
