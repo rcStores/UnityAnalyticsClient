@@ -84,7 +84,7 @@ namespace Advant
 
         public static async Task<bool> GetTester()
         {
-            return _backend.GetTester(_userRegistrator.GetUserId());
+            return await _backend.GetTester(_userRegistrator.GetUserId());
         }
 
         private static async void InitImplAsync(Identifier id)
@@ -92,7 +92,7 @@ namespace Advant
             SendEvent("logged_in");
             SendUserDetails(await _userRegistrator.RegistrateAsync(id));
             _cacheHolder.StartSendingDataAsync(_userRegistrator.GetUserId());
-			Debug.LogWarning($"USER {_userRegistrator.GetUserId()} is" + (GetTester() ? "tester" : "NOT tester"));
+			Debug.LogWarning($"USER {_userRegistrator.GetUserId()} is" + (await GetTester() ? "tester" : "NOT tester"));
         }
         
         private static void SendUserDetails(bool isUserNew)
