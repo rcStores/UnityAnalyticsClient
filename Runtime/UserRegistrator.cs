@@ -14,8 +14,7 @@ namespace Advant
         private readonly Backend _backend;
 
         private const int GET_ID_RETRY_INTERVAL = 15000;
-
-        private Func<long, Task> _onRegistrationSuccess;
+		
         private long _userId;
 
         private const string USER_ID_PREF = "UserId";
@@ -32,12 +31,6 @@ namespace Advant
             _userPropertiesTableName = userPropertiesTableName;
             _backend = backend;
 			_userId = Convert.ToInt64(PlayerPrefs.GetInt(USER_ID_PREF, -1));
-        }
-
-        public UserRegistrator SetActionOnSuccess(Func<long, Task> func)
-        {
-            _onRegistrationSuccess = func;
-            return this;
         }
 
         public async Task<bool> RegistrateAsync(Identifier identifier)
