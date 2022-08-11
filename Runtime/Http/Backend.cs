@@ -40,9 +40,21 @@ namespace Advant.Http
             await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(T)], RequestType.POST, data.ToJson(userId));
         }
 
-        public bool GetTester(long userId)
+        public async Task<bool> GetTester(long userId)
         {
-            return Convert.ToBoolean(await ExecuteWebRequestAsync(_getTesterEndpoint + $"/{userId}", RequestType.GET));
+			string response = null;
+			try
+			{
+				response = await ExecuteWebRequestAsync(_getTesterEndpoint + $"/{userId}", RequestType.GET);
+			}
+			catch (Exception e)
+			{
+				Debug.Log("Error while getting tester info: " + e.Message);
+				response = "false";
+			}
+				
+			Debug.LogWarning("GetTester response: " + response);
+            return Convert.ToBoolean(response);
         }
 
         public async Task<UserIdResponse> GetOrCreateUserIdAsync(Identifier dto)
@@ -72,9 +84,9 @@ namespace Advant.Http
                 await Task.Yield();
             if (request.responseCode != 201 && request.responseCode != 200)
             {
-				File.WriteAllText(
-					Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
-					Encoding.UTF8.GetString(request.uploadHandler.data));
+				// File.WriteAllText(
+					// Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
+					// Encoding.UTF8.GetString(request.uploadHandler.data));
 
                 throw new Exception(
 					"Http request failure. Response code: " + request.responseCode + 
