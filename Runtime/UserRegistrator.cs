@@ -57,7 +57,7 @@ namespace Advant
 					break;
                 }
             }
-			_isTester = await _backend.GetTester(response.UserId);
+			_isTester = await _backend.GetTester(_userId);
             Log.Info("Success. Start sending task");
             return result;;
         }
