@@ -81,7 +81,7 @@ namespace Advant
             _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "cheater", value));
         }
 
-        public static bool GetTester()
+        public static async Task<bool> GetTester()
         {
             return _backend.GetTester(_userRegistrator.GetUserId());
         }
