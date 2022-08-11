@@ -16,7 +16,7 @@ namespace Advant
         private const int GET_ID_RETRY_INTERVAL = 15000;
 		
         private long _userId;
-		private bool _isTester:
+		private bool _isTester;
 
         private const string USER_ID_PREF = "UserId";
         private const string APP_VERSION_PREF = "AppVersion";
