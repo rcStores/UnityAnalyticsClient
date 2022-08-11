@@ -46,7 +46,7 @@ namespace Advant.Data.Models
                     string valueStr;
                     if (item.Value is string str) 
                     {
-                        valueStr = $"\"{item.Value.Replace("'", @"\'")}\"";
+                        valueStr = $"\"{(string)item.Value.Replace("'", @"\'")}\"";
                     }
                     else if (item.Value is DateTime dt)
                     {
