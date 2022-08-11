@@ -77,7 +77,7 @@ namespace Advant.Data
 			{
 				_areEventsProcessing = true;
 				Volatile.Write(ref _areEventsProcessing, true);
-				//Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
+				Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
 				_sendingCancellationSource?.Cancel();
 			} 
         }
@@ -172,7 +172,7 @@ namespace Advant.Data
 					.ContinueWith(task => { });
 				await continuationTask;
 					
-				//Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
+				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 
                 bool hasPropertiesSendingSucceeded = true;
                 bool hasEventsSendingSucceeded = true;
@@ -227,9 +227,9 @@ namespace Advant.Data
                 }
                 catch (Exception e)
                 {
-					// Debug.LogWarning("[ADVANAL] Error while sending data: " + e.Message);
-                    // Debug.LogWarning("Stack trace: " + e.StackTrace);
-                    // Debug.LogWarning("Source: " + e.Source);
+					Debug.LogWarning("[ADVANAL] Error while sending data: " + e.Message);
+                    Debug.LogWarning("Stack trace: " + e.StackTrace);
+                    Debug.LogWarning("Source: " + e.Source);
                 }
                 finally
 				{
