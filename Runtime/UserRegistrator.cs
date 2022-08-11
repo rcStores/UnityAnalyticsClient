@@ -16,6 +16,7 @@ namespace Advant
         private const int GET_ID_RETRY_INTERVAL = 15000;
 		
         private long _userId;
+		private bool _isTester:
 
         private const string USER_ID_PREF = "UserId";
         private const string APP_VERSION_PREF = "AppVersion";
@@ -35,6 +36,7 @@ namespace Advant
 
         public async Task<bool> RegistrateAsync(Identifier identifier)
         {
+			bool result = false;
             identifier.UserId = _userId;
             while (await _backend.GetOrCreateUserIdAsync(identifier) is var response)
             {
@@ -51,16 +53,23 @@ namespace Advant
                 {
                     _userId = response.UserId;
                     PlayerPrefs.SetInt(USER_ID_PREF, Convert.ToInt32(_userId));
-                    return response.IsUserNew;
+                    result = response.IsUserNew;
+					break;
                 }
             }
+			_isTester = await _backend.GetTester(response.UserId);
             Log.Info("Success. Start sending task");
-            return false;
+            return result;;
         }
 
         public long GetUserId()
         {
             return _userId;
         }
+		
+		public bool IsTester()
+		{
+			return _isTester;
+		}
     }
 }

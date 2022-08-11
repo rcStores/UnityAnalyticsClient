@@ -84,7 +84,7 @@ namespace Advant
 
         public static bool GetTester()
         {
-            return _backend.GetTester(_userRegistrator.GetUserId()).Result;
+            return _userRegistrator.IsTester();
         }
 
         private static async void InitImplAsync(Identifier id)
@@ -122,9 +122,7 @@ namespace Advant
             }
 
             _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "cheater", false));
-			bool isTester = await _backend.GetTester(_userRegistrator.GetUserId());
-			Debug.LogWarning($"USER {_userRegistrator.GetUserId()} is " + (isTester ? "tester" : "NOT tester"));
-            _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "tester", isTester));
+			Debug.LogWarning($"USER {_userRegistrator.GetUserId()} is " + (GetTester() ? "tester" : "NOT tester"));
             //_cacheHolder.Put(GameProperty.Create("country", value));
             _cacheHolder.Put(GameProperty.Create(
 				USERS_DATA_TABLE,
