@@ -42,7 +42,7 @@ namespace Advant.Http
 
         public bool GetTester(long userId)
         {
-            return Convert.ToBoolean(ExecuteWebRequestAsync(_getTesterEndpoint + $"/{userId}", RequestType.GET));
+            return Convert.ToBoolean(await ExecuteWebRequestAsync(_getTesterEndpoint + $"/{userId}", RequestType.GET));
         }
 
         public async Task<UserIdResponse> GetOrCreateUserIdAsync(Identifier dto)
