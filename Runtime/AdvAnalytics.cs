@@ -92,7 +92,6 @@ namespace Advant
             SendEvent("logged_in");
             SendUserDetails(await _userRegistrator.RegistrateAsync(id));
             _cacheHolder.StartSendingDataAsync(_userRegistrator.GetUserId());
-			Debug.LogWarning($"USER {_userRegistrator.GetUserId()} is" + (await GetTester() ? "tester" : "NOT tester"));
         }
         
         private static void SendUserDetails(bool isUserNew)
@@ -123,7 +122,9 @@ namespace Advant
             }
 
             _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "cheater", false));
-            _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "tester", false));
+			bool isTester = await GetTester();
+			Debug.LogWarning($"USER {_userRegistrator.GetUserId()} is " + (isTester ? "tester" : "NOT tester"));
+            _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "tester", isTester));
             //_cacheHolder.Put(GameProperty.Create("country", value));
             _cacheHolder.Put(GameProperty.Create(
 				USERS_DATA_TABLE,
