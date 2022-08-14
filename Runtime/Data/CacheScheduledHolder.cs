@@ -142,9 +142,10 @@ namespace Advant.Data
 
             var fs = new FileStream(filePath, FileMode.Open);
             ConcurrentQueue<T> result = null;
+			BinaryFormatter formatter = null;
             try
             {
-                BinaryFormatter formatter = new BinaryFormatter();
+                formatter = new BinaryFormatter();
                 result = new ConcurrentQueue<T>((IEnumerable<T>)formatter.Deserialize(fs));
             }
 			catch (InvalidCastException e)
