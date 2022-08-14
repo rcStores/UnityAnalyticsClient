@@ -147,9 +147,14 @@ namespace Advant.Data
                 BinaryFormatter formatter = new BinaryFormatter();
                 result = new ConcurrentQueue<T>((IEnumerable<T>)formatter.Deserialize(fs));
             }
+			catch (InvalidCastException e)
+			{
+				var deserializedCache = (Cache<T>)formatter.Deserialize(fs);
+				result = new ConcurrentQueue<T>(deserializedCache.Get());
+			}
             catch (SerializationException)
             {
-                return new ConcurrentQueue<T>();
+                result = new ConcurrentQueue<T>();
             }
             finally
             {

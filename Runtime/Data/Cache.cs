@@ -98,10 +98,5 @@ namespace Advant.Data
         {
             _data.Clear();
         }
-		
-		public static explicit operator IEnumerable<T>(Cache<T> cache)
-		{
-			return cache.Get();
-		}
     }
 }
