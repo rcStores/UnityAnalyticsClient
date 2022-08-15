@@ -15,7 +15,7 @@ namespace Advant.Data.Models
             _event_time = eventTime;
             _current_app_version = currentAppVersion;
 			_parameters = new List<ParameterValue>();
-			if (parameters != null && pparameters.Count > 0)
+			if (parameters != null && parameters.Count > 0)
 			{
 				_parameters.Capacity = parameters.Count;
 				foreach (var item in parameters)
