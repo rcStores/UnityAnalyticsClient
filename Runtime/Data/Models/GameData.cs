@@ -29,7 +29,7 @@ namespace Advant.Data.Models
                 { typeof(DateTime), EValueType.DateTime },
             };
 			
-		public string Name { get => _name }
+		public string Name { get => _name };
 		
 		private string _name;
 		private string _value;
