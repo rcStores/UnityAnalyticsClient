@@ -27,8 +27,8 @@ namespace Advant.Http
         {
 			_getTesterEndpoint = pathBase + "/AnalyticsData/GetTester";
 			_putUserIdEndpoint = pathBase + "/UserIds/GetOrCreateUserId";
-			_gameDataEndpointsByType[typeof(GameProperty)] = pathBase + "/AnalyticsData/SaveProperties";
-			_gameDataEndpointsByType[typeof(GameEvent)] = pathBase + "/AnalyticsData/SaveEvents";
+			_gameDataEndpointsByType[typeof(GameProperty)] = pathBase + "/AnalyticsData/SaveProperties2";
+			_gameDataEndpointsByType[typeof(GameEvent)] = pathBase + "/AnalyticsData/SaveEvents2";
         }
 
         public async Task SendToServerAsync<T>(long userId, Cache<T> data) where T : IGameData // => v?
