@@ -39,7 +39,7 @@ namespace Advant.Data.Models
     }
 
     // ECS unity
-    internal static class ParametersDictionaryExtensions
+    internal static class ParametersExtensions
     {
         public static void ToJson(this Dictionary<string, object> dict, StringBuilder sb)
         {
@@ -78,5 +78,20 @@ namespace Advant.Data.Models
             sb.Append('}');
 			//Debug.LogWarning("GameEvent JSON:\n" + sb);
         }
+		
+		public static void ToJson(this List<ParameterValue> list, StringBuilder sb)
+		{
+			sb.Append('[');
+            if (list != null && list.Count != 0)
+            {
+                foreach (var item in list)
+                {
+                    item.ToJson(sb);
+					sb.Append(',');
+                }
+                sb.Remove(sb.Length - 1, 1);
+            }
+            sb.Append(']');
+		}
     }
 }
