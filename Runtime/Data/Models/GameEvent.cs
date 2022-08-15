@@ -61,7 +61,7 @@ namespace Advant.Data.Models
 					{
 						valueStr = item.Value.ToString().ToLower();
 					}
-                    else if ((item.Value is float f || item.Value is double d) && item.Value == (long)item.Value)
+                    else if ((item.Value is float f || item.Value is double d) && (double)item.Value == (long)item.Value)
                     { 
                         valueStr = $"{item.Value.ToString()}.000001";
                     }
