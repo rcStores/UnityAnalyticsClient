@@ -14,7 +14,12 @@ namespace Advant.Data.Models
             _name = name;
             _event_time = eventTime;
             _current_app_version = currentAppVersion;
-            _parameters = parameters;
+			_parameters = new List<ParameterValue>();
+			_parameters.Capacity = parameters.Count;
+			foreach (var item in parameters)
+			{
+				_parameters.Add(ParameterValue.Create(item.Key, item.Value));
+			}
         }
 
         public void ToJson(long id, StringBuilder sb)
@@ -30,7 +35,7 @@ namespace Advant.Data.Models
         private string _name;
         private DateTime _event_time;
         private string _current_app_version;
-        public Dictionary<string, object> _parameters;
+        public List<ParameterValue> _parameters;
     }
 
     // ECS unity
@@ -56,10 +61,15 @@ namespace Advant.Data.Models
 					{
 						valueStr = item.Value.ToString().ToLower();
 					}
-                    else
+                    else if ((item.Value is float f || item.Value is double d) && item.Value == (long)item.Value)
                     { 
-                        valueStr = item.Value.ToString();
+                        valueStr = $"{item.Value.ToString()}.000001";
                     }
+					else
+					{
+						valueStr = item.Value.ToString();
+					}
+					
 
                     sb.Append($"\"{item.Key}\":{valueStr},");
                 }

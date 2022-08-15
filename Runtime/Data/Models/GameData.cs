@@ -1,38 +1,70 @@
-﻿namespace Advant.Data.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
+
+namespace Advant.Data.Models
 {
-    internal enum EValueType
+	internal interface IGameData
     {
-        Int, Float, Double, String, Bool, DateTime
+        string Name { get; }
+		string Table { get; }
+        void ToJson(long id, StringBuilder sb);
     }
-
-    //public struct Value
-    //{
-    //    string data;
-    //    EValueType type;
-
-    //    int AsInt() { return Convert.ToInt32(data); }
-    //    double AsDouble() { return Convert.ToDouble(data); }
-    //    string AsString() { return data; }
-    //    bool AsBool() { return Convert.ToBoolean(data); }
-    //    DateTime AsDateTime() { return Convert.ToDateTime(data); }
-
-    //    TResult CastToNativeType<TResult> ()
-    //    {
-
-    //        MethodInfo method = typeof(Value).GetMethod(nameof(Value.CastToNativeType));
-    //        MethodInfo generic = method.MakeGenericMethod(int);
-    //        generic.Invoke(this, null);
-    //    }
-    //}
-
-    //public class EventParameters : Dictionary<string, Value>
-    //{
-
-    //}
-
-    // will probably remove this
-    //public class PropertyBase : GameData
-    //{
-    //    public string name { get; set; }
-    //}
+	
+	internal public class ParameterValue
+	{	
+		internal enum EValueType
+		{
+			Int, Float, Double, String, Bool, DateTime
+		}
+		
+		static readonly Dictionary<Type, EValueType> NativeTypesDescription = new Dictionary<Type, EValueType>()
+            {
+                { typeof(int), EValueType.Int },
+                { typeof(string), EValueType.String },
+                { typeof(float), EValueType.Float },
+                { typeof(double), EValueType.Double },
+                { typeof(bool), EValueType.Bool },
+                { typeof(DateTime), EValueType.DateTime },
+            };
+			
+		public string Name { get => _name }
+		
+		private string _name;
+		private string _value;
+		private EValueType _type;
+		
+		private ParameterValue(string name, string value, EValueType type)
+		{
+			_name = name;
+			_value = value;
+			_type = type;
+		}
+		
+		public void ToJson(StringBuilder sb)
+        {
+            string valueStr; 
+			if (_type == EValueType.DateTime)
+			{
+				valueStr = $"\"{DateTime.Parse(_value).ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\"";
+			}
+			else if (_value is null)
+			{
+				valueStr = "null";
+			}
+			else
+			{
+				valueStr = $"\"{_value.ToString()}\"";
+			}
+				
+            sb.Append($"{{\"name\":\"{_name}\", \"value\":{valueStr}, \"type\":{(int)_type}}}");
+            //Debug.Log("Property in JSON: " + sb);
+        }
+		
+		public static ParameterValue<T> Create(string name, T value)
+		{
+			return new ParameterValue(name, value?.ToString(), NativeTypesDescription[value.GetType()]);
+		}
+	}
 }

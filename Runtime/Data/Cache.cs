@@ -6,13 +6,6 @@ using UnityEngine;
 
 namespace Advant.Data
 {
-    internal interface IGameData
-    {
-        string Name { get; }
-		string Table { get; }
-        void ToJson(long id, StringBuilder sb);
-    }
-
     [Serializable]
     internal class Cache<T> where T : IGameData
     {
