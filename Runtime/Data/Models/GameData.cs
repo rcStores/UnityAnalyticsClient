@@ -25,6 +25,7 @@ namespace Advant.Data.Models
                 { typeof(string), EValueType.String },
                 { typeof(float), EValueType.Float },
                 { typeof(double), EValueType.Double },
+				{ typeof(decimal), EValueType.Double },
                 { typeof(bool), EValueType.Bool },
                 { typeof(DateTime), EValueType.DateTime },
             };
