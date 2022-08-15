@@ -15,7 +15,7 @@ namespace Advant.Data.Models
             _event_time = eventTime;
             _current_app_version = currentAppVersion;
 			_parameters = new List<ParameterValue>();
-			_parameters.Capacity = parameters.Count;
+			_parameters.Capacity = parameters?.Count ?? 0;
 			foreach (var item in parameters)
 			{
 				_parameters.Add(ParameterValue.Create(item.Key, item.Value));
@@ -35,7 +35,7 @@ namespace Advant.Data.Models
         private string _name;
         private DateTime _event_time;
         private string _current_app_version;
-        public List<ParameterValue> _parameters;
+        private List<ParameterValue> _parameters;
     }
 
     // ECS unity
