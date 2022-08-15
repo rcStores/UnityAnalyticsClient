@@ -12,7 +12,7 @@ namespace Advant.Data.Models
         void ToJson(long id, StringBuilder sb);
     }
 	
-	internal public class ParameterValue
+	internal class ParameterValue
 	{	
 		internal enum EValueType
 		{
@@ -62,7 +62,7 @@ namespace Advant.Data.Models
             //Debug.Log("Property in JSON: " + sb);
         }
 		
-		public static ParameterValue<T> Create(string name, T value)
+		public static ParameterValue Create<T>(string name, T value)
 		{
 			return new ParameterValue(name, value?.ToString(), NativeTypesDescription[value.GetType()]);
 		}
