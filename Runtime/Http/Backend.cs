@@ -11,6 +11,7 @@ using UnityEngine;
 using System.Threading;
 using SimpleJSON;
 using System.IO;
+using Cysharp.Threading.Tasks;
 
 namespace Advant.Http
 {
@@ -81,7 +82,8 @@ namespace Advant.Http
             var operation = request.SendWebRequest();
 
             while (!operation.isDone)
-                await Task.Yield();
+				await UniTask.Yield(PlayerLoopTiming.PreLateUpdate);
+                //await Task.Yield();
             if (request.responseCode != 201 && request.responseCode != 200)
             {
 				// File.WriteAllText(
