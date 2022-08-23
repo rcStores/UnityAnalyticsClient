@@ -2,5 +2,8 @@
   "name": "com.advant.analytics",
   "version": "1.0.0",
   "displayName": "Advant Analytics",
-  "unity": "2020.3"
-  }
+  "unity": "2020.3",
+  "dependencies": {
+    "com.cysharp.unitask": "2.3.1"
+ }
+}
