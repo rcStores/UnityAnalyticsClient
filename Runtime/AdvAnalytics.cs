@@ -135,7 +135,7 @@ namespace Advant
             _cacheHolder.StartSendingDataAsync(_userRegistrator.GetUserId());
         }
         
-        private static async Task SendUserDetails(bool isUserNew)
+        private static void SendUserDetails(bool isUserNew)
         {
             if (isUserNew)
             {

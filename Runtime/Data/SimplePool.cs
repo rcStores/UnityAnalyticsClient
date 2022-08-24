@@ -207,6 +207,13 @@ internal struct Value
 		}
 		
 		public void Free() { }
+		
+		public void ToJson(long id, StringBuilder sb)
+		{
+			sb.Append($"{{\"table\":\"{_table}\", \"user_id\":{id}, \"value\":");
+			_value.ToJson(sb);
+			sb.Append('}');
+		}
 	}
 	
 } // namespace Advant.Data.Models
@@ -276,7 +283,7 @@ namespace Advant.Data
 			_maxSize = newMaxSize;
 		}
 
-		public ref IGameData NewElement(out int idx)
+		public ref T NewElement(out int idx)
 		{
 			if (_poolCount >= _maxSize)
 			{
@@ -309,7 +316,7 @@ namespace Advant.Data
 			_poolCount = _poolCount - count;
 		}
 
-		public async Task<string> ToJson(long userId)
+		public async UniTask<string> ToJson(long userId)
 		{
 			int breakPointCount = 10;
 			

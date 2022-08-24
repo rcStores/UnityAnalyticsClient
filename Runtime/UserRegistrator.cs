@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 namespace Advant
 {
@@ -34,7 +35,7 @@ namespace Advant
 			_userId = Convert.ToInt64(PlayerPrefs.GetInt(USER_ID_PREF, -1));
         }
 
-        public async Task<bool> RegistrateAsync(Identifier identifier)
+        public async UniTask<bool> RegistrateAsync(Identifier identifier)
         {
 			bool result = false;
             identifier.UserId = _userId;
@@ -46,7 +47,11 @@ namespace Advant
 #endif				
                 if (response.UserId == -1)
                 {
-                    await Task.Delay(GET_ID_RETRY_INTERVAL);
+                    //await Task.Delay(GET_ID_RETRY_INTERVAL);
+					await UniTask.Delay(
+						GET_ID_RETRY_INTERVAL, 
+						ignoreTimeScale = false, 
+						delayTiming = PlayerLoopTiming.PostLateUpdate);
                     Log.Info("retry");
                 }
                 else

@@ -139,7 +139,7 @@ namespace Advant.Data
 			}
         }
 
-        public async Task StartSendingDataAsync(long id)
+        public async UniTask StartSendingDataAsync(long id)
         {
 			Log.Info("Start scheduler");
             Debug.Assert(id != -1);
