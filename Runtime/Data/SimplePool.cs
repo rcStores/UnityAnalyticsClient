@@ -74,7 +74,7 @@ internal struct Value
 	[Serializable]
 	public struct GameEvent : IGameData
 	{
-		private static const int _maxParameterCount;
+		private int _maxParameterCount;
 		private int _currentCount;
 
 		private int _id;
@@ -96,6 +96,7 @@ internal struct Value
 		public void SetMaxParameterCount(int count)
 		{
 			Array.Resize(ref _parameters, count);
+			_maxParameterCount = count;
 		}
 		
 		public void SetTimestamp(DateTime timestamp)
