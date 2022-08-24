@@ -36,11 +36,11 @@ namespace Advant.Http
         {
             Log.Info("Task runs in thread #" + Thread.CurrentThread);
             if (String.IsNullOrEmpty(data))
-				return UniTask.CompletedTask;
+				return UniTask<string>.CompletedTask;
                 //throw new ArgumentException("The cache is empty");
 
             string dummy = await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(T)], RequestType.POST, data);
-			return UniTask.CompletedTask;
+			return UniTask<string>.CompletedTask;
         }
 
         public async UniTask<bool> GetTester(long userId)
