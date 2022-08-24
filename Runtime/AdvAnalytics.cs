@@ -163,15 +163,15 @@ namespace Advant
         }
 
         private static async void InitImplAsync(Identifier id)
-        {
-            ref GameEvent e = ref _cacheHolder.NewEvent();
-			e.SetName("logged_in");
+        {    
             SendUserDetails(await _userRegistrator.RegistrateAsync(id));
             _cacheHolder.StartSendingDataAsync(_userRegistrator.GetUserId());
         }
         
         private static void SendUserDetails(bool isUserNew)
         {
+			ref GameEvent e = ref _cacheHolder.NewEvent();
+			e.SetName("logged_in");
             if (isUserNew)
             {
                 Log.Info("Create properties for a new user");

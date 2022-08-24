@@ -182,7 +182,7 @@ namespace Advant.Data
         {
             if (!File.Exists(filePath))
             {
-                return new SimplePool<T>(10)();
+                return new SimplePool<T>(10);
             }
 
             FileStream fs = null;
@@ -203,11 +203,11 @@ namespace Advant.Data
             {
                 fs.Close();
                 File.Delete(filePath);
-				return result;
             }
+			return result;
         }
 
-        private async Task RunSendingLoop(long userId)
+        private async UniTask RunSendingLoop(long userId)
         {
 			while (true)		
             {

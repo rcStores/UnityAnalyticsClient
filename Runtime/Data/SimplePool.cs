@@ -155,9 +155,10 @@ internal struct Value
 		private void ExtendParameterPool()
 		{
 			var newMaxCount = _maxParameterCount * 2;
+			Value[] newParameters;
 			try
 			{
-				var newParameters = new Value[newMaxCount];
+				newParameters = new Value[newMaxCount];
 			}
 			catch (Exception e)
 			{
@@ -317,7 +318,7 @@ namespace Advant.Data
 					await UniTask.Delay(20, false, PlayerLoopTiming.PostLateUpdate);
 				}
 				
-				_pool[_busyIdxs[i]].ToJson(userId, _sb);	
+				_pool[i].ToJson(userId, _sb);	
 			}
 			string result = _sb.Append(']').ToString();
 			_sb.Clear();
