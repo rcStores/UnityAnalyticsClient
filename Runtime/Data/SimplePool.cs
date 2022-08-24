@@ -74,14 +74,14 @@ internal struct Value
 	[Serializable]
 	public struct GameEvent : IGameData
 	{
-		private int _maxParameterCount = 10;
-		private int _currentCount = 0;
+		private static const int _maxParameterCount;
+		private int _currentCount;
 
 		private int _id;
 		private string _name;
 		private string _timestamp;
 
-		private Value[] _parameters = new Value[_maxParameterCount];
+		private Value[] _parameters;
 
 		public void SetName(string name)
 		{
@@ -91,6 +91,11 @@ internal struct Value
 		public void SetId(int id)
 		{
 			_id = id;
+		}
+		
+		public void SetMaxParameterCount(int count)
+		{
+			Array.Resize(ref _parameters, count);
 		}
 		
 		public void SetTimestamp(DateTime timestamp)
@@ -168,7 +173,7 @@ internal struct Value
 	internal struct GameProperty
 	{
 		private string _table;
-		private Value _value = new Value();
+		private Value _value;
 		
 		public void Set(string name, int value)
 		{
@@ -208,7 +213,7 @@ internal struct Value
 namespace Advant.Data
 {
 	[Serializable]
-	internal class SimplePool 
+	internal class SimplePool<T> where T : IGameData
 	{
 		private readonly int _maxSize;      
 
@@ -220,13 +225,25 @@ namespace Advant.Data
 		private StringBuilder _sb;
 		
 		private const int CRITICAL_SIZE_RESTRICTION = 10000;
+		private const int MAX_GAME_EVENT_PARAMETER_COUNT = 10;
 
 		public SimplePool(int maxSize)
 		{
 			_maxSize = maxSize;
 
 			_poolCount = 0;
-			_pool = new IGameData[_maxSize];
+			if (T is GameEvent)
+			{
+				_pool = new GameEvent[_maxSize];
+				foreach (ref var e in _pool)
+				{
+					e.SetMaxParameterCount(MAX_GAME_EVENT_PARAMETER_COUNT);
+				}
+			}
+			else 
+			{
+				_pool = new GameProperty[_maxSize];
+			}
 
 			//_busyIdxs = new int[_maxSize];
 
