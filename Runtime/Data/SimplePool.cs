@@ -343,9 +343,9 @@ namespace Advant.Data
 			sb.Append('[');
 			if (list != null && count != 0)
 			{
-				foreach (var item in list)
+				for (int i = 0; i < count; ++i)
 				{
-					item.ToJson(sb);
+					list[i].ToJson(sb);
 					sb.Append(',');
 				}
 				sb.Remove(sb.Length - 1, 1);
