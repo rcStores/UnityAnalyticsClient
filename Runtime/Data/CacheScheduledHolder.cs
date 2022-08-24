@@ -73,9 +73,9 @@ namespace Advant.Data
             _usersTable = usersTableName;
         }
 		
-		public ref GameEvent NewEvent(out int idx)
+		public ref GameEvent NewEvent()
 		{
-			ref var e = ref _events.NewElement(out var _);
+			ref GameEvent e = ref _events.NewElement();
 			e.SetTimestamp(DateTime.UtcNow);
 			e.SetMaxParameterCount(10);
 			if (_events.GetCurrentBusyCount() >= MAX_CACHE_COUNT)
@@ -97,9 +97,9 @@ namespace Advant.Data
 			// }			
 		// }
 		
-		public ref GameProperty NewProperty(out int idx)
+		public ref GameProperty NewProperty()
 		{
-			return ref _properties.NewElement(out var _);
+			return ref _properties.NewElement();
 		}
 		
 		// public void SendProperty(int idx)
@@ -155,7 +155,7 @@ namespace Advant.Data
 
         private void SerializeProperties()
         {
-            Serialize(_propsPathPath, _properties);
+            Serialize(_propsPath, _properties);
         }
 
         public void Serialize<T>(string filePath, SimplePool<T> data) where T : IGameData 
@@ -220,8 +220,8 @@ namespace Advant.Data
 				// await continuationTask;
 				await UniTask.Delay(
 					TimeSpan.FromMinutes(2), 
-					ignoreTimeScale = false, 
-					delayTiming = PlayerLoopTiming.PostLateUpdate, 
+					false, 
+					PlayerLoopTiming.PostLateUpdate, 
 					_sendingCancellationSource.Token)
 						.SuppressCancellationThrow();
 						
@@ -231,8 +231,8 @@ namespace Advant.Data
 
                 bool hasPropertiesSendingSucceeded = true;
 				bool hasEventsSendingSucceeded = true;
-				int eventsBatchSize;
-				int propertiesBatchSize;
+				int eventsBatchSize = 0;
+				int propertiesBatchSize = 0;
 				Task propertiesSending = null, eventsSending = null;
 				try
 				{

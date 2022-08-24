@@ -274,7 +274,7 @@ namespace Advant.Data
 			_maxSize = newMaxSize;
 		}
 
-		public ref T NewElement(out int idx)
+		public ref T NewElement()
 		{
 			if (_poolCount >= _maxSize)
 			{
@@ -289,11 +289,7 @@ namespace Advant.Data
 				}	
 			}
 			
-			idx = _poolCount++;
-			
-			//MarkAsBusy(idx);
-			
-			return ref _pool[idx];
+			return ref _pool[_poolCount++];
 		}
 
 		public void MarkAsSended(int count)
@@ -318,9 +314,7 @@ namespace Advant.Data
 				
 				if (i % breakPointCount == 0)
 				{
-					await UniTask.Delay(20, 
-						ignoreTimeScale = false, 
-						delayTiming = PlayerLoopTiming.PostLateUpdate);
+					await UniTask.Delay(20, false, PlayerLoopTiming.PostLateUpdate);
 				}
 				
 				_pool[_busyIdxs[i]].ToJson(userId, _sb);	

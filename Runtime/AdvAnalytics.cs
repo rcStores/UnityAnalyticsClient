@@ -62,9 +62,9 @@ namespace Advant
 #endif
         }
 		
-		public static ref GameEvent NewEvent(out int idx)
+		public static ref GameEvent NewEvent()
 		{
-			return ref _cacheHolder.NewEvent(out idx);
+			return ref _cacheHolder.NewEvent();
 		}
 		
 		// public void SendEvent(int idx)
@@ -78,35 +78,35 @@ namespace Advant
 		// }
 		private static void SendPropertyImpl(string name, int value, string tableName)
 		{
-			ref var p = ref _cacheHolder.NewProperty(out var _);
+			ref var p = ref _cacheHolder.NewProperty();
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
 		
 		private static void SendPropertyImpl(string name, double value, string tableName)
 		{
-			ref var p = ref _cacheHolder.NewProperty(out var _);
+			ref var p = ref _cacheHolder.NewProperty();
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
 		
 		private static void SendPropertyImpl(string name, string value, string tableName)
 		{
-			ref var p = ref _cacheHolder.NewProperty(out var _);
+			ref var p = ref _cacheHolder.NewProperty();
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
 		
 		private static void SendPropertyImpl(string name, bool value, string tableName)
 		{
-			ref var p = ref _cacheHolder.NewProperty(out var _);
+			ref var p = ref _cacheHolder.NewProperty();
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
 		
 		private static void SendPropertyImpl(string name, DateTime value, string tableName)
 		{
-			ref var p = ref _cacheHolder.NewProperty(out var _);
+			ref var p = ref _cacheHolder.NewProperty();
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
@@ -154,7 +154,7 @@ namespace Advant
         public static void SetCheater(bool value)
         {
             //_cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "cheater", value));
-			_cacheHolder.NewProperty(out var _).Set("cheater", value).SetTableName(USERS_DATA_TABLE);
+			SendPropertyImpl("cheater", value, CUSTOM_PROPERTIES_TABLE);
         }
 
         public static bool GetTester()
@@ -164,7 +164,8 @@ namespace Advant
 
         private static async void InitImplAsync(Identifier id)
         {
-            NewEvent(out var _).SetName("logged_in");
+            ref GameEvent e = ref _cacheHolder.NewEvent();
+			e.SetName("logged_in");
             SendUserDetails(await _userRegistrator.RegistrateAsync(id));
             _cacheHolder.StartSendingDataAsync(_userRegistrator.GetUserId());
         }
