@@ -32,7 +32,7 @@ namespace Advant.Http
 			_gameDataEndpointsByType[typeof(GameEvent)] = pathBase + "/AnalyticsData/SaveEvents2";
         }
 
-        public async UniTask SendToServerAsync<T>(string data) where T : IGameData // => v?
+        public async UniTask<string> SendToServerAsync<T>(string data) where T : IGameData // => v?
         {
             Log.Info("Task runs in thread #" + Thread.CurrentThread);
             if (String.IsNullOrEmpty(data))
