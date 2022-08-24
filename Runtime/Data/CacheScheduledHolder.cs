@@ -76,7 +76,7 @@ namespace Advant.Data
 		public ref GameEvent NewEvent(out int idx)
 		{
 			var e = ref _events.NewElement(idx);
-			e.SetTimestamp(DateTime.UtcNow)
+			e.SetTimestamp(DateTime.UtcNow);
 			if (_events.GetCurrentBusyCount() >= MAX_CACHE_COUNT)
 			{
 				Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");

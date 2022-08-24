@@ -241,7 +241,7 @@ namespace Advant.Data
 			_maxSize = maxSize;
 
 			_poolCount = 0;
-			if (T t is GameEvent e)
+			if (typeof(T) == typeof(GameEvent))
 			{
 				_pool = new GameEvent[_maxSize];
 				for (int i = 0; i < _maxSize; ++i)
