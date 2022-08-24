@@ -120,7 +120,7 @@ namespace Advant
         public static void SetCheater(bool value)
         {
             //_cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "cheater", value));
-			_cacheHolder.NewProperty(our var _).SetValue("cheater", value).SetTableName(USERS_DATA_TABLE);
+			_cacheHolder.NewProperty(our var _).Set("cheater", value).SetTableName(USERS_DATA_TABLE);
         }
 
         public static bool GetTester()
@@ -144,10 +144,10 @@ namespace Advant
                 // _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "last_install_date", DateTime.UtcNow.ToUniversalTime()));
 				// _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "first_game_version", Application.version));
                 // _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "current_game_version", Application.version));
-				_cacheHolder.NewProperty(our var _).SetValue("first_install_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
-				_cacheHolder.NewProperty(our var _).SetValue("last_install_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
-				_cacheHolder.NewProperty(our var _).SetValue("first_game_version", Application.version).SetTableName(USERS_DATA_TABLE);
-				_cacheHolder.NewProperty(our var _).SetValue("current_game_version", Application.version).SetTableName(USERS_DATA_TABLE);
+				_cacheHolder.NewProperty(our var _).Set("first_install_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
+				_cacheHolder.NewProperty(our var _).Set("last_install_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
+				_cacheHolder.NewProperty(our var _).Set("first_game_version", Application.version).SetTableName(USERS_DATA_TABLE);
+				_cacheHolder.NewProperty(our var _).Set("current_game_version", Application.version).SetTableName(USERS_DATA_TABLE);
 
                 PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
             }
@@ -158,28 +158,30 @@ namespace Advant
                 if (appVersion != "" && appVersion != Application.version)
                 {
                     //_cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "last_update_date", DateTime.UtcNow.ToUniversalTime()));
-					_cacheHolder.NewProperty(our var _).SetValue("last_update_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
+					_cacheHolder.NewProperty(our var _).Set("last_update_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
                 }
                 else if (appVersion == "")
                 {
                     //_cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "last_install_date", DateTime.UtcNow.ToUniversalTime()));
-					_cacheHolder.NewProperty(our var _).SetValue("last_install_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
+					_cacheHolder.NewProperty(our var _).Set("last_install_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
                 }
                 //_cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "current_game_version", Application.version));
-				_cacheHolder.NewProperty(our var _).SetValue("current_game_version", Application.version).SetTableName(USERS_DATA_TABLE);
+				_cacheHolder.NewProperty(our var _).Set("current_game_version", Application.version).SetTableName(USERS_DATA_TABLE);
                 PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
             }
 
-            _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "cheater", false));
+            //_cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "cheater", false));	
 			// Debug.LogWarning($"USER {_userRegistrator.GetUserId()} is " + (GetTester() ? "tester" : "NOT tester"));
             //_cacheHolder.Put(GameProperty.Create("country", value));
             // _cacheHolder.Put(GameProperty.Create(
 				// USERS_DATA_TABLE,
 				// "os", 
 				// SystemInfo.operatingSystem.Contains("Android") ? "android" : "ios"));
-				
-			_cacheHolder.NewProperty(our var _).SetValue("os", 
-				Application.platform == RuntimePlatform.Android ? "android" : "ios").SetTableName(USERS_DATA_TABLE);
+			
+			_cacheHolder.NewProperty(our var _).Set("cheater", false).SetTableName(USERS_DATA_TABLE);
+			_cacheHolder.NewProperty(our var _)
+				.Set("os", Application.platform == RuntimePlatform.Android ? "android" : "ios")
+				.SetTableName(USERS_DATA_TABLE);
 
         }
     }
