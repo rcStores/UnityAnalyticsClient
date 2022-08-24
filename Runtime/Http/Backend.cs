@@ -39,7 +39,7 @@ namespace Advant.Http
 				return UniTask.CompletedTask;
                 //throw new ArgumentException("The cache is empty");
 
-            await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(T)], RequestType.POST, data);
+            strin dummy = await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(T)], RequestType.POST, data);
 			return;
         }
 

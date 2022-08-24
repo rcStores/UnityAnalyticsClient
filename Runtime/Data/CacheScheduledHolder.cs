@@ -233,7 +233,7 @@ namespace Advant.Data
 				bool hasEventsSendingSucceeded = true;
 				int eventsBatchSize = 0;
 				int propertiesBatchSize = 0;
-				UniTask propertiesSending = null, eventsSending = null;
+				UniTask propertiesSending = default(UniTask), eventsSending = default(UniTask);
 				try
 				{
 					eventsBatchSize = _events.GetCurrentBusyCount();
@@ -257,10 +257,8 @@ namespace Advant.Data
 				finally
 				{
 					Debug.LogWarning("[ADVANAL] Getting results of data sending...");
-					hasPropertiesSendingSucceeded = propertiesSending == null ? 
-						false : !propertiesSending.IsFaulted;
-					hasEventsSendingSucceeded = eventsSending == null ?
-						false : !eventsSending.IsFaulted;
+					hasPropertiesSendingSucceeded = !propertiesSending.IsFaulted;
+					hasEventsSendingSucceeded = !eventsSending.IsFaulted;
 				}
 				
 				if (hasEventsSendingSucceeded) 
