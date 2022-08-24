@@ -62,7 +62,7 @@ namespace Advant
 #endif
         }
 		
-		public ref GameEvent NewEvent(out int idx)
+		public static ref GameEvent NewEvent(out int idx)
 		{
 			return ref _cacheHolder.NewEvent(out idx);
 		}
@@ -77,27 +77,27 @@ namespace Advant
 			// return ref _cacheHolder.NewProperty(idx).SetTableName(CUSTOM_PROPERTIES_TABLE);
 		// }
 		
-		public void SendProperty(string name, int value)
+		public static void SendProperty(string name, int value)
 		{
 			_cacheHolder.NewProperty(out var _).Set(name, value).SetTableName(CUSTOM_PROPERTIES_TABLE);
 		}
 		
-		public void SendProperty(string name, double value)
+		public static void SendProperty(string name, double value)
 		{
 			_cacheHolder.NewProperty(out var _).Set(name, value).SetTableName(CUSTOM_PROPERTIES_TABLE);
 		}
 		
-		public void SendProperty(string name, bool value)
+		public static void SendProperty(string name, bool value)
 		{
 			_cacheHolder.NewProperty(out var _).Set(name, value).SetTableName(CUSTOM_PROPERTIES_TABLE);
 		}
 		
-		public void SendProperty(string name, DateTime value)
+		public static void SendProperty(string name, DateTime value)
 		{
 			_cacheHolder.NewProperty(out var _).Set(name, value).SetTableName(CUSTOM_PROPERTIES_TABLE);
 		}
 		
-		public void SendProperty(string name, string value)
+		public static void SendProperty(string name, string value)
 		{
 			_cacheHolder.NewProperty(out var _).Set(name, value).SetTableName(CUSTOM_PROPERTIES_TABLE);
 		}
