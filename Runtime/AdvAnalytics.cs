@@ -130,8 +130,8 @@ namespace Advant
 
         private static async void InitImplAsync(Identifier id)
         {
-            SendEvent("logged_in");
-            await SendUserDetails(await _userRegistrator.RegistrateAsync(id));
+            NewEvent(out var _).SetName("logged_in");
+            SendUserDetails(await _userRegistrator.RegistrateAsync(id));
             _cacheHolder.StartSendingDataAsync(_userRegistrator.GetUserId());
         }
         

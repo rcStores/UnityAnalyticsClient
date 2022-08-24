@@ -67,8 +67,8 @@ namespace Advant.Data
             _eventsPath = Path.Combine(serializationPath, CACHED_EVENTS_FILE);
             _propsPath = Path.Combine(serializationPath, CACHED_PROPERTIES_FILE);
 
-            _gameEvents = Deserialize<GameEvent>(_eventsPath);
-            _gameProperties = Deserialize<GameProperty>(_propsPath);
+            _events = Deserialize<GameEvent>(_eventsPath);
+            _properties = Deserialize<GameProperty>(_propsPath);
 
             _usersTable = usersTableName;
         }
@@ -181,7 +181,7 @@ namespace Advant.Data
         {
             if (!File.Exists(filePath))
             {
-                return new ConcurrentQueue<T>();
+                return new SimplePool<T>(10)();
             }
 
             FileStream fs = null;

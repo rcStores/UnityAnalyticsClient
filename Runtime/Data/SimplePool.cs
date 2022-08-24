@@ -177,34 +177,40 @@ internal struct Value
 		private string _table;
 		private Value _value;
 		
-		public void Set(string name, int value)
+		public ref GameProperty Set(string name, int value)
 		{
 			_value.Set(name, value);
+			return ref this;
 		}
 
-		public void Set(string name, double value)
+		public ref GameProperty Set(string name, double value)
 		{
 			_value.Set(name, value);
+			return ref this;
 		}
 
-		public void Set(string name, string value)
+		public ref GameProperty Set(string name, string value)
 		{
 			_value.Set(name, value);
+			return ref this;
 		}
 
-		public void Set(string name, bool value)
+		public ref GameProperty Set(string name, bool value)
 		{
 			_value.Set(name, value);
+			return ref this;
 		}
 		
-		public void Set(string name, DateTime value)
+		public ref GameProperty Set(string name, DateTime value)
 		{
 			_value.Set(name, value);
+			return ref this;
 		}
 		
-		public void SetTableName(string table)
+		public ref GameProperty SetTableName(string table)
 		{
 			_table = table;
+			return ref this;
 		}
 		
 		public void Free() { }
