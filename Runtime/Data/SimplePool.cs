@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Text;
 using UnityEngine;
 
+using Advant.Data.Models;
+
 namespace Advant.Data.Models
 {
 	
@@ -70,23 +72,16 @@ internal struct Value
 }
 
 	[Serializable]
-	internal struct GameEvent : IGameData
+	public struct GameEvent : IGameData
 	{
-		private int _maxParameterCount;
-		private int _currentCount;
+		private int _maxParameterCount = 10;;
+		private int _currentCount = 0;
 
 		private int _id;
 		private string _name;
 		private string _timestamp;
 
-		private Value[] _parameters;
-
-		public GameEvent()
-		{
-			_maxParameterCount = 10;
-			_currentCount = 0;
-			_parameters = new Value[_maxParameterCount];
-		}
+		private Value[] _parameters = new Value[_maxParameterCount];
 
 		public void SetName(string name)
 		{
@@ -173,13 +168,7 @@ internal struct Value
 	internal struct GameProperty
 	{
 		private string _table;
-		private Value _value;
-		
-		GameProperty(string tableName)
-		{
-			_table = tableName;
-			_value = new Value();
-		}
+		private Value _value = new Value();;
 		
 		public void Set(string name, int value)
 		{
@@ -204,6 +193,11 @@ internal struct Value
 		public void Set(string name, DateTime value)
 		{
 			_value.Set(name, value);
+		}
+		
+		public void SetTableName(string table)
+		{
+			_table = table;
 		}
 		
 		public void Free() { }
