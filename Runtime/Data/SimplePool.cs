@@ -171,7 +171,7 @@ internal struct Value
 	}
 	
 	[Serializable]
-	internal struct GameProperty
+	internal struct GameProperty : IGameData
 	{
 		private string _table;
 		private Value _value;
