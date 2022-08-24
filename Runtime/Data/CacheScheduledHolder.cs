@@ -246,7 +246,7 @@ namespace Advant.Data
 						_backend.SendToServerAsync<GameProperty>(await _properties.ToJson(userId)) :
 						null;
 						
-					await Task.WhenAll(new Task[] { eventsSending, propertiesSending }.Where(i => i != null));
+					await UniTask.WhenAll(new UniTask[] { eventsSending, propertiesSending }.Where(i => i != null));
 				}
 				catch (Exception e)
                 {

@@ -155,7 +155,7 @@ internal struct Value
 		private void ExtendParameterPool()
 		{
 			var newMaxCount = _maxParameterCount * 2;
-			Value[] newParameters;
+			Value[] newParameters = null;
 			try
 			{
 				newParameters = new Value[newMaxCount];
