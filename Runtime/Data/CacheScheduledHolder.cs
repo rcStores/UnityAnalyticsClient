@@ -231,16 +231,19 @@ namespace Advant.Data
 
                 bool hasPropertiesSendingSucceeded = true;
 				bool hasEventsSendingSucceeded = true;
+				int eventsBatchSize;
+				int propertiesBatchSize;
+				Task propertiesSending = null, eventsSending = null;
 				try
 				{
-					int eventsBatchSize = _events.GetCurrentBusyCount();
-					int propertiesBatchSize = _properties.GetCurrentBusyCount();
+					eventsBatchSize = _events.GetCurrentBusyCount();
+					propertiesBatchSize = _properties.GetCurrentBusyCount();
 					
-					var eventsSending = eventsBatchSize > 0 ?
-						_backend.SendToServerAsync<GameEvent>(userId, await _events.ToJson(userId)) :
+					eventsSending = eventsBatchSize > 0 ?
+						_backend.SendToServerAsync<GameEvent>(await _events.ToJson(userId)) :
 						null;
-					var propertiesSending = propertiesBatchSize > 0 ?
-						_backend.SendToServerAsync<GameProperty>(userId, await _properties.ToJson(userId)) :
+					propertiesSending = propertiesBatchSize > 0 ?
+						_backend.SendToServerAsync<GameProperty>(await _properties.ToJson(userId)) :
 						null;
 						
 					await Task.WhenAll(new Task[] { eventsSending, propertiesSending }.Where(i => i != null));
