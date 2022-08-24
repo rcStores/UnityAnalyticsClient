@@ -1,3 +1,4 @@
 {
-	"name": "advant.analytics"
+	"name": "advant.analytics",
+	"references": [ "com.cysharp.unitask" ],
 }
