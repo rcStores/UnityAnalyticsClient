@@ -74,7 +74,7 @@ internal struct Value
 	[Serializable]
 	public struct GameEvent : IGameData
 	{
-		private int _maxParameterCount = 10;;
+		private int _maxParameterCount = 10;
 		private int _currentCount = 0;
 
 		private int _id;
@@ -168,7 +168,7 @@ internal struct Value
 	internal struct GameProperty
 	{
 		private string _table;
-		private Value _value = new Value();;
+		private Value _value = new Value();
 		
 		public void Set(string name, int value)
 		{
