@@ -177,40 +177,34 @@ internal struct Value
 		private string _table;
 		private Value _value;
 		
-		public ref GameProperty Set(string name, int value)
+		public void Set(string name, int value)
 		{
 			_value.Set(name, value);
-			return ref this;
 		}
 
-		public ref GameProperty Set(string name, double value)
+		public void Set(string name, double value)
 		{
 			_value.Set(name, value);
-			return ref this;
 		}
 
-		public ref GameProperty Set(string name, string value)
+		public void Set(string name, string value)
 		{
 			_value.Set(name, value);
-			return ref this;
 		}
 
-		public ref GameProperty Set(string name, bool value)
+		public void Set(string name, bool value)
 		{
 			_value.Set(name, value);
-			return ref this;
 		}
 		
-		public ref GameProperty Set(string name, DateTime value)
+		public void Set(string name, DateTime value)
 		{
 			_value.Set(name, value);
-			return ref this;
 		}
 		
-		public ref GameProperty SetTableName(string table)
+		public void SetTableName(string table)
 		{
 			_table = table;
-			return ref this;
 		}
 		
 		public void Free() { }
@@ -230,9 +224,9 @@ namespace Advant.Data
 	[Serializable]
 	internal class SimplePool<T> where T : IGameData
 	{
-		private readonly int _maxSize;      
+		private int _maxSize;      
 
-		private readonly IGameData[] _pool; 
+		private T[] _pool; 
 		private int _poolCount;
 
 		//private int[] _busyIdxs;
@@ -247,12 +241,12 @@ namespace Advant.Data
 			_maxSize = maxSize;
 
 			_poolCount = 0;
-			if (T is GameEvent)
+			if (T t is GameEvent e)
 			{
 				_pool = new GameEvent[_maxSize];
-				foreach (ref var e in _pool)
+				for (int i = 0; i < _maxSize; ++i)
 				{
-					e.SetMaxParameterCount(MAX_GAME_EVENT_PARAMETER_COUNT);
+					(GameEvent)(_pool[i]).SetMaxParameterCount(MAX_GAME_EVENT_PARAMETER_COUNT);
 				}
 			}
 			else 
@@ -268,10 +262,11 @@ namespace Advant.Data
 		private void ExtendPool()
 		{
 			Debug.LogWarning("ExtendingPool");
+			T[] newPool;
+			int newMaxSize = _maxSize * 2;
 			try
 			{	
-				int newMaxSize = _maxSize * 2;
-				var newPool = new IGameData[newMaxSize];
+				newPool = new T[newMaxSize];
 				//var newBusyIdxs = new int[newMaxSize];
 			}
 			catch (Exception e)
@@ -306,7 +301,6 @@ namespace Advant.Data
 			}
 			
 			idx = _poolCount++;
-			_pool[idx].SetTimestamp(DateTime.UtcNow);
 			
 			//MarkAsBusy(idx);
 			
