@@ -50,8 +50,8 @@ namespace Advant
                     //await Task.Delay(GET_ID_RETRY_INTERVAL);
 					await UniTask.Delay(
 						GET_ID_RETRY_INTERVAL, 
-						ignoreTimeScale = false, 
-						delayTiming = PlayerLoopTiming.PostLateUpdate);
+						false, 
+						PlayerLoopTiming.PostLateUpdate);
                     Log.Info("retry");
                 }
                 else

@@ -32,16 +32,17 @@ namespace Advant.Http
 			_gameDataEndpointsByType[typeof(GameEvent)] = pathBase + "/AnalyticsData/SaveEvents2";
         }
 
-        public async Task SendToServerAsync<T>(string data) where T : IGameData // => v?
+        public async UniTask SendToServerAsync<T>(string data) where T : IGameData // => v?
         {
             Log.Info("Task runs in thread #" + Thread.CurrentThread);
-            if (data.IsEmpty())
-                throw new ArgumentException("The cache is empty");
+            if (String.IsNullOrEmpty(data))
+				return UniTask.CompletedTask;
+                //throw new ArgumentException("The cache is empty");
 
             await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(T)], RequestType.POST, data);
         }
 
-        public async Task<bool> GetTester(long userId)
+        public async UniTask<bool> GetTester(long userId)
         {
 			string response = null;
 			try
@@ -58,7 +59,7 @@ namespace Advant.Http
             return Convert.ToBoolean(response);
         }
 
-        public async Task<UserIdResponse> GetOrCreateUserIdAsync(Identifier dto)
+        public async UniTask<UserIdResponse> GetOrCreateUserIdAsync(Identifier dto)
         {
 			var result = new UserIdResponse();
             try
@@ -76,7 +77,7 @@ namespace Advant.Http
             
         }
 
-        private async Task<string> ExecuteWebRequestAsync(string path, RequestType type, string jsonData = null)
+        private async UniTask<string> ExecuteWebRequestAsync(string path, RequestType type, string jsonData = null)
         {
             using var request = CreateRequest(path, type, jsonData);
             var operation = request.SendWebRequest();

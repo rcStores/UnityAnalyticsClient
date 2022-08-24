@@ -75,8 +75,9 @@ namespace Advant.Data
 		
 		public ref GameEvent NewEvent(out int idx)
 		{
-			var e = ref _events.NewElement(idx);
+			ref var e = ref _events.NewElement(out var _);
 			e.SetTimestamp(DateTime.UtcNow);
+			e.SetMaxParameterCount(10);
 			if (_events.GetCurrentBusyCount() >= MAX_CACHE_COUNT)
 			{
 				Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
@@ -98,7 +99,7 @@ namespace Advant.Data
 		
 		public ref GameProperty NewProperty(out int idx)
 		{
-			return ref _properties.NewElement(idx);
+			return ref _properties.NewElement(out var _);
 		}
 		
 		// public void SendProperty(int idx)

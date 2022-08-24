@@ -241,18 +241,7 @@ namespace Advant.Data
 			_maxSize = maxSize;
 
 			_poolCount = 0;
-			if (typeof(T) == typeof(GameEvent))
-			{
-				_pool = new GameEvent[_maxSize];
-				for (int i = 0; i < _maxSize; ++i)
-				{
-					(GameEvent)(_pool[i]).SetMaxParameterCount(MAX_GAME_EVENT_PARAMETER_COUNT);
-				}
-			}
-			else 
-			{
-				_pool = new GameProperty[_maxSize];
-			}
+			_pool = new T[_maxSize];
 
 			//_busyIdxs = new int[_maxSize];
 
