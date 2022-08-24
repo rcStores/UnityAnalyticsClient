@@ -76,7 +76,7 @@ namespace Advant
 		// {
 			// return ref _cacheHolder.NewProperty(idx).SetTableName(CUSTOM_PROPERTIES_TABLE);
 		// }
-		private void SendPropertyImpl(string name, T value, string tableName)
+		private static void SendPropertyImpl<T>(string name, T value, string tableName)
 		{
 			var p = ref _cacheHolder.NewProperty(out var _);
 			p.Set(name, value);
