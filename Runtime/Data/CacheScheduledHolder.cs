@@ -233,7 +233,7 @@ namespace Advant.Data
 				bool hasEventsSendingSucceeded = true;
 				int eventsBatchSize = 0;
 				int propertiesBatchSize = 0;
-				Task propertiesSending = null, eventsSending = null;
+				UniTask propertiesSending = null, eventsSending = null;
 				try
 				{
 					eventsBatchSize = _events.GetCurrentBusyCount();
@@ -241,12 +241,12 @@ namespace Advant.Data
 					
 					eventsSending = eventsBatchSize > 0 ?
 						_backend.SendToServerAsync<GameEvent>(await _events.ToJson(userId)) :
-						null;
+						UniTask.CompletedTask;
 					propertiesSending = propertiesBatchSize > 0 ?
 						_backend.SendToServerAsync<GameProperty>(await _properties.ToJson(userId)) :
-						null;
+						UniTask.CompletedTask;
 						
-					await UniTask.WhenAll(new UniTask[] { eventsSending, propertiesSending }.Where(i => i != null));
+					await UniTask.WhenAll(eventsSending, propertiesSending);
 				}
 				catch (Exception e)
                 {

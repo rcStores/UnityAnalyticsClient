@@ -39,7 +39,8 @@ namespace Advant.Http
 				return UniTask.CompletedTask;
                 //throw new ArgumentException("The cache is empty");
 
-            return await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(T)], RequestType.POST, data);
+            await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(T)], RequestType.POST, data);
+			return;
         }
 
         public async UniTask<bool> GetTester(long userId)
