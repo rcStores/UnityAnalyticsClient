@@ -79,27 +79,27 @@ namespace Advant
 		
 		public void SendProperty(string name, int value)
 		{
-			_cacheHolder.NewProperty(out var _).SetValue(name, value).SetTableName(CUSTOM_PROPERTIES_TABLE);
+			_cacheHolder.NewProperty(out var _).Set(name, value).SetTableName(CUSTOM_PROPERTIES_TABLE);
 		}
 		
 		public void SendProperty(string name, double value)
 		{
-			_cacheHolder.NewProperty(out var _).SetValue(name, value).SetTableName(CUSTOM_PROPERTIES_TABLE);
+			_cacheHolder.NewProperty(out var _).Set(name, value).SetTableName(CUSTOM_PROPERTIES_TABLE);
 		}
 		
 		public void SendProperty(string name, bool value)
 		{
-			_cacheHolder.NewProperty(out var _).SetValue(name, value).SetTableName(CUSTOM_PROPERTIES_TABLE);
+			_cacheHolder.NewProperty(out var _).Set(name, value).SetTableName(CUSTOM_PROPERTIES_TABLE);
 		}
 		
 		public void SendProperty(string name, DateTime value)
 		{
-			_cacheHolder.NewProperty(out var _).SetValue(name, value).SetTableName(CUSTOM_PROPERTIES_TABLE);
+			_cacheHolder.NewProperty(out var _).Set(name, value).SetTableName(CUSTOM_PROPERTIES_TABLE);
 		}
 		
 		public void SendProperty(string name, string value)
 		{
-			_cacheHolder.NewProperty(out var _).SetValue(name, value).SetTableName(CUSTOM_PROPERTIES_TABLE);
+			_cacheHolder.NewProperty(out var _).Set(name, value).SetTableName(CUSTOM_PROPERTIES_TABLE);
 		}
 
         public static void SaveCacheLocally()
@@ -120,7 +120,7 @@ namespace Advant
         public static void SetCheater(bool value)
         {
             //_cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "cheater", value));
-			_cacheHolder.NewProperty(our var _).Set("cheater", value).SetTableName(USERS_DATA_TABLE);
+			_cacheHolder.NewProperty(out var _).Set("cheater", value).SetTableName(USERS_DATA_TABLE);
         }
 
         public static bool GetTester()
@@ -144,10 +144,10 @@ namespace Advant
                 // _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "last_install_date", DateTime.UtcNow.ToUniversalTime()));
 				// _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "first_game_version", Application.version));
                 // _cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "current_game_version", Application.version));
-				_cacheHolder.NewProperty(our var _).Set("first_install_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
-				_cacheHolder.NewProperty(our var _).Set("last_install_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
-				_cacheHolder.NewProperty(our var _).Set("first_game_version", Application.version).SetTableName(USERS_DATA_TABLE);
-				_cacheHolder.NewProperty(our var _).Set("current_game_version", Application.version).SetTableName(USERS_DATA_TABLE);
+				_cacheHolder.NewProperty(out var _).Set("first_install_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
+				_cacheHolder.NewProperty(out var _).Set("last_install_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
+				_cacheHolder.NewProperty(out var _).Set("first_game_version", Application.version).SetTableName(USERS_DATA_TABLE);
+				_cacheHolder.NewProperty(out var _).Set("current_game_version", Application.version).SetTableName(USERS_DATA_TABLE);
 
                 PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
             }
@@ -158,15 +158,15 @@ namespace Advant
                 if (appVersion != "" && appVersion != Application.version)
                 {
                     //_cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "last_update_date", DateTime.UtcNow.ToUniversalTime()));
-					_cacheHolder.NewProperty(our var _).Set("last_update_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
+					_cacheHolder.NewProperty(out var _).Set("last_update_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
                 }
                 else if (appVersion == "")
                 {
                     //_cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "last_install_date", DateTime.UtcNow.ToUniversalTime()));
-					_cacheHolder.NewProperty(our var _).Set("last_install_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
+					_cacheHolder.NewProperty(out var _).Set("last_install_date", DateTime.UtcNow.ToUniversalTime()).SetTableName(USERS_DATA_TABLE);
                 }
                 //_cacheHolder.Put(GameProperty.Create(USERS_DATA_TABLE, "current_game_version", Application.version));
-				_cacheHolder.NewProperty(our var _).Set("current_game_version", Application.version).SetTableName(USERS_DATA_TABLE);
+				_cacheHolder.NewProperty(out var _).Set("current_game_version", Application.version).SetTableName(USERS_DATA_TABLE);
                 PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
             }
 
@@ -178,8 +178,8 @@ namespace Advant
 				// "os", 
 				// SystemInfo.operatingSystem.Contains("Android") ? "android" : "ios"));
 			
-			_cacheHolder.NewProperty(our var _).Set("cheater", false).SetTableName(USERS_DATA_TABLE);
-			_cacheHolder.NewProperty(our var _)
+			_cacheHolder.NewProperty(out var _).Set("cheater", false).SetTableName(USERS_DATA_TABLE);
+			_cacheHolder.NewProperty(out var _)
 				.Set("os", Application.platform == RuntimePlatform.Android ? "android" : "ios")
 				.SetTableName(USERS_DATA_TABLE);
 
