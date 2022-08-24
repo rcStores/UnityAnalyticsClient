@@ -22,7 +22,7 @@ internal struct Value
 {
 	internal enum EValueType
 	{
-		Int, Double, String, Bool, DateTime
+		Int, Float, Double, String, Bool, DateTime
 	}
 
 	private string _name;
