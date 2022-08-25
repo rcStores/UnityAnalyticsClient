@@ -305,6 +305,9 @@ namespace Advant.Data
 
 		public async UniTask<string> ToJson(long userId)
 		{
+			if (_poolCount == 0)
+				return null;
+			
 			int breakPointCount = 10;
 			
 			_sb.Append('[');

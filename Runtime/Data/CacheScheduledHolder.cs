@@ -232,15 +232,10 @@ namespace Advant.Data
 				int eventsBatchSize = _events.GetCurrentBusyCount();
 				int propertiesBatchSize = _properties.GetCurrentBusyCount();
 				
-				var eventsSending = eventsBatchSize > 0 ?
-					_backend.SendToServerAsync<GameEvent>(await _events.ToJson(userId)) :
-					UniTask.CompletedTask;
-					
-				var propertiesSending = propertiesBatchSize > 0 ?
-					_backend.SendToServerAsync<GameProperty>(await _properties.ToJson(userId)) :
-					UniTask.CompletedTask;
+				var eventsSending = _backend.SendToServerAsync<GameEvent>(await _events.ToJson(userId));					
+				var propertiesSending = _backend.SendToServerAsync<GameProperty>(await _properties.ToJson(userId));
 						
-				bool (hasEventsSendingSucceeded, hasPropertiesSendingSucceededSendingSucceeded) = await UniTask.WhenAll(eventsSending, propertiesSending);
+				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceededSendingSucceeded) = await UniTask.WhenAll(eventsSending, propertiesSending);
 				
 				Debug.LogWarning("[ADVANAL] Getting results of data sending...");
 				
