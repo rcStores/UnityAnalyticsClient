@@ -81,23 +81,23 @@ namespace Advant.Http
         private async UniTask<string> ExecuteWebRequestAsync(string path, RequestType type, string jsonData = null)
         {
             using var request = CreateRequest(path, type, jsonData);
-            var operation = request.SendWebRequest();
+            var operation = await request.SendWebRequest();
 
-            while (!operation.isDone)
-				await UniTask.Yield(PlayerLoopTiming.PostLateUpdate);
+            // while (!operation.isDone)
+				// await UniTask.Yield(PlayerLoopTiming.PostLateUpdate);
                 //await Task.Yield();
-            if (request.responseCode != 201 && request.responseCode != 200)
+            if (operation.responseCode != 201 && operation.responseCode != 200)
             {
 				File.WriteAllText(
 					Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
 					Encoding.UTF8.GetString(request.uploadHandler.data));
 
                 throw new Exception(
-					"Http request failure. Response code: " + request.responseCode + 
-					"\nError: " + request.error +
-					"\nUpdload handler data: " + Encoding.UTF8.GetString(request.uploadHandler.data));
+					"Http request failure. Response code: " + operation.responseCode + 
+					"\nError: " + operation.error +
+					"\nUpdload handler data: " + Encoding.UTF8.GetString(operation.uploadHandler.data));
             }
-            return request.downloadHandler.text;
+            return operation.downloadHandler.text;
         }
 
         private UnityWebRequest CreateRequest(string path, RequestType type = RequestType.GET, string jsonData = null)

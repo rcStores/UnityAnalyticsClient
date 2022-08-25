@@ -263,10 +263,12 @@ namespace Advant.Data
 				
 				if (hasEventsSendingSucceeded) 
 				{
+					Debug.LogWarning("[ADVANAL] Clear events");
 					_events.MarkAsSended(eventsBatchSize);
 				}
 				if (hasPropertiesSendingSucceeded)
 				{
+					Debug.LogWarning("[ADVANAL] Clear properties");
 					_properties.MarkAsSended(propertiesBatchSize);
 				}
 			}
