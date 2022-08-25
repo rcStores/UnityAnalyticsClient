@@ -89,23 +89,32 @@ namespace Advant.Http
 
         private async UniTask<string> ExecuteWebRequestAsync(string path, RequestType type, string jsonData = null)
         {
-            using var request = CreateRequest(path, type, jsonData);
-            var operation = await request.SendWebRequest();
-
-            // while (!operation.isDone)
-				// await UniTask.Yield(PlayerLoopTiming.PostLateUpdate);
-                //await Task.Yield();
-            if (operation.responseCode != 201 && operation.responseCode != 200)
-            {
+			try
+			{
+				var operation = await CreateRequest(path, type, jsonData).SendWebRequest();
+			}
+			catch (Exception e)
+			{
 				File.WriteAllText(
 					Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
 					Encoding.UTF8.GetString(request.uploadHandler.data));
+				throw e;
+			}
+				
+            // while (!operation.isDone)
+				// await UniTask.Yield(PlayerLoopTiming.PostLateUpdate);
+                //await Task.Yield();
+            // if (operation.responseCode != 201 && operation.responseCode != 200)
+            // {
+				// File.WriteAllText(
+					// Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
+					// Encoding.UTF8.GetString(request.uploadHandler.data));
 
-                throw new Exception(
-					"Http request failure. Response code: " + operation.responseCode + 
-					"\nError: " + operation.error +
-					"\nUpdload handler data: " + Encoding.UTF8.GetString(operation.uploadHandler.data));
-            }
+                // throw new Exception(
+					// "Http request failure. Response code: " + operation.responseCode + 
+					// "\nError: " + operation.error +
+					// "\nUpdload handler data: " + Encoding.UTF8.GetString(operation.uploadHandler.data));
+            // }
             return operation.downloadHandler.text;
         }
 
