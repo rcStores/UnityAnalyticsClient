@@ -229,37 +229,20 @@ namespace Advant.Data
 					
 				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 
-                bool hasPropertiesSendingSucceeded = true;
-				bool hasEventsSendingSucceeded = true;
-				int eventsBatchSize = 0;
-				int propertiesBatchSize = 0;
-				UniTask propertiesSending = default(UniTask), eventsSending = default(UniTask);
-				try
-				{
-					eventsBatchSize = _events.GetCurrentBusyCount();
-					propertiesBatchSize = _properties.GetCurrentBusyCount();
+				int eventsBatchSize = _events.GetCurrentBusyCount();
+				int propertiesBatchSize = _properties.GetCurrentBusyCount();
+				
+				eventsSending = eventsBatchSize > 0 ?
+					_backend.SendToServerAsync<GameEvent>(await _events.ToJson(userId)) :
+					UniTask.CompletedTask;
 					
-					eventsSending = eventsBatchSize > 0 ?
-						_backend.SendToServerAsync<GameEvent>(await _events.ToJson(userId)) :
-						UniTask.CompletedTask;
-					propertiesSending = propertiesBatchSize > 0 ?
-						_backend.SendToServerAsync<GameProperty>(await _properties.ToJson(userId)) :
-						UniTask.CompletedTask;
+				propertiesSending = propertiesBatchSize > 0 ?
+					_backend.SendToServerAsync<GameProperty>(await _properties.ToJson(userId)) :
+					UniTask.CompletedTask;
 						
-					await UniTask.WhenAll(eventsSending, propertiesSending);
-				}
-				catch (Exception e)
-                {
-					Debug.LogWarning("[ADVANAL] Error while sending data: " + e.Message);
-					Debug.LogWarning("Stack trace: " + e.StackTrace);
-					Debug.LogWarning("Source: " + e.Source);
-				}
-				finally
-				{
-					Debug.LogWarning("[ADVANAL] Getting results of data sending...");
-					hasPropertiesSendingSucceeded = propertiesSending.Status == UniTaskStatus.Succeeded;
-					hasEventsSendingSucceeded = eventsSending.Status == UniTaskStatus.Succeeded;
-				}
+				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceededSendingSucceeded) = await UniTask.WhenAll(eventsSending, propertiesSending);
+				
+				Debug.LogWarning("[ADVANAL] Getting results of data sending...");
 				
 				if (hasEventsSendingSucceeded) 
 				{
