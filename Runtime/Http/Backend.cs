@@ -89,10 +89,10 @@ namespace Advant.Http
 
         private async UniTask<string> ExecuteWebRequestAsync(string path, RequestType type, string jsonData = null)
         {
-			UnityWebRequest operation = null;
+			using var operation = CreateRequest(path, type, jsonData);
 			try
 			{
-				operation = await CreateRequest(path, type, jsonData).SendWebRequest();
+				operation = await operation.SendWebRequest();
 			}
 			catch (Exception e)
 			{
