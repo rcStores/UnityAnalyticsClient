@@ -340,6 +340,7 @@ namespace Advant.Data
 	{
 		public static void ToJson(this Value[] list, StringBuilder sb, int count)
 		{
+			Debug.LogWarning("ParametersExtensions.ToJson: parameters count = " + count);
 			sb.Append('[');
 			if (list != null && count != 0)
 			{
