@@ -257,15 +257,15 @@ namespace Advant.Data
 				finally
 				{
 					Debug.LogWarning("[ADVANAL] Getting results of data sending...");
-					hasPropertiesSendingSucceeded = propertiesSending.Status != UniTaskStatus.Faulted;
-					hasEventsSendingSucceeded = eventsSending.Status != UniTaskStatus.Faulted;
+					hasPropertiesSendingSucceeded = propertiesSending.Status == UniTaskStatus.Succeeded;
+					hasEventsSendingSucceeded = eventsSending.Status == UniTaskStatus.Succeeded;
 				}
 				
-				if (propertiesSending.Status == UniTaskStatus.Succeeded) 
+				if (hasEventsSendingSucceeded) 
 				{
 					_events.MarkAsSended(eventsBatchSize);
 				}
-				if (eventsSending.Status == UniTaskStatus.Succeeded)
+				if (hasPropertiesSendingSucceeded)
 				{
 					_properties.MarkAsSended(propertiesBatchSize);
 				}
