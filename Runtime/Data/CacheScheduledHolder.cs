@@ -235,7 +235,7 @@ namespace Advant.Data
 				var eventsSending = _backend.SendToServerAsync<GameEvent>(await _events.ToJson(userId));					
 				var propertiesSending = _backend.SendToServerAsync<GameProperty>(await _properties.ToJson(userId));
 						
-				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceededSendingSucceeded) = await UniTask.WhenAll(eventsSending, propertiesSending);
+				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded) = await UniTask.WhenAll(eventsSending, propertiesSending);
 				
 				Debug.LogWarning("[ADVANAL] Getting results of data sending...");
 				
