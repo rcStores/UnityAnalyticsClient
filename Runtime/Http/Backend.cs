@@ -97,7 +97,7 @@ namespace Advant.Http
 			{
 				File.WriteAllText(
 					Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
-					Encoding.UTF8.GetString(request.uploadHandler.data));
+					Encoding.UTF8.GetString(operation.uploadHandler.data));
 				throw e;
 			}
 				
