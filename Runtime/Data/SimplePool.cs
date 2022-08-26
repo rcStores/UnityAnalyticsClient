@@ -225,11 +225,8 @@ namespace Advant.Data
 	[Serializable]
 	internal class SimplePool<T> where T : IGameData
 	{     
-		private T[] _pool; 
-		private int _poolCount;
-
-		private int[] _busyIdxs;		
-		private int[] _freeIdxs;
+		private T[] _pool;
+		private int[] _indices;		
 		private int _currentCount;
 
 		private StringBuilder _sb;
@@ -243,11 +240,10 @@ namespace Advant.Data
 			_pool = new T[maxSize];
 
 			_currentCount = 0;
-			_busyIdxs = new int[maxSize];
-			_freeIdxs = new int[maxSize];	
+			_indices = new int[maxSize];	
 			for (int i = 0; i < maxSize; ++i)
 			{
-				_freeIdxs[i] = i;
+				_indices[i] = i;
 			}
 
 			_sb = new StringBuilder();
@@ -259,11 +255,10 @@ namespace Advant.Data
 			try
 			{
 				Array.Resize(ref _pool, _pool.Length * 2);
-				Array.Resize(ref _busyIdxs, _busyIdxs.Length * 2);
-				Array.Resize(ref _freeIdxs, _freeIdxs.Length * 2);
-				for (int i = _currentCount; i < _freeIdxs.Length; ++i)
+				Array.Resize(ref _indices, _freeIdxs.Length * 2);
+				for (int i = _currentCount; i < _indices.Length; ++i)
 				{
-					_freeIdxs[i] = i;
+					_indices[i] = i;
 				}
 			}
 			catch (Exception e)
@@ -288,9 +283,7 @@ namespace Advant.Data
 				}	
 			}
 			
-			int idx = _freeIdxs[_currentCount];
-			_busyIdxs[_currentCount++] = idx;
-			ref var element = ref _pool[idx];
+			ref var element = ref _pool[_indices[_currentCount++]];
 			element.Free();
 
 			return ref element;
@@ -298,17 +291,9 @@ namespace Advant.Data
 
 		public void FreeFromBeginning(int count)
 		{			
-			for (int i = 0, j = count; i < count || j < _currentCount; ++i, ++j)
+			for (int i = 0; i < count; ++i)
 			{
-				if (i < count) 
-				{
-					_freeIdxs[_currentCount - 1 - i] = _busyIdxs[i];
-				}
-				
-				if (j < _currentCount)
-				{
-					_busyIdxs[i] = _busyIdxs[j];
-				}
+				(indices[i], indices[_currentCount - 1 - i]) = (indices[_currentCount - 1 - i], indices[i]); // swap indices
 			}
 			_currentCount = _currentCount - count;
 		}
@@ -331,7 +316,7 @@ namespace Advant.Data
 					await UniTask.Delay(20, false, PlayerLoopTiming.PostLateUpdate);
 				}
 				
-				_pool[_busyIdxs[i]].ToJson(userId, _sb);	
+				_pool[_indices[i]].ToJson(userId, _sb);	
 			}
 			string result = _sb.Append(']').ToString();
 			_sb.Clear();
