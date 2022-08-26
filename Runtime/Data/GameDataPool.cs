@@ -10,7 +10,7 @@ using Advant.Data.Models;
 namespace Advant.Data
 {
 	[Serializable]
-	internal class GameDataPool<T>
+	internal abstract class GameDataPool<T>
 	{     
 		private T[] 	_pool;
 		private int[] 	_indices;		
@@ -22,7 +22,7 @@ namespace Advant.Data
 		private const int MAX_GAME_EVENT_PARAMETER_COUNT 	= 10;
 		private const int SERIALIZATION_BREAKPOINT 			= 10;
 		
-		public abstract async async UniTask<string> ToJsonAsync(long userId);
+		public abstract async UniTask<string> ToJsonAsync(long userId);
 
 		public SimplePool(int maxSize)
 		{

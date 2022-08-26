@@ -166,13 +166,13 @@ namespace Advant.Data
             }
         }
 
-        public T Deserialize<TPool, TGameData>(string filePath) where T : GameDataPool<TGameData>
+        public TPool Deserialize<TPool, TGameData>(string filePath) where T : GameDataPool<TGameData>
         {
-			T result = null;
+			TPool result = null;
 			
             if (!File.Exists(filePath))
             {
-                result = new T(POOL_INITIAL_SIZE);
+                result = new TPool(POOL_INITIAL_SIZE);
             }
 			else 
 			{
@@ -181,11 +181,11 @@ namespace Advant.Data
 					using var fs 	= new FileStream(filePath, FileMode.Open);
 					var formatter 	= new BinaryFormatter();
 				
-					result = (T)formatter.Deserialize(fs);
+					result = (TPool)formatter.Deserialize(fs);
 				}
 				catch (Exception)
 				{
-					result = new T(POOL_INITIAL_SIZE);
+					result = new TPool(POOL_INITIAL_SIZE);
 				}
 				finally
 				{

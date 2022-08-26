@@ -5,7 +5,7 @@ using System.Text;
 namespace Advant.Data.Models
 {
 [Serializable]
-internal struct GameEvent
+public struct GameEvent
 {
 	private int _currentCount;
 
