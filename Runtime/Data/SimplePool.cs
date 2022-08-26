@@ -224,13 +224,13 @@ namespace Advant.Data
 {
 	[Serializable]
 	internal class SimplePool<T> where T : IGameData
-	{
-		private int _maxSize;      
-
+	{     
 		private T[] _pool; 
 		private int _poolCount;
 
-		//private int[] _busyIdxs;
+		private int[] _busyIdxs;		
+		private int[] _freeIdxs;
+		private int _currentCount;
 
 		private StringBuilder _sb;
 		
@@ -239,12 +239,16 @@ namespace Advant.Data
 
 		public SimplePool(int maxSize)
 		{
-			_maxSize = maxSize;
-
 			_poolCount = 0;
-			_pool = new T[_maxSize];
+			_pool = new T[maxSize];
 
-			//_busyIdxs = new int[_maxSize];
+			_currentCount = 0;
+			_busyIdxs = new int[maxSize];
+			_freeIdxs = new int[maxSize];	
+			for (int i = 0; i < maxSize; ++i)
+			{
+				_freeIdxs[i] = i;
+			}
 
 			_sb = new StringBuilder();
 		}
@@ -252,37 +256,27 @@ namespace Advant.Data
 		private void ExtendPool()
 		{
 			Debug.LogWarning("ExtendingPool");
-			T[] newPool;
-			int newMaxSize = _maxSize * 2;
 			try
-			{	
-				newPool = new T[newMaxSize];
-				//var newBusyIdxs = new int[newMaxSize];
+			{
+				Array.Resize(ref _pool, _pool.Length * 2);
+				Array.Resize(ref _busyIdxs, _busyIdxs.Length * 2);
+				Array.Resize(ref _freeIdxs, _freeIdxs.Length * 2);
 			}
 			catch (Exception e)
 			{
 				Debug.LogError("Pool allocation failure: " + e.Message);
 				return;
 			}
-			
-			for (int i = 0; i < _poolCount; ++i)
-			{
-				newPool[i] = _pool[i];
-				//newBusyIdxs[i] = _busyIdxs[i];
-			}
-			_pool = newPool;
-			//_busyIdxs = newBusyIdxs;
-			_maxSize = newMaxSize;
 		}
 
 		public ref T NewElement()
 		{
-			if (_poolCount >= _maxSize)
+			if (_currentCount >= _pool.Length)
 			{
-				if (_maxSize * 2 >= CRITICAL_SIZE_RESTRICTION)
+				if (_pool.Length * 2 >= CRITICAL_SIZE_RESTRICTION)
 				{
 					// the server is down for too long
-					--_poolCount;
+					--_currentCount;
 				}
 				else
 				{
@@ -290,28 +284,40 @@ namespace Advant.Data
 				}	
 			}
 			
-			return ref _pool[_poolCount++];
+			int idx = _freeIdxs[currentCount];
+			_busyIdxs[_currentCount++] = idx;
+			var ref element = _pool[idx];
+			element.Free();
+
+			return ref element;
 		}
 
-		public void MarkAsSended(int count)
+		public void FreeFromBeginning(int count)
 		{			
-			for (int i = 0, j = count; j < _poolCount; ++i, ++j)
+			for (int i = 0, j = count; i < count || j < _currentCount; ++i, ++j)
 			{
-				_pool[i].Free();
-				//_busyIdxs[i] = _busyIdxs[j];
+				if (i < count) 
+				{
+					_freeIdxs[_currentCount - 1 - i] = _busyIdxs[i];
+				}
+				
+				if (j < _currentCount)
+				{
+					_busyIdxs[i] = _busyIdxs[j];
+				}
 			}
-			_poolCount = _poolCount - count;
+			_currentCount = _currentCount - count;
 		}
 
 		public async UniTask<string> ToJson(long userId)
 		{
-			if (_poolCount == 0)
+			if (_currentCount == 0)
 				return null;
 			
 			int breakPointCount = 10;
 			
 			_sb.Append('[');
-			for (int i = 0; i < _poolCount; ++i)
+			for (int i = 0; i < _currentCount; ++i)
 			{
 				if (i > 0)
 					_sb.Append(',');
@@ -321,7 +327,7 @@ namespace Advant.Data
 					await UniTask.Delay(20, false, PlayerLoopTiming.PostLateUpdate);
 				}
 				
-				_pool[i].ToJson(userId, _sb);	
+				_pool[_busyIdxs[i]].ToJson(userId, _sb);	
 			}
 			string result = _sb.Append(']').ToString();
 			_sb.Clear();
@@ -335,7 +341,7 @@ namespace Advant.Data
 
 		public int GetCurrentBusyCount()
 		{
-			return _poolCount;
+			return _currentCount;
 		}
 	}
 	
