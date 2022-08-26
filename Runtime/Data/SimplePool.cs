@@ -286,7 +286,7 @@ namespace Advant.Data
 			
 			int idx = _freeIdxs[_currentCount];
 			_busyIdxs[_currentCount++] = idx;
-			var ref element = ref _pool[idx];
+			ref var element = ref _pool[idx];
 			element.Free();
 
 			return ref element;
