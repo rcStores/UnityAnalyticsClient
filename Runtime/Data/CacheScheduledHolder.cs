@@ -17,67 +17,62 @@ using Cysharp.Threading.Tasks;
 namespace Advant.Data
 {
     internal class CacheScheduledHolder
-    {
-        private const int SENDING_INTERVAL = 120000; // 2 min in ms
+    {       
 		private CancellationTokenSource _sendingCancellationSource; 
 
-		private const string USER_ID_PREF = "UserId";
-        private const string APP_VERSION_PREF = "AppVersion";
 
-        private readonly Backend _backend;
-
-        // private readonly ConcurrentQueue<GameProperty> _gameProperties;
-        // private readonly ConcurrentQueue<GameEvent> _gameEvents;
+        private readonly Backend 				_backend;		
+		private readonly GamePropertiesPool 	_properties;
+        private readonly GameEventsPool 		_events;
 		
-		private readonly SimplePool<GameProperty> _properties;
-        private readonly SimplePool<GameEvent> _events;
-		
-        private const int MAX_CACHE_COUNT = 10;
-        private int _currentEventsCount = 0;
-		
-		private bool _isSendingRunning = false;
-		
-		// private GameDataPool<GameEvent> _events = new GameDataPool(MAX_EVENTS_SIZE);
-		// private GameDataPool<GameProperty> _properties = new GameDataPool(MAX_PROPERTIES_SIZE);
-
-        // private bool _arePropertiesProcessing = false;
-        // private bool _areEventsProcessing = false;
-
-        private const string CACHED_EVENTS_FILE = "Events.dat";
-        private const string CACHED_PROPERTIES_FILE = "Properties.dat";
-		
-		private const int POOL_INITIAL_SIZE = 100;
-
-        private readonly string _propsPath;
+		private readonly string _propsPath;
         private readonly string _eventsPath;
-
-        private readonly string _usersTable;
+        private readonly string _usersTable;		
+			
+		private const string USER_ID_PREF 				= "UserId";
+        private const string APP_VERSION_PREF 			= "AppVersion";
+        private const string CACHED_EVENTS_FILE 		= "Events.dat";
+        private const string CACHED_PROPERTIES_FILE 	= "Properties.dat";
+		
+		private const int SENDING_INTERVAL 		= 120000; // 2 min in ms	
+		private const int POOL_INITIAL_SIZE 	= 100;
+		private const int MAX_CACHE_COUNT 		= 10; 
 
         public CacheScheduledHolder(string usersTableName, Backend backend)
         {
 			string serializationPath = null;
+// ------------------------------------------------------------------------------------------------------
 #if UNITY_IOS || UNITY_EDITOR
             serializationPath = Path.Combine(Application.persistentDataPath, "CachedData");
+// ------------------------------------------------------------------------------------------------------
 #else
             serializationPath = Path.Combine(AndroidUtils.ApiUtil.GetPersistentDataPath(), "CachedData");
 #endif
+// ------------------------------------------------------------------------------------------------------
+
             _backend = backend;
+			
             if (!Directory.Exists(serializationPath))
             {
                 Directory.CreateDirectory(serializationPath);
             }
-            _eventsPath = Path.Combine(serializationPath, CACHED_EVENTS_FILE);
-            _propsPath = Path.Combine(serializationPath, CACHED_PROPERTIES_FILE);
+            _eventsPath 	= Path.Combine(serializationPath, CACHED_EVENTS_FILE);
+            _propsPath 		= Path.Combine(serializationPath, CACHED_PROPERTIES_FILE);
 
-            _events = Deserialize<GameEvent>(_eventsPath);
-            _properties = Deserialize<GameProperty>(_propsPath);
+            _events 		= Deserialize<GameEventsPool, GameEvent>(_eventsPath);
+            _properties 	= Deserialize<GamePropertiesPool, GameProperty>(_propsPath);
 
             _usersTable = usersTableName;
         }
 		
-		public ref GameEvent NewEvent()
+		public ref GameEvent NewEvent(string eventName)
 		{
 			ref GameEvent e = ref _events.NewElement();
+			
+			e.Free();
+			e.SetTimestamp(DateTime.UtcNow);
+			e.SetMaxParameterCount(GAME_EVENT_PARAMETER_COUNT);
+			e.SetName(eventName);
 			
 			if (_events.GetCurrentBusyCount() >= MAX_CACHE_COUNT)
 			{
@@ -88,34 +83,42 @@ namespace Advant.Data
 			return ref e;
 		}
 		
-		public ref GameProperty NewProperty()
+		public void NewProperty(string name, int value, string tableName)
 		{
-			return ref _properties.NewElement();
+			ref var p = ref _cacheHolder.NewProperty();
+			p.Set(name, value);
+			p.SetTableName(tableName);
 		}
 		
-		// public void SendProperty(int idx)
-		// {
-			// _properties.MarkAsBusy(idx);
-		// }
-
-        // public async void Put(GameProperty gameProperty)
-        // {
-            // _gameProperties.Enqueue(gameProperty);
-        // }
-
-        // public async void Put(GameEvent gameEvent)
-        // {
-            // _gameEvents.Enqueue(gameEvent);
-            // Interlocked.Increment(ref _currentEventsCount);
-			
-			// if (_currentEventsCount >= MAX_CACHE_COUNT && !_areEventsProcessing) 
-			// {
-				// _areEventsProcessing = true;
-				// Volatile.Write(ref _areEventsProcessing, true);
-				// Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
-				// _sendingCancellationSource?.Cancel();
-			// } 
-        // }
+		public void NewProperty(string name, double value, string tableName)
+		{
+			ref var p = ref _cacheHolder.NewProperty();
+			p.Set(name, value);
+			p.SetTableName(tableName);
+		}
+		
+		public void NewProperty(string name, string value, string tableName)
+		{
+			ref var p = ref _cacheHolder.NewProperty();
+			p.Set(name, value);
+			p.SetTableName(tableName);
+		}
+		
+		public void NewProperty(string name, bool value, string tableName)
+		{
+			ref var p = ref _cacheHolder.NewProperty();
+			p.Set(name, value);
+			p.SetTableName(tableName);
+		}
+		
+		public void NewProperty(string name, DateTime value, string tableName)
+		{
+			ref var p = ref _cacheHolder.NewProperty();
+			p.Set(name, value);
+			p.SetTableName(tableName);
+		}
+		
+		public ref GameProperty NewProperty() => return ref _properties.NewElement();
 
         public void SaveCacheLocally()
         {
@@ -141,60 +144,55 @@ namespace Advant.Data
 		
 		private void SerializeEvents()
         {
-            Serialize(_eventsPath, _events);
+            Serialize<GameEventsPool>(_eventsPath, _events);
         }
 
         private void SerializeProperties()
         {
-            Serialize(_propsPath, _properties);
+            Serialize<GamePropertiesPool>(_propsPath, _properties);
         }
 
-        public void Serialize<T>(string filePath, SimplePool<T> data) where T : IGameData 
+        public void Serialize<T>(string filePath, T data)
         {
-            FileStream fs = null;
-
             BinaryFormatter formatter = new BinaryFormatter();
             try
             {
-				fs = new FileStream(filePath, FileMode.OpenOrCreate);
+				using var fs = new FileStream(filePath, FileMode.OpenOrCreate);
                 formatter.Serialize(fs, data);
             }
             catch (Exception e)
             {
                 Log.Info("Failed to serialize. Reason: " + e.Message);
             }
-            finally
-            {
-                fs.Close();
-            }
         }
 
-        public SimplePool<T> Deserialize<T>(string filePath) where T : IGameData
+        public T Deserialize<TPool, TGameData>(string filePath) where T : GameDataPool<TGameData>
         {
+			T result = null;
+			
             if (!File.Exists(filePath))
             {
-                return new SimplePool<T>(POOL_INITIAL_SIZE);
+                result = new T(POOL_INITIAL_SIZE);
             }
-
-            FileStream fs = null;
-            SimplePool<T> result = null;
-			BinaryFormatter formatter = null;
-            try
-            {
-				fs = new FileStream(filePath, FileMode.Open);
-                formatter = new BinaryFormatter();
-                //result = new ConcurrentQueue<T>((IEnumerable<T>)formatter.Deserialize(fs));
-				result = (SimplePool<T>)formatter.Deserialize(fs);
-            }
-			catch (Exception)
-            {
-                result = new SimplePool<T>(POOL_INITIAL_SIZE);
-            }
-            finally
-            {
-                fs.Close();
-                File.Delete(filePath);
-            }
+			else 
+			{
+				try
+				{
+					using var fs 	= new FileStream(filePath, FileMode.Open);
+					var formatter 	= new BinaryFormatter();
+				
+					result = (T)formatter.Deserialize(fs);
+				}
+				catch (Exception)
+				{
+					result = new T(POOL_INITIAL_SIZE);
+				}
+				finally
+				{
+					File.Delete(filePath);
+				}
+			}
+			
 			return result;
         }
 
@@ -206,27 +204,22 @@ namespace Advant.Data
 				if (!Application.isPlaying) return;
 #endif				
 				_sendingCancellationSource = new CancellationTokenSource();
-				// var continuationTask = Task.Delay(SENDING_INTERVAL, _sendingCancellationSource.Token)
-					// .ContinueWith(task => { });
-				// await continuationTask;
-				await UniTask.Delay(
-					TimeSpan.FromMinutes(2), 
-					false, 
-					PlayerLoopTiming.PostLateUpdate, 
-					_sendingCancellationSource.Token)
-						.SuppressCancellationThrow();
+				
+				await UniTask.Delay(TimeSpan.FromMinutes(2), false, PlayerLoopTiming.PostLateUpdate,_sendingCancellationSource.Token)
+					.SuppressCancellationThrow();
 						
 				_sendingCancellationSource = null;
 					
 				//Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 
-				int eventsBatchSize = _events.GetCurrentBusyCount();
-				int propertiesBatchSize = _properties.GetCurrentBusyCount();
+				int eventsBatchSize 		= _events.GetCurrentBusyCount();
+				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
 				
-				var eventsSending = _backend.SendToServerAsync<GameEvent>(await _events.ToJson(userId));					
-				var propertiesSending = _backend.SendToServerAsync<GameProperty>(await _properties.ToJson(userId));
+				var eventsSending 		= _backend.SendToServerAsync<GameEvent>		(await _events.ToJson(userId));					
+				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>	(await _properties.ToJson(userId));
 						
-				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded) = await UniTask.WhenAll(eventsSending, propertiesSending);
+				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded) = 
+					await UniTask.WhenAll(eventsSending, propertiesSending);
 				
 				//Debug.LogWarning("[ADVANAL] Getting results of data sending...");
 				
@@ -241,8 +234,11 @@ namespace Advant.Data
 					_properties.FreeFromBeginning(propertiesBatchSize);
 				}
 			}
-				// }
         }
+		
+				// var continuationTask = Task.Delay(SENDING_INTERVAL, _sendingCancellationSource.Token)
+					// .ContinueWith(task => { });
+				// await continuationTask;
 		
 				// bool hasPropertiesSendingSucceeded = true;
                 // bool hasEventsSendingSucceeded = true;

@@ -1,99 +1,109 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Globalization;
 using System.Text;
-using UnityEngine;
 
-namespace Advant.Data.Models 
+namespace Advant.Data.Models
 {
-    // [Serializable]
-    // internal class GameEvent : IGameData
-    // {
-        // public GameEvent(string name, DateTime eventTime, string currentAppVersion, Dictionary<string, object> parameters)
-        // {
-            // _name = name;
-            // _event_time = eventTime;
-            // _current_app_version = currentAppVersion;
-			// _parameters = new List<ParameterValue>();
-			// if (parameters != null && parameters.Count > 0)
-			// {
-				// _parameters.Capacity = parameters.Count;
-				// foreach (var item in parameters)
-				// {
-					// _parameters.Add(ParameterValue.Create(item.Key, item.Value));
-				// }
-			// }
-        // }
+[Serializable]
+internal struct GameEvent
+{
+	private int _currentCount;
 
-        // public void ToJson(long id, StringBuilder sb)
-        // {
-            // sb.Append($"{{\"user_id\":{id}, \"name\":\"{_name}\", \"event_time\":\"{_event_time.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\", \"current_app_version\":\"{_current_app_version}\", \"parameters\":"); 
-            // _parameters.ToJson(sb);
-            // sb.Append('}');
-        // }
+	private string 		_name;
+	private string 		_timestamp;
+	private Value[] 	_parameters;
 
-        // public string Name => _name;
-		// public string Table => "_" + _name;
+	public void Add(string name, int value)
+	{
+		if (_currentCount == _parameters.Length)
+			ExtendParameterPool();
+		_parameters[_currentCount++].Set(name, value);
+	}
 
-        // private string _name;
-        // private DateTime _event_time;
-        // private string _current_app_version;
-        // private List<ParameterValue> _parameters;
-    // }
+	public void Add(string name, double value)
+	{
+		if (_currentCount == _parameters.Length)
+			ExtendParameterPool();
+		_parameters[_currentCount++].Set(name, value);
+	}
 
-    // // ECS unity
-    // internal static class ParametersExtensions
-    // {
-        // public static void ToJson(this Dictionary<string, object> dict, StringBuilder sb)
-        // {
-            // sb.Append('{');
-            // if (dict != null)
-            // {
-                // foreach (var item in dict)
-                // {
-                    // string valueStr;
-                    // if (item.Value is string str) 
-                    // {
-                        // valueStr = $"\"{((string)item.Value).Replace(Environment.NewLine, @"\\n")}\"";
-                    // }
-                    // else if (item.Value is DateTime dt)
-                    // {
-                        // valueStr = $"\"{((DateTime)item.Value).ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\"";
-                    // }
-					// else if (item.Value is bool b)
-					// {
-						// valueStr = item.Value.ToString().ToLower();
-					// }
-                    // else if ((item.Value is float f || item.Value is double d) && (double)item.Value == (long)item.Value)
-                    // { 
-                        // valueStr = $"{item.Value.ToString()}.000001";
-                    // }
-					// else
-					// {
-						// valueStr = item.Value.ToString();
-					// }
+	public void Add(string name, bool value)
+	{
+		if (_currentCount == _parameters.Length)
+			ExtendParameterPool();
+		_parameters[_currentCount++].Set(name, value);
+	}
 
-                    // sb.Append($"\"{item.Key}\":{valueStr},");
-                // }
-                // sb.Remove(sb.Length - 1, 1);
-            // }
-            // sb.Append('}');
-			// //Debug.LogWarning("GameEvent JSON:\n" + sb);
-        // }
+	public void Add(string name, DateTime value)
+	{
+		if (_currentCount == _parameters.Length)
+			ExtendParameterPool();
+		_parameters[_currentCount++].Set(name, value);
+	}
+	
+	public void Add(string name, string value)
+	{
+		if (_currentCount == _parameters.Length)
+			ExtendParameterPool();
+		_parameters[_currentCount++].Set(name, value);
+	}
+
+	public void ToJson(long id, StringBuilder sb)
+	{
+		sb.Append($"{{\"user_id\":{id}, \"name\":\"{_name}\", \"event_time\":\"{_timestamp}\", \"current_app_version\":\"{Application.version}\", \"parameters\":");
+		_parameters.ToJson(sb, _currentCount);
+		sb.Append('}');
+	}
+	
+	internal void Free()
+	{
+		_currentCount = 0;
+	}
+	
+	internal void SetName(string name)
+	{
+		_name = name;
+	}
+	
+	internal void SetMaxParameterCount(int count)
+	{
+		Array.Resize(ref _parameters, count);
+	}
 		
-		// public static void ToJson(this List<ParameterValue> list, StringBuilder sb)
-		// {
-			// sb.Append('[');
-            // if (list != null && list.Count != 0)
-            // {
-                // foreach (var item in list)
-                // {
-                    // item.ToJson(sb);
-					// sb.Append(',');
-                // }
-                // sb.Remove(sb.Length - 1, 1);
-            // }
-            // sb.Append(']');
-		// }
-    // }
+	internal void SetTimestamp(DateTime timestamp)
+	{
+		_timestamp = timestamp.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture);
+	}
+		
+	private void ExtendParameterPool()
+	{
+		try
+		{
+			Array.Resize(ref _parameters, _parameters.Length * 2);
+		}
+		catch (Exception e)
+		{
+			Debug.LogError($"Cannot add more parameters to the event (new count = {_parameters.Length * 2}): {e.Message}");
+		}
+	}
+}
+
+internal static class GameEventParametersExtensions
+{
+	public static void ToJson(Value[] parameters, StringBuilder sb, int validParametersCount)
+	{
+		sb.Append('[');
+		if (parameters != null && validParametersCount != 0)
+		{
+			for (int i = 0; i < validParametersCount; ++i)
+			{
+				if (i > 0)
+					sb.Append(',');
+				parameters[i].ToJson(sb);
+			}
+		}
+		sb.Append(']');
+	}
+}
+			
 }
