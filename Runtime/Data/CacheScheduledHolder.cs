@@ -75,10 +75,9 @@ namespace Advant.Data
             _usersTable = usersTableName;
         }
 		
-		public ref GameEvent NewEvent(string eventName)
+		public ref GameEvent NewEvent()
 		{
 			ref GameEvent e = ref _events.NewElement();
-			
 			
 			if (_events.GetCurrentBusyCount() >= MAX_CACHE_COUNT)
 			{
