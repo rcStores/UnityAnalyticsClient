@@ -236,7 +236,6 @@ namespace Advant.Data
 
 		public SimplePool(int maxSize)
 		{
-			_poolCount = 0;
 			_pool = new T[maxSize];
 
 			_currentCount = 0;
@@ -255,7 +254,7 @@ namespace Advant.Data
 			try
 			{
 				Array.Resize(ref _pool, _pool.Length * 2);
-				Array.Resize(ref _indices, _freeIdxs.Length * 2);
+				Array.Resize(ref _indices, _indices.Length * 2);
 				for (int i = _currentCount; i < _indices.Length; ++i)
 				{
 					_indices[i] = i;
@@ -293,7 +292,7 @@ namespace Advant.Data
 		{			
 			for (int i = 0; i < count; ++i)
 			{
-				(indices[i], indices[_currentCount - 1 - i]) = (indices[_currentCount - 1 - i], indices[i]); // swap indices
+				(_indices[i], _indices[_currentCount - 1 - i]) = (_indices[_currentCount - 1 - i], _indices[i]); // swap indices
 			}
 			_currentCount = _currentCount - count;
 		}
