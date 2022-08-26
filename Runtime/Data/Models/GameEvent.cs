@@ -52,7 +52,7 @@ public struct GameEvent
 	public void ToJson(long id, StringBuilder sb)
 	{
 		sb.Append($"{{\"user_id\":{id}, \"name\":\"{_name}\", \"event_time\":\"{_timestamp}\", \"current_app_version\":\"{Application.version}\", \"parameters\":");
-		_parameters.ToJson(sb, _currentCount);
+		ParametersToJson(sb);
 		sb.Append('}');
 	}
 	
@@ -87,24 +87,20 @@ public struct GameEvent
 			Debug.LogError($"Cannot add more parameters to the event (new count = {_parameters.Length * 2}): {e.Message}");
 		}
 	}
-}
-
-internal static class GameEventParametersExtensions
-{
-	public static void ToJson(this Value[] parameters, StringBuilder sb, int validParametersCount)
+	
+	private void ParametersToJson(StringBuilder sb)
 	{
 		sb.Append('[');
-		if (parameters != null && validParametersCount != 0)
+		if (_parameters != null && _currentCount != 0)
 		{
-			for (int i = 0; i < validParametersCount; ++i)
+			for (int i = 0; i < _currentCount; ++i)
 			{
 				if (i > 0)
 					sb.Append(',');
-				parameters[i].ToJson(sb);
+				_parameters[i].ToJson(sb);
 			}
 		}
 		sb.Append(']');
 	}
-}
-			
+}			
 }
