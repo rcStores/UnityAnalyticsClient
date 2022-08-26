@@ -45,6 +45,8 @@ namespace Advant.Data
 
         private const string CACHED_EVENTS_FILE = "Events.dat";
         private const string CACHED_PROPERTIES_FILE = "Properties.dat";
+		
+		private const int POOL_INITIAL_SIZE = 100;
 
         private readonly string _propsPath;
         private readonly string _eventsPath;
@@ -73,29 +75,19 @@ namespace Advant.Data
             _usersTable = usersTableName;
         }
 		
-		public ref GameEvent NewEvent()
+		public ref GameEvent NewEvent(string eventName)
 		{
 			ref GameEvent e = ref _events.NewElement();
-			e.SetTimestamp(DateTime.UtcNow);
-			e.SetMaxParameterCount(10);
+			
+			
 			if (_events.GetCurrentBusyCount() >= MAX_CACHE_COUNT)
 			{
-				Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
+				//Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
 				_sendingCancellationSource?.Cancel();
 			}
-			Debug.LogWarning("[ADVANAL] RETURNING EVENT REFERENCE");
+			//Debug.LogWarning("[ADVANAL] RETURNING EVENT REFERENCE");
 			return ref e;
 		}
-		
-		// public void SendEvent(int idx)
-		// {
-			// _events.MarkAsBusy(idx);
-			// if (_events.GetCurrentBusyCount() >= MAX_CACHE_COUNT)
-			// {
-				// Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
-				// _sendingCancellationSource?.Cancel();
-			// }			
-		// }
 		
 		public ref GameProperty NewProperty()
 		{
@@ -182,7 +174,7 @@ namespace Advant.Data
         {
             if (!File.Exists(filePath))
             {
-                return new SimplePool<T>(10);
+                return new SimplePool<T>(POOL_INITIAL_SIZE);
             }
 
             FileStream fs = null;
@@ -197,7 +189,7 @@ namespace Advant.Data
             }
 			catch (Exception)
             {
-                result = new SimplePool<T>(10);
+                result = new SimplePool<T>(POOL_INITIAL_SIZE);
             }
             finally
             {
@@ -227,7 +219,7 @@ namespace Advant.Data
 						
 				_sendingCancellationSource = null;
 					
-				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
+				//Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 
 				int eventsBatchSize = _events.GetCurrentBusyCount();
 				int propertiesBatchSize = _properties.GetCurrentBusyCount();
@@ -237,16 +229,16 @@ namespace Advant.Data
 						
 				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded) = await UniTask.WhenAll(eventsSending, propertiesSending);
 				
-				Debug.LogWarning("[ADVANAL] Getting results of data sending...");
+				//Debug.LogWarning("[ADVANAL] Getting results of data sending...");
 				
 				if (hasEventsSendingSucceeded) 
 				{
-					Debug.LogWarning("[ADVANAL] Clear events");
+					//Debug.LogWarning("[ADVANAL] Clear events");
 					_events.FreeFromBeginning(eventsBatchSize);
 				}
 				if (hasPropertiesSendingSucceeded)
 				{
-					Debug.LogWarning("[ADVANAL] Clear properties");
+					//Debug.LogWarning("[ADVANAL] Clear properties");
 					_properties.FreeFromBeginning(propertiesBatchSize);
 				}
 			}
