@@ -286,10 +286,9 @@ namespace Advant.Data
 			
 			int idx = _freeIdxs[currentCount];
 			_busyIdxs[_currentCount++] = idx;
-			var ref element = ref _pool[idx];
-			element.Free();
+			_pool[idx].Free();
 
-			return ref element;
+			return ref _pool[idx];
 		}
 
 		public void FreeFromBeginning(int count)
