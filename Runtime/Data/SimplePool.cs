@@ -261,6 +261,10 @@ namespace Advant.Data
 				Array.Resize(ref _pool, _pool.Length * 2);
 				Array.Resize(ref _busyIdxs, _busyIdxs.Length * 2);
 				Array.Resize(ref _freeIdxs, _freeIdxs.Length * 2);
+				for (int i = _currentCount; i < _freeIdxs.Length; ++i)
+				{
+					_freeIdxs[i] = i;
+				}
 			}
 			catch (Exception e)
 			{
