@@ -166,7 +166,7 @@ namespace Advant.Data
             }
         }
 
-        public TPool Deserialize<TPool, TGameData>(string filePath) where T : GameDataPool<TGameData>
+        public TPool Deserialize<TPool, TGameData>(string filePath) where TPool : GameDataPool<TGameData>
         {
 			TPool result = null;
 			

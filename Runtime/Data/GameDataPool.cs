@@ -22,9 +22,9 @@ namespace Advant.Data
 		private const int MAX_GAME_EVENT_PARAMETER_COUNT 	= 10;
 		private const int SERIALIZATION_BREAKPOINT 			= 10;
 		
-		public abstract async UniTask<string> ToJsonAsync(long userId);
+		public abstract UniTask<string> ToJsonAsync(long userId);
 
-		public SimplePool(int maxSize)
+		public GameDataPool(int maxSize)
 		{
 			_pool = new T[maxSize];
 
