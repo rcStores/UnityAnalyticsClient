@@ -166,7 +166,7 @@ namespace Advant.Data
 
         public TPool Deserialize<TPool>(string filePath) where TPool : new()
         {
-			TPool result = null;
+			TPool result = default(TPool);
 			
             if (!File.Exists(filePath))
             {
@@ -213,8 +213,8 @@ namespace Advant.Data
 				int eventsBatchSize 		= _events.GetCurrentBusyCount();
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
 				
-				var eventsSending 		= _backend.SendToServerAsync<GameEvent>		(await _events.ToJson(userId));					
-				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>	(await _properties.ToJson(userId));
+				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJson(userId));					
+				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJson(userId));
 						
 				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded) = 
 					await UniTask.WhenAll(eventsSending, propertiesSending);
