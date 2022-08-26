@@ -118,7 +118,7 @@ namespace Advant.Data
 			p.SetTableName(tableName);
 		}
 		
-		public ref GameProperty NewProperty() => return ref _properties.NewElement();
+		public ref GameProperty NewProperty() => ref _properties.NewElement();
 
         public void SaveCacheLocally()
         {
