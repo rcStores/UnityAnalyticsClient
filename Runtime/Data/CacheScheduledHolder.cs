@@ -34,9 +34,10 @@ namespace Advant.Data
         private const string CACHED_EVENTS_FILE 		= "Events.dat";
         private const string CACHED_PROPERTIES_FILE 	= "Properties.dat";
 		
-		private const int SENDING_INTERVAL 		= 120000; // 2 min in ms	
-		private const int POOL_INITIAL_SIZE 	= 100;
-		private const int MAX_CACHE_COUNT 		= 10; 
+		private const int SENDING_INTERVAL 				= 120000; // 2 min in ms	
+		private const int POOL_INITIAL_SIZE 			= 100;
+		private const int MAX_CACHE_COUNT 				= 10; 
+		private const int GAME_EVENT_PARAMETER_COUNT 	= 10;
 
         public CacheScheduledHolder(string usersTableName, Backend backend)
         {
@@ -85,40 +86,38 @@ namespace Advant.Data
 		
 		public void NewProperty(string name, int value, string tableName)
 		{
-			ref var p = ref _cacheHolder.NewProperty();
+			ref var p = ref _properties.NewProperty();
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
 		
 		public void NewProperty(string name, double value, string tableName)
 		{
-			ref var p = ref _cacheHolder.NewProperty();
+			ref var p = ref _properties.NewProperty();
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
 		
 		public void NewProperty(string name, string value, string tableName)
 		{
-			ref var p = ref _cacheHolder.NewProperty();
+			ref var p = ref _properties.NewProperty();
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
 		
 		public void NewProperty(string name, bool value, string tableName)
 		{
-			ref var p = ref _cacheHolder.NewProperty();
+			ref var p = ref _properties.NewProperty();
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
 		
 		public void NewProperty(string name, DateTime value, string tableName)
 		{
-			ref var p = ref _cacheHolder.NewProperty();
+			ref var p = ref _properties.NewProperty();
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
-		
-		public ref GameProperty NewProperty() => ref _properties.NewElement();
 
         public void SaveCacheLocally()
         {

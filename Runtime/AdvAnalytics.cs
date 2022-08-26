@@ -27,8 +27,6 @@ namespace Advant
 
         private const string APP_VERSION_PREF 	= "AppVersion";
         private const string USER_ID_PREF 		= "UserId";
-		
-		private const int GAME_EVENT_PARAMETER_COUNT = 10;
 
         static AdvAnalytics()
         {

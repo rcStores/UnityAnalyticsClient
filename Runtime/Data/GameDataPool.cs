@@ -12,15 +12,15 @@ namespace Advant.Data
 	[Serializable]
 	internal abstract class GameDataPool<T>
 	{     
-		private T[] 	_pool;
-		private int[] 	_indices;		
-		private int 	_currentCount;
+		protected T[] 	_pool;
+		protected int[] 	_indices;		
+		protected int 	_currentCount;
 		
-		private StringBuilder _sb;
+		protected StringBuilder _sb;
 		
-		private const int CRITICAL_SIZE_RESTRICTION 		= 10000;
-		private const int MAX_GAME_EVENT_PARAMETER_COUNT 	= 10;
-		private const int SERIALIZATION_BREAKPOINT 			= 10;
+		protected const int CRITICAL_SIZE_RESTRICTION 		= 10000;
+		protected const int MAX_GAME_EVENT_PARAMETER_COUNT 	= 10;
+		protected const int SERIALIZATION_BREAKPOINT 			= 10;
 		
 		public abstract UniTask<string> ToJsonAsync(long userId);
 
