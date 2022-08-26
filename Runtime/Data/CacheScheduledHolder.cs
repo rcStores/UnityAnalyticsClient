@@ -213,8 +213,8 @@ namespace Advant.Data
 				int eventsBatchSize 		= _events.GetCurrentBusyCount();
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
 				
-				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJson(userId));					
-				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJson(userId));
+				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(userId));					
+				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJsonAsync(userId));
 						
 				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded) = 
 					await UniTask.WhenAll(eventsSending, propertiesSending);
