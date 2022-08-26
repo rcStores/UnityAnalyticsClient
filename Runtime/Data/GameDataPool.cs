@@ -18,19 +18,19 @@ namespace Advant.Data
 		
 		protected StringBuilder _sb;
 		
-		protected const int CRITICAL_SIZE_RESTRICTION 		= 10000;
-		protected const int MAX_GAME_EVENT_PARAMETER_COUNT 	= 10;
-		protected const int SERIALIZATION_BREAKPOINT 			= 10;
+		protected const int CRITICAL_SIZE_RESTRICTION 	= 10000;
+		protected const int INITIAL_SIZE 				= 100;
+		protected const int SERIALIZATION_BREAKPOINT 	= 10;
 		
 		public abstract UniTask<string> ToJsonAsync(long userId);
 
-		public GameDataPool(int maxSize)
+		public GameDataPool()
 		{
-			_pool = new T[maxSize];
+			_pool = new T[INITIAL_SIZE];
 
 			_currentCount = 0;
-			_indices = new int[maxSize];	
-			for (int i = 0; i < maxSize; ++i)
+			_indices = new int[INITIAL_SIZE];	
+			for (int i = 0; i < INITIAL_SIZE; ++i)
 			{
 				_indices[i] = i;
 			}

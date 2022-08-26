@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Text;
+using UnityEngine;
 
 namespace Advant.Data.Models
 {
@@ -90,7 +91,7 @@ public struct GameEvent
 
 internal static class GameEventParametersExtensions
 {
-	public static void ToJson(Value[] parameters, StringBuilder sb, int validParametersCount)
+	public static void ToJson(this Value[] parameters, StringBuilder sb, int validParametersCount)
 	{
 		sb.Append('[');
 		if (parameters != null && validParametersCount != 0)

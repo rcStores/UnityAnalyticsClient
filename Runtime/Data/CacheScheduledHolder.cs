@@ -34,8 +34,7 @@ namespace Advant.Data
         private const string CACHED_EVENTS_FILE 		= "Events.dat";
         private const string CACHED_PROPERTIES_FILE 	= "Properties.dat";
 		
-		private const int SENDING_INTERVAL 				= 120000; // 2 min in ms	
-		private const int POOL_INITIAL_SIZE 			= 100;
+		private const int SENDING_INTERVAL 				= 120000; // 2 min in ms
 		private const int MAX_CACHE_COUNT 				= 10; 
 		private const int GAME_EVENT_PARAMETER_COUNT 	= 10;
 
@@ -60,8 +59,8 @@ namespace Advant.Data
             _eventsPath 	= Path.Combine(serializationPath, CACHED_EVENTS_FILE);
             _propsPath 		= Path.Combine(serializationPath, CACHED_PROPERTIES_FILE);
 
-            _events 		= Deserialize<GameEventsPool, GameEvent>(_eventsPath);
-            _properties 	= Deserialize<GamePropertiesPool, GameProperty>(_propsPath);
+            _events 		= Deserialize<GameEventsPool>(_eventsPath);
+            _properties 	= Deserialize<GamePropertiesPool>(_propsPath);
 
             _usersTable = usersTableName;
         }
@@ -86,35 +85,35 @@ namespace Advant.Data
 		
 		public void NewProperty(string name, int value, string tableName)
 		{
-			ref var p = ref _properties.NewProperty();
+			ref var p = ref _properties.NewElement();
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
 		
 		public void NewProperty(string name, double value, string tableName)
 		{
-			ref var p = ref _properties.NewProperty();
+			ref var p = ref _properties.NewElement();
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
 		
 		public void NewProperty(string name, string value, string tableName)
 		{
-			ref var p = ref _properties.NewProperty();
+			ref var p = ref _properties.NewElement();
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
 		
 		public void NewProperty(string name, bool value, string tableName)
 		{
-			ref var p = ref _properties.NewProperty();
+			ref var p = ref _properties.NewElement();
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
 		
 		public void NewProperty(string name, DateTime value, string tableName)
 		{
-			ref var p = ref _properties.NewProperty();
+			ref var p = ref _properties.NewElement();
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
@@ -165,13 +164,13 @@ namespace Advant.Data
             }
         }
 
-        public TPool Deserialize<TPool, TGameData>(string filePath) where TPool : GameDataPool<TGameData>
+        public TPool Deserialize<TPool>(string filePath) where TPool : new()
         {
 			TPool result = null;
 			
             if (!File.Exists(filePath))
             {
-                result = new TPool(POOL_INITIAL_SIZE);
+                result = new TPool();
             }
 			else 
 			{
@@ -184,7 +183,7 @@ namespace Advant.Data
 				}
 				catch (Exception)
 				{
-					result = new TPool(POOL_INITIAL_SIZE);
+					result = new TPool();
 				}
 				finally
 				{
