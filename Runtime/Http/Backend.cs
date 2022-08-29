@@ -28,7 +28,7 @@ namespace Advant.Http
         public void SetPathBase(string pathBase)
         {
 			_getTesterEndpoint = pathBase + "/AnalyticsData/GetTester";
-			_getCountryEndpoint = "https://extreme-ip-lookup.com/json";
+			_getCountryEndpoint = "https://ipapi.co/json";
 			_putUserIdEndpoint = pathBase + "/UserIds/GetOrCreateUserId";
 			_gameDataEndpointsByType[typeof(GameProperty)] = pathBase + "/AnalyticsData/SaveProperties2";
 			_gameDataEndpointsByType[typeof(GameEvent)] = pathBase + "/AnalyticsData/SaveEvents2";
