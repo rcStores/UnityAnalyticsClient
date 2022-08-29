@@ -19,7 +19,7 @@ namespace Advant.Data
 		protected StringBuilder _sb;
 		
 		protected const int CRITICAL_SIZE_RESTRICTION 	= 10000;
-		protected const int INITIAL_SIZE 				= 100;
+		protected const int INITIAL_SIZE 				= 500;
 		protected const int SERIALIZATION_BREAKPOINT 	= 10;
 		
 		public abstract UniTask<string> ToJsonAsync(long userId);
@@ -40,17 +40,18 @@ namespace Advant.Data
 
 		public ref T NewElement()
 		{
-			if (_currentCount >= _pool.Length)
+			if (_currentCount == _pool.Length)
 			{
-				if (_pool.Length * 2 >= CRITICAL_SIZE_RESTRICTION)
-				{
-					// the server is down for too long
-					--_currentCount;
-				}
-				else
-				{
-					ExtendPool();
-				}	
+				_currentCount = 0;
+				// if (_pool.Length * 2 >= CRITICAL_SIZE_RESTRICTION)
+				// {
+					// // the server is down for too long
+					// --_currentCount;
+				// }
+				// else
+				// {
+					// ExtendPool();
+				// }	
 			}
 			
 			return ref _pool[_indices[_currentCount++]];
@@ -96,24 +97,34 @@ namespace Advant.Data
 	{
 		public override async UniTask<string> ToJsonAsync(long userId)
 		{
+			string result = null;
+			
 			if (_currentCount == 0)
-				return null;
+				return result;
 			
-			_sb.Append('[');
-			for (int i = 0; i < _currentCount; ++i)
+			try
 			{
-				if (i > 0)
-					_sb.Append(',');
-			
-				if (i % SERIALIZATION_BREAKPOINT == 0)
+				_sb.Append('[');
+				for (int i = 0; i < _currentCount; ++i)
 				{
-					await UniTask.Delay(20, false, PlayerLoopTiming.PostLateUpdate);
+					if (i > 0)
+						_sb.Append(',');
+			
+					if (i % SERIALIZATION_BREAKPOINT == 0)
+					{
+						await UniTask.Delay(20, false, PlayerLoopTiming.PostLateUpdate);
+					}
+					
+					_pool[_indices[i]].ToJson(userId, _sb);	
 				}
-				
-				_pool[_indices[i]].ToJson(userId, _sb);	
+				result = _sb.Append(']').ToString();
+				_sb.Clear();
 			}
-			string result = _sb.Append(']').ToString();
-			_sb.Clear();
+			catch (Exception e)
+			{
+				Debug.LogError("Game properties JSON serialization failed.");
+			}
+			
 			return result;
 		}
 	}
@@ -123,24 +134,33 @@ namespace Advant.Data
 	{
 		public override async UniTask<string> ToJsonAsync(long userId)
 		{
+			string result = null;
+			
 			if (_currentCount == 0)
-				return null;
+				return result;
 			
-			_sb.Append('[');
-			for (int i = 0; i < _currentCount; ++i)
-			{
-				if (i > 0)
-					_sb.Append(',');
-			
-				if (i % SERIALIZATION_BREAKPOINT == 0)
+			try
+			{	
+				_sb.Append('[');
+				for (int i = 0; i < _currentCount; ++i)
 				{
-					await UniTask.Delay(20, false, PlayerLoopTiming.PostLateUpdate);
-				}
+					if (i > 0)
+						_sb.Append(',');
+			
+					if (i % SERIALIZATION_BREAKPOINT == 0)
+					{
+						await UniTask.Delay(20, false, PlayerLoopTiming.PostLateUpdate);
+					}
 				
-				_pool[_indices[i]].ToJson(userId, _sb);	
+					_pool[_indices[i]].ToJson(userId, _sb);	
+				}
+				result = _sb.Append(']').ToString();
+				_sb.Clear();
 			}
-			string result = _sb.Append(']').ToString();
-			_sb.Clear();
+			catch (Exception e)
+			{
+				Debug.LogError("Game events JSON serialization failed.");
+			}
 			return result;
 		}
 	}

@@ -18,6 +18,7 @@ namespace Advant
 		
         private long _userId;
 		private bool _isTester;
+		private string _country;
 
         private const string USER_ID_PREF = "UserId";
         private const string APP_VERSION_PREF = "AppVersion";
@@ -63,6 +64,7 @@ namespace Advant
                 }
             }
 			_isTester = await _backend.GetTester(_userId);
+			_country = await _backend.GetCountry();
             Log.Info("Success. Start sending task");
             return result;;
         }
@@ -75,6 +77,11 @@ namespace Advant
 		public bool IsTester()
 		{
 			return _isTester;
+		}
+		
+		public string GetCountry()
+		{
+			return _country;
 		}
     }
 }

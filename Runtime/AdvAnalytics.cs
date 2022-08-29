@@ -116,9 +116,11 @@ namespace Advant
 				
                 PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
             }
-			
+			string country = _userRegistrator.GetCountry();
+			Debug.LogWarning("[ADVANT] Users' country is " + country);
 			_cacheHolder.NewProperty("cheater", false, 																	USERS_DATA_TABLE);
 			_cacheHolder.NewProperty("os", 		Application.platform == RuntimePlatform.Android ? "android" : "ios", 	USERS_DATA_TABLE);
+			_cacheHolder.NewProperty("country", country, 											USERS_DATA_TABLE);
         }	
     }
 }

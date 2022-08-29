@@ -20,6 +20,7 @@ namespace Advant.Http
         private readonly Dictionary<Type, string> _gameDataEndpointsByType = new Dictionary<Type, string>();
         
         private string _getTesterEndpoint;
+		private string _getCountryEndpoint;
         private string _putUserIdEndpoint;
 
         public long UserId { get; private set; }
@@ -27,6 +28,7 @@ namespace Advant.Http
         public void SetPathBase(string pathBase)
         {
 			_getTesterEndpoint = pathBase + "/AnalyticsData/GetTester";
+			_getCountryEndpoint = "https://extreme-ip-lookup.com/json";
 			_putUserIdEndpoint = pathBase + "/UserIds/GetOrCreateUserId";
 			_gameDataEndpointsByType[typeof(GameProperty)] = pathBase + "/AnalyticsData/SaveProperties2";
 			_gameDataEndpointsByType[typeof(GameEvent)] = pathBase + "/AnalyticsData/SaveEvents2";
@@ -68,6 +70,21 @@ namespace Advant.Http
 			Debug.LogWarning("GetTester response: " + response);
             return Convert.ToBoolean(response);
         }
+		
+		public async UniTask<bool> GetCountry()
+		{
+			string country = null;	
+			try
+			{
+				var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET));
+				country = jsonNode["country"];
+			}
+			catch (Exception e)
+			{
+				Debug.Log("Error while getting country info: " + e.Message);
+			}
+            return country;		
+		}
 
         public async UniTask<UserIdResponse> GetOrCreateUserIdAsync(Identifier dto)
         {
