@@ -71,7 +71,7 @@ namespace Advant.Http
             return Convert.ToBoolean(response);
         }
 		
-		public async UniTask<bool> GetCountry()
+		public async UniTask<string> GetCountry()
 		{
 			string country = null;	
 			try
