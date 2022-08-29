@@ -63,8 +63,9 @@ namespace Advant
 					break;
                 }
             }
-			_isTester = await _backend.GetTester(_userId);
-			_country = await _backend.GetCountry();
+			var (_isTester, _country) = await UniTask.WhenAll(
+				_backend.GetTester(_userId), 
+				_backend.GetCountry());
             Log.Info("Success. Start sending task");
             return result;;
         }
