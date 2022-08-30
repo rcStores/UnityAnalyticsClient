@@ -11,17 +11,16 @@ namespace Advant
 {
     internal class UserRegistrator
     {
-        private readonly string _userPropertiesTableName;
-        private readonly Backend _backend;
+        private readonly string 	_userPropertiesTableName;
+        private readonly Backend 	_backend;
 
-        private const int GET_ID_RETRY_INTERVAL = 15000;
-		
-        private long _userId;
-		private bool _isTester;
-		private string _country;
+        private long 	_userId;
+		private bool 	_isTester;
+		private string 	_country;
 
-        private const string USER_ID_PREF = "UserId";
-        private const string APP_VERSION_PREF = "AppVersion";
+		private const int 	GET_ID_RETRY_INTERVAL 	= 15000;
+        private const string USER_ID_PREF 			= "UserId";
+        private const string APP_VERSION_PREF 		= "AppVersion";
 
         public UserRegistrator(string userPropertiesTableName, Backend backend)
         {
@@ -70,19 +69,8 @@ namespace Advant
             return result;;
         }
 
-        public long GetUserId()
-        {
-            return _userId;
-        }
-		
-		public bool IsTester()
-		{
-			return _isTester;
-		}
-		
-		public string GetCountry()
-		{
-			return _country;
-		}
+        public long 	GetUserId() 	=> _userId;
+		public bool 	IsTester() 		=> _isTester;
+		public string 	GetCountry() 	=> _country;
     }
 }

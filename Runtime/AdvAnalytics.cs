@@ -74,6 +74,7 @@ namespace Advant
         public static void SaveCacheLocally() 							=> _cacheHolder.SaveCacheLocally();
         
         public static void SetCheater(bool value)						=> _cacheHolder.NewProperty("cheater", value, CUSTOM_PROPERTIES_TABLE);
+		public static void SetTrafficSource(string source)				=> _cacheHolder.NewProperty("traffic", source, USERS_DATA_TABLE);
 
         public static bool GetTester() 									=> _userRegistrator.IsTester();
 
