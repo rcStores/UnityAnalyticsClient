@@ -35,7 +35,7 @@ namespace Advant
             _userRegistrator 	= new UserRegistrator(USERS_DATA_TABLE, _backend);
         }
 
-        public static void Init(string endpointsPathBase)
+        public static void StartInit(string endpointsPathBase)
         {
             _backend.SetPathBase(endpointsPathBase);
 
@@ -44,7 +44,7 @@ namespace Advant
 			
 // ---------------------------------------------------------------------------------------------
 #if UNITY_EDITOR && DEBUG_ANAL
-            InitImplAsync(new Identifier(platform: "IOS", "DEBUG", "DEBUG"));
+            InitAsync(new Identifier(platform: "IOS", "DEBUG", "DEBUG"));
 // ---------------------------------------------------------------------------------------------			
 #elif UNITY_EDITOR
 			return;
@@ -55,11 +55,11 @@ namespace Advant
 			    {
 				    Log.Info("GAID couldn't be received");
 			    }
-                InitImplAsync(new Identifier(platform: "Android", idfv, gaid));
+                InitAsync(new Identifier(platform: "Android", idfv, gaid));
             });
 // ---------------------------------------------------------------------------------------------
 #elif UNITY_IOS
-            InitImplAsync(new Identifier(platform: "IOS", idfv, Device.advertisingIdentifier));
+            InitAsync(new Identifier(platform: "IOS", idfv, Device.advertisingIdentifier));
 #endif
         }
 		
@@ -78,7 +78,7 @@ namespace Advant
 
         public static bool GetTester() 									=> _userRegistrator.IsTester();
 
-        private static async void InitImplAsync(Identifier id)
+        private static async void InitAsync(Identifier id)
         {    
             SendUserDetails(await _userRegistrator.RegistrateAsync(id));
             _cacheHolder.StartSendingDataAsync(_userRegistrator.GetUserId());
