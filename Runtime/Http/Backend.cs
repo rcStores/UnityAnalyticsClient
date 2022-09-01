@@ -153,7 +153,7 @@ namespace Advant.Http
             return operation.downloadHandler.text;
         }
 
-        private UnityWebRequest CreateRequest(string path, RequestType type = RequestType.GET, string jsonData = null, int timeout)
+        private UnityWebRequest CreateRequest(string path, RequestType type = RequestType.GET, string jsonData = null, int timeout = 0)
         {
             var request = new UnityWebRequest(path, type.ToString());
 
