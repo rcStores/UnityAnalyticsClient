@@ -34,6 +34,7 @@ namespace Advant.Http
 			_putSessionCountEndpoint = "/AnalyticsData/PutSessionCount";
 			_gameDataEndpointsByType[typeof(GameProperty)] = pathBase + "/AnalyticsData/SaveProperties2";
 			_gameDataEndpointsByType[typeof(GameEvent)] = pathBase + "/AnalyticsData/SaveEvents2";
+			_gameDataEndpointsByType[typeof(Session)] = pathBase + "/AnalyticsData/SaveSession";
         }
 
         public async UniTask<bool> SendToServerAsync<T>(string data)
