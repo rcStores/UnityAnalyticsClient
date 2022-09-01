@@ -22,6 +22,7 @@ namespace Advant.Http
         private string _getTesterEndpoint;
 		private string _getCountryEndpoint;
         private string _putUserIdEndpoint;
+		private string _putSessionCountEndpoint;;
 
         public long UserId { get; private set; }
 
@@ -30,6 +31,7 @@ namespace Advant.Http
 			_getTesterEndpoint = pathBase + "/AnalyticsData/GetTester";
 			_getCountryEndpoint = "https://ipapi.co/json";
 			_putUserIdEndpoint = pathBase + "/UserIds/GetOrCreateUserId";
+			_putSessionCountEndpoint = "/AnalyticsData/PutSessionCount";
 			_gameDataEndpointsByType[typeof(GameProperty)] = pathBase + "/AnalyticsData/SaveProperties2";
 			_gameDataEndpointsByType[typeof(GameEvent)] = pathBase + "/AnalyticsData/SaveEvents2";
         }
@@ -71,12 +73,12 @@ namespace Advant.Http
             return Convert.ToBoolean(response);
         }
 		
-		public async UniTask<string> GetCountry()
+		public async UniTask<string> GetCountryAsync(int timeout)
 		{
 			string country = null;	
 			try
 			{
-				var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET));
+				var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, timeout));
 				country = jsonNode["country"];
 			}
 			catch (Exception e)
@@ -93,20 +95,34 @@ namespace Advant.Http
             {
                 var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_putUserIdEndpoint, RequestType.PUT, dto.ToJson()));
                 result.UserId = jsonNode["userId"];
-                result.IsUserNew = jsonNode["isUserNew"];
+                result.SessionCount = jsonNode["SessionCount"];
             }
             catch (Exception e)
             {
                 Log.Info(e.Message);
                 result.UserId = -1;
             }
-            return result;
-            
+            return result;         
+        }
+		
+		public async UniTask<bool> PutSessionCount(long userId, long sessionCount)
+        {
+			var result = false;
+            try
+            {
+                result = Convert.ToBoolean(
+					await ExecuteWebRequestAsync(_putSessionCountEndpoint, RequestType.PUT, $"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}"));
+            }
+            catch (Exception e)
+            {
+                Log.Info(e.Message);
+            }
+            return result;         
         }
 
-        private async UniTask<string> ExecuteWebRequestAsync(string path, RequestType type, string jsonData = null)
+        private async UniTask<string> ExecuteWebRequestAsync(string path, RequestType type, string jsonData = null, int timeout = 0)
         {
-			using var request = CreateRequest(path, type, jsonData);
+			using var request = CreateRequest(path, type, jsonData, timeout);
 			UnityWebRequest operation = null;
 			try
 			{
@@ -137,7 +153,7 @@ namespace Advant.Http
             return operation.downloadHandler.text;
         }
 
-        private UnityWebRequest CreateRequest(string path, RequestType type = RequestType.GET, string jsonData = null)
+        private UnityWebRequest CreateRequest(string path, RequestType type = RequestType.GET, string jsonData = null, int timeout)
         {
             var request = new UnityWebRequest(path, type.ToString());
 
@@ -149,6 +165,7 @@ namespace Advant.Http
 
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
+			request.timeout = timeout;
 
             return request;
         }

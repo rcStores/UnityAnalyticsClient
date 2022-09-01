@@ -19,7 +19,8 @@ namespace Advant.Data
     internal class CacheScheduledHolder
     {       
 		private CancellationTokenSource _sendingCancellationSource; 
-
+		
+		private Session _session;
 
         private readonly Backend 				_backend;		
 		private readonly GamePropertiesPool 	_properties;
@@ -117,6 +118,17 @@ namespace Advant.Data
 			p.Set(name, value);
 			p.SetTableName(tableName);
 		}
+		
+		public void NewSession(long sessionCount, int gameArea)
+		{
+			_session.SetSessionCount(sessionCount);
+			_session.SetArea(gameArea);
+		}
+		
+		public void BewSession(int gameArea)
+		{
+			_session.SetArea(gameArea);
+		}
 
         public void SaveCacheLocally()
         {
@@ -213,11 +225,20 @@ namespace Advant.Data
 				int eventsBatchSize 		= _events.GetCurrentBusyCount();
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
 				
+				var lastActivity = _session.GetLastActivty();
+				if (lastActivity != default(DateTime) && DateTime.UtcNow.Subtract(lastActivity) > TimeSpan.FromMinutes(10))
+				{
+					long sessionCount = _session.GetSessionCount() + 1;
+					_session.SetSessionCount(sessionCount);
+					await backend.PutSessionCount(userId, sessionCount);
+				}
+				
 				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(userId));					
 				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJsonAsync(userId));
+				var sessionSending		= _backend.SendToServerAsync<Session>(_session.ToJson(userId));
 						
-				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded) = 
-					await UniTask.WhenAll(eventsSending, propertiesSending);
+				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded, hasSessionSendingSucceeded) = 
+					await UniTask.WhenAll(eventsSending, propertiesSending, sessionSending);
 				
 				//Debug.LogWarning("[ADVANAL] Getting results of data sending...");
 				
@@ -231,6 +252,10 @@ namespace Advant.Data
 					//Debug.LogWarning("[ADVANAL] Clear properties");
 					_properties.FreeFromBeginning(propertiesBatchSize);
 				}
+				// if (hasSessionSendingSucceeded)
+				// {
+					// _session.MarkAsRegistered();
+				// }
 			}
         }
 		

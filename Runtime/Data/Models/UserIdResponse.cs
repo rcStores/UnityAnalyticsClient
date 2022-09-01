@@ -1,5 +1,5 @@
 internal class UserIdResponse
 {
     public long UserId { get; set; }
-    public bool IsUserNew { get; set; }
+    public long SessionCount { get; set; }
 }

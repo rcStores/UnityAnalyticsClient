@@ -11,8 +11,9 @@ namespace Advant
 {
     internal class UserRegistrator
     {
-        private readonly string 	_userPropertiesTableName;
-        private readonly Backend 	_backend;
+        private readonly string 			_userPropertiesTableName;
+        private readonly Backend 			_backend;
+		private readonly CountryDetector 	_countryDetector;
 
         private long 	_userId;
 		private bool 	_isTester;
@@ -33,11 +34,13 @@ namespace Advant
             _userPropertiesTableName = userPropertiesTableName;
             _backend = backend;
 			_userId = Convert.ToInt64(PlayerPrefs.GetInt(USER_ID_PREF, -1));
+			
+			_countryDetector = new CountryDetector(_backend);
         }
 
-        public async UniTask<bool> RegistrateAsync(Identifier identifier)
+        public async UniTask<long> RegistrateAsync(Identifier identifier)
         {
-			bool result = false;
+			long result;
             identifier.UserId = _userId;
             while (await _backend.GetOrCreateUserIdAsync(identifier) is var response)
             {
@@ -58,13 +61,13 @@ namespace Advant
                 {
                     _userId = response.UserId;
                     PlayerPrefs.SetInt(USER_ID_PREF, Convert.ToInt32(_userId));
-                    result = response.IsUserNew;
+                    result = response.SessionCount;
 					break;
                 }
             }
 			var (_isTester, _country) = await UniTask.WhenAll(
 				_backend.GetTester(_userId), 
-				_backend.GetCountry());
+				GetCountryAsync());
             Log.Info("Success. Start sending task");
             return result;;
         }
@@ -72,5 +75,14 @@ namespace Advant
         public long 	GetUserId() 	=> _userId;
 		public bool 	IsTester() 		=> _isTester;
 		public string 	GetCountry() 	=> _country;
+		
+		public async UniTask<string> GetCountryAsync(int timeout) 
+		{
+			if (_country == null)
+			{
+				_country = await _backend.GetCountryAsync(timeout);
+			}
+			return _country;
+		}
     }
 }
