@@ -13,7 +13,6 @@ namespace Advant
     {
         private readonly string 			_userPropertiesTableName;
         private readonly Backend 			_backend;
-		private readonly CountryDetector 	_countryDetector;
 
         private long 	_userId;
 		private bool 	_isTester;
