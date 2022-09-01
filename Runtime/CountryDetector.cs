@@ -13,3 +13,4 @@ internal class CountryDetector
 	{
 		_country = _backend.GetCountry(timeout);
 	}
+}

@@ -22,7 +22,7 @@ namespace Advant.Http
         private string _getTesterEndpoint;
 		private string _getCountryEndpoint;
         private string _putUserIdEndpoint;
-		private string _putSessionCountEndpoint;;
+		private string _putSessionCountEndpoint;
 
         public long UserId { get; private set; }
 
