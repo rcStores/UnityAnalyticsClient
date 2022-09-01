@@ -102,6 +102,8 @@ namespace Advant
 			// _cacheHolder.NewProperty("session_starts", DateTime.UtcNow, SESSIONS_TABLE);
 			// _cacheHolder.NewProperty("session_number", sessionCount, SESSIONS_TABLE);
 			
+			if (sessionCount == 0) return;
+			
             if (sessionCount == 1)
             {
                 Log.Info("Create properties for a new user");

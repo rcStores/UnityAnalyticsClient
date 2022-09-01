@@ -43,7 +43,7 @@ namespace Advant
             {
 #if UNITY_EDITOR
 				if (!Application.isPlaying)
-					return false;
+					return 0;
 #endif				
                 if (response.UserId == -1)
                 {
@@ -64,7 +64,7 @@ namespace Advant
             }
 			var (_isTester, _country) = await UniTask.WhenAll(
 				_backend.GetTester(_userId), 
-				GetCountryAsync());
+				GetCountryAsync(0));
             Log.Info("Success. Start sending task");
             return result;
         }
