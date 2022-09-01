@@ -125,7 +125,7 @@ namespace Advant.Data
 			_session.SetArea(gameArea);
 		}
 		
-		public void BewSession(int gameArea)
+		public void NewSession(int gameArea)
 		{
 			_session.SetArea(gameArea);
 		}
@@ -225,12 +225,12 @@ namespace Advant.Data
 				int eventsBatchSize 		= _events.GetCurrentBusyCount();
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
 				
-				var lastActivity = _session.GetLastActivty();
+				var lastActivity = _session.GetLastActivity();
 				if (lastActivity != default(DateTime) && DateTime.UtcNow.Subtract(lastActivity) > TimeSpan.FromMinutes(10))
 				{
 					long sessionCount = _session.GetSessionCount() + 1;
 					_session.SetSessionCount(sessionCount);
-					await backend.PutSessionCount(userId, sessionCount);
+					await _backend.PutSessionCount(userId, sessionCount);
 				}
 				
 				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(userId));					

@@ -33,8 +33,6 @@ namespace Advant
             _userPropertiesTableName = userPropertiesTableName;
             _backend = backend;
 			_userId = Convert.ToInt64(PlayerPrefs.GetInt(USER_ID_PREF, -1));
-			
-			_countryDetector = new CountryDetector(_backend);
         }
 
         public async UniTask<long> RegistrateAsync(Identifier identifier)
@@ -68,7 +66,7 @@ namespace Advant
 				_backend.GetTester(_userId), 
 				GetCountryAsync());
             Log.Info("Success. Start sending task");
-            return result;;
+            return result;
         }
 
         public long 	GetUserId() 	=> _userId;
