@@ -153,15 +153,15 @@ namespace Advant.Data
 		
 		private async UniTask UpdateSessionCount(long userId)
 		{
-			var session = sessions.GetCurrentSession();
+			var session = _sessions.GetCurrentSession();
 			var lastActivity = _sessions.GetLastActivity();
 			if (lastActivity != default(DateTime) && DateTime.UtcNow.Subtract(lastActivity) > TimeSpan.FromMinutes(10))
 			{
 				NewSession(
-					sessions.GetSessionCount() + 1,
-					sessions.GetArea());
+					session.GetSessionCount() + 1,
+					session.GetArea());
 				
-				await _backend.PutSessionCount(userId, _sessions.GetCurrentSession().GetSessionCount());
+				await _backend.PutSessionCount(userId, session.GetSessionCount());
 			}
 		}
 
@@ -170,7 +170,7 @@ namespace Advant.Data
 			try
 			{
 				//Debug.LogWarning("[ADVANAL] Saving cache locally");
-				RegisterActivity(ref _sessions.GetCurrentSession());
+				RegisterActivity();
 				SerializeSessions();
 				SerializeEvents();
 				SerializeProperties();
@@ -272,7 +272,7 @@ namespace Advant.Data
 				
 				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(userId));					
 				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJsonAsync(userId));
-				var sessionSending		= _backend.SendToServerAsync<Session>(_sessions.ToJson(userId));
+				var sessionSending		= _backend.SendToServerAsync<Session>(await _sessions.ToJsonAsync(userId));
 						
 				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded, hasSessionSendingSucceeded) = 
 					await UniTask.WhenAll(eventsSending, propertiesSending, sessionSending);
@@ -291,7 +291,7 @@ namespace Advant.Data
 				}
 				if (hasSessionSendingSucceeded)
 				{
-					_sessions.FreeFromBeginning(sessionssBatchSize);
+					_sessions.FreeFromBeginning(sessionsBatchSize);
 				}
 			}
         }
