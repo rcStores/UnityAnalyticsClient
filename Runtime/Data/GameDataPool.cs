@@ -57,7 +57,7 @@ namespace Advant.Data
 			return ref _pool[_indices[_currentCount++]];
 		}
 
-		public void FreeFromBeginning(int count)
+		public virtual void FreeFromBeginning(int count)
 		{
 			if (count > _pool.Length)
 				count = _pool.Length;
