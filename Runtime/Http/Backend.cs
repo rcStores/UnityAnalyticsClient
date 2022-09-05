@@ -28,13 +28,13 @@ namespace Advant.Http
 
         public void SetPathBases(string analytics, string registration)
         {
-			_getTesterEndpoint 								= registration + "/AnalyticsData/GetTester";
+			_getTesterEndpoint 								= registration + "/Registration/GetTester";
 			_getCountryEndpoint 							= "https://ipapi.co/json";
-			_putUserIdEndpoint 								= registration + "/UserIds/GetOrCreateUserId";
-			_putSessionCountEndpoint 						= registration + "/AnalyticsData/PutSessionCount";
+			_putUserIdEndpoint 								= registration + "/Registration/GetOrCreateUserId";
+			_putSessionCountEndpoint 						= registration + "/Sessions/PutSessionCount";
 			_gameDataEndpointsByType[typeof(GameProperty)]	= analytics + "/AnalyticsData/SaveProperties2";
 			_gameDataEndpointsByType[typeof(GameEvent)] 	= analytics + "/AnalyticsData/SaveEvents2";
-			_gameDataEndpointsByType[typeof(Session)] 		= analytics + "/AnalyticsData/SaveSession";
+			_gameDataEndpointsByType[typeof(Session)] 		= registration + "/Sessions/SaveSession";
         }
 
         public async UniTask<bool> SendToServerAsync<T>(string data)
@@ -96,7 +96,7 @@ namespace Advant.Http
             {
                 var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_putUserIdEndpoint, RequestType.PUT, dto.ToJson()));
                 result.UserId = jsonNode["userId"];
-                result.SessionCount = jsonNode["SessionCount"];
+                result.SessionCount = jsonNode["sessionCount"];
             }
             catch (Exception e)
             {
