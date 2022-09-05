@@ -138,7 +138,7 @@ namespace Advant.Data
 			s.SetArea(newArea);
 		}
 		
-		public async UniTask RegisterActivity(long userId, ref Session session)
+		public async UniTask RegisterActivity(long userId)
 		{
 			try 
 			{
@@ -153,15 +153,13 @@ namespace Advant.Data
 		
 		private async UniTask UpdateSessionCount(long userId)
 		{
-			if (_sessions.GetCurrentSession() == null) 
-				return UniTask.CompletedTask;
-			
-			var lastActivity = _sessions.GetCurrentSession().GetLastActivity();
+			var session = sessions.GetCurrentSession();
+			var lastActivity = _sessions.GetLastActivity();
 			if (lastActivity != default(DateTime) && DateTime.UtcNow.Subtract(lastActivity) > TimeSpan.FromMinutes(10))
 			{
 				NewSession(
-					_sessions.GetCurrentSession().GetSessionCount() + 1,
-					_sessions.GetCurrentSession().GetArea());
+					sessions.GetSessionCount() + 1,
+					sessions.GetArea());
 				
 				await _backend.PutSessionCount(userId, _sessions.GetCurrentSession().GetSessionCount());
 			}
@@ -270,7 +268,7 @@ namespace Advant.Data
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
 				int sessionsBatchSize 		= _sessions.GetCurrentBusyCount();
 				
-				RegisterActivity(userId, ref _sessions.GetCurrentSession());
+				RegisterActivity(userId);
 				
 				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(userId));					
 				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJsonAsync(userId));
