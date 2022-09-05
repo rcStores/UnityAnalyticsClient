@@ -26,15 +26,15 @@ namespace Advant.Http
 
         public long UserId { get; private set; }
 
-        public void SetPathBase(string pathBase)
+        public void SetPathBases(string analytics, string registration)
         {
-			_getTesterEndpoint = pathBase + "/AnalyticsData/GetTester";
-			_getCountryEndpoint = "https://ipapi.co/json";
-			_putUserIdEndpoint = pathBase + "/UserIds/GetOrCreateUserId";
-			_putSessionCountEndpoint = "/AnalyticsData/PutSessionCount";
-			_gameDataEndpointsByType[typeof(GameProperty)] = pathBase + "/AnalyticsData/SaveProperties2";
-			_gameDataEndpointsByType[typeof(GameEvent)] = pathBase + "/AnalyticsData/SaveEvents2";
-			_gameDataEndpointsByType[typeof(Session)] = pathBase + "/AnalyticsData/SaveSession";
+			_getTesterEndpoint 								= registration + "/AnalyticsData/GetTester";
+			_getCountryEndpoint 							= "https://ipapi.co/json";
+			_putUserIdEndpoint 								= registration + "/UserIds/GetOrCreateUserId";
+			_putSessionCountEndpoint 						= registration + "/AnalyticsData/PutSessionCount";
+			_gameDataEndpointsByType[typeof(GameProperty)]	= analytics + "/AnalyticsData/SaveProperties2";
+			_gameDataEndpointsByType[typeof(GameEvent)] 	= analytics + "/AnalyticsData/SaveEvents2";
+			_gameDataEndpointsByType[typeof(Session)] 		= analytics + "/AnalyticsData/SaveSession";
         }
 
         public async UniTask<bool> SendToServerAsync<T>(string data)

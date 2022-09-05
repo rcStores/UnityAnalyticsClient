@@ -28,12 +28,14 @@ namespace Advant.Data
 		
 		private readonly string _propsPath;
         private readonly string _eventsPath;
+		private readonly string _sessionsPath;
         private readonly string _usersTable;		
 			
 		private const string USER_ID_PREF 				= "UserId";
         private const string APP_VERSION_PREF 			= "AppVersion";
         private const string CACHED_EVENTS_FILE 		= "Events.dat";
         private const string CACHED_PROPERTIES_FILE 	= "Properties.dat";
+		private const string CACHED_SESSIONS_FILE 		= "Sessions.dat";
 		
 		private const int SENDING_INTERVAL 				= 120000; // 2 min in ms
 		private const int MAX_CACHE_COUNT 				= 10; 
@@ -59,9 +61,11 @@ namespace Advant.Data
             }
             _eventsPath 	= Path.Combine(serializationPath, CACHED_EVENTS_FILE);
             _propsPath 		= Path.Combine(serializationPath, CACHED_PROPERTIES_FILE);
+			_sessionsPath 	= Path.Combine(serializationPath, CACHED_SESSIONS_FILE);
 
             _events 		= Deserialize<GameEventsPool>(_eventsPath);
             _properties 	= Deserialize<GamePropertiesPool>(_propsPath);
+			_sessions	 	= Deserialize<GameSessionsPool>(_sessionsPath);
 
             _usersTable = usersTableName;
         }
@@ -121,13 +125,41 @@ namespace Advant.Data
 		
 		public void NewSession(long sessionCount, int gameArea)
 		{
-			_session.SetSessionCount(sessionCount);
-			_session.SetArea(gameArea);
+			ref var s = ref _sessions.NewElement();
+			s.SetSessionStart(DateTime.UtcNow);
+			s.SetSessionCount(sessionCount);
+			s.SetArea(gameArea);
 		}
 		
-		public void NewSession(int gameArea)
+		public void UpdateGameArea(int newArea)
 		{
-			_session.SetArea(gameArea);
+			ref var s = ref _sessions.GetCurrentSession();
+			s.SetArea(newArea);
+		}
+		
+		public async UniTask RegisterActivity()
+		{
+			await UpdateSessionCount();
+			ref var s = ref _sessions.GetCurrentSession();
+			s?.SetLastActivity(DateTime.UtcNow);
+		}
+		
+		private async UniTask UpdateSessionCount()
+		{
+			ref var session = ref _sessions.GetCurrentSession();
+			
+			if (session == null) 
+				return UniTask.CompletedTask;
+			
+			var lastActivity = session.GetLastActivity();
+			if (lastActivity != default(DateTime) && DateTime.UtcNow.Subtract(lastActivity) > TimeSpan.FromMinutes(10))
+			{
+				NewSession(
+					session.GetSessionCount() + 1,
+					session.GetArea());
+				
+				await _backend.PutSessionCount(userId, _sessions.GetCurrentSession().GetSessionCount());
+			}
 		}
 
         public void SaveCacheLocally()
@@ -135,6 +167,8 @@ namespace Advant.Data
 			try
 			{
 				//Debug.LogWarning("[ADVANAL] Saving cache locally");
+				RegisterActivity();
+				SerializeSessions();
 				SerializeEvents();
 				SerializeProperties();
 			}
@@ -160,6 +194,11 @@ namespace Advant.Data
         private void SerializeProperties()
         {
             Serialize<GamePropertiesPool>(_propsPath, _properties);
+        }
+		
+		private void SerializeSessions()
+        {
+            Serialize<GameSessionsPool>(_sessionsPath, _sessions);
         }
 
         public void Serialize<T>(string filePath, T data)
@@ -224,14 +263,9 @@ namespace Advant.Data
 
 				int eventsBatchSize 		= _events.GetCurrentBusyCount();
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
+				int sessionsBatchSize 		= _sessions.GetCurrentBusyCount();
 				
-				var lastActivity = _session.GetLastActivity();
-				if (lastActivity != default(DateTime) && DateTime.UtcNow.Subtract(lastActivity) > TimeSpan.FromMinutes(10))
-				{
-					long sessionCount = _session.GetSessionCount() + 1;
-					_session.SetSessionCount(sessionCount);
-					await _backend.PutSessionCount(userId, sessionCount);
-				}
+				RegisterActivity();
 				
 				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(userId));					
 				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJsonAsync(userId));
@@ -252,10 +286,10 @@ namespace Advant.Data
 					//Debug.LogWarning("[ADVANAL] Clear properties");
 					_properties.FreeFromBeginning(propertiesBatchSize);
 				}
-				// if (hasSessionSendingSucceeded)
-				// {
-					// _session.MarkAsRegistered();
-				// }
+				if (hasSessionSendingSucceeded)
+				{
+					_sessions.FreeFromBeginning(sessionssBatchSize);
+				}
 			}
         }
 		

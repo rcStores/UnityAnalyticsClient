@@ -58,7 +58,10 @@ namespace Advant.Data
 		}
 
 		public void FreeFromBeginning(int count)
-		{			
+		{
+			if (count > _pool.Length)
+				count = _pool.Length;
+			
 			for (int i = 0; i < count; ++i)
 			{
 				(_indices[i], _indices[_currentCount - 1 - i]) = (_indices[_currentCount - 1 - i], _indices[i]); // swap indices
@@ -162,6 +165,51 @@ namespace Advant.Data
 				Debug.LogError("Game events JSON serialization failed.");
 			}
 			return result;
+		}
+	}
+	
+	[Serializable]
+	internal class GameSessionsPool : GameDataPool<Session>
+	{
+		public override async UniTask<string> ToJsonAsync(long userId)
+		{
+			string result = null;
+			
+			if (_currentCount == 0)
+				return result;
+			
+			try
+			{
+				_sb.Append('[');
+				for (int i = 0; i < _currentCount; ++i)
+				{
+					if (i > 0)
+						_sb.Append(',');
+			
+					if (i % SERIALIZATION_BREAKPOINT == 0)
+					{
+						await UniTask.Delay(20, false, PlayerLoopTiming.PostLateUpdate);
+					}
+					
+					_pool[_indices[i]].ToJson(userId, _sb);	
+				}
+				result = _sb.Append(']').ToString();
+				_sb.Clear();
+			}
+			catch (Exception e)
+			{
+				Debug.LogError("Game session JSON serialization failed.");
+			}
+			
+			return result;
+		}
+		
+		public ref Session? GetCurrentSession() => _currentCount == 0? 
+			null : _pool[indices[_currentCount - 1]];
+			
+		public override void FreeFromBeginning(int count)
+		{			
+			base.FreeFromBeginning(count - 1);
 		}
 	}
 

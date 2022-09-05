@@ -35,9 +35,9 @@ namespace Advant
             _userRegistrator 	= new UserRegistrator(USERS_DATA_TABLE, _backend);
         }
 
-        public static void StartInit(string endpointsPathBase, int currentGameArea)
+        public static void StartInit(string analyticsPathBase, string registrationPathbase, int currentGameArea)
         {
-            _backend.SetPathBase(endpointsPathBase);
+            _backend.SetPathBases(analyticsPathBase, registrationPathbase);
 
             string idfv = SystemInfo.deviceUniqueIdentifier;
             Log.Info("Handling IDs");
@@ -81,7 +81,7 @@ namespace Advant
         
         public static void SetCheater(bool value)						=> _cacheHolder.NewProperty("cheater", value, CUSTOM_PROPERTIES_TABLE);
 		public static void SetTrafficSource(string source)				=> _cacheHolder.NewProperty("traffic", source, USERS_DATA_TABLE);
-		public static void SetAreaForSession(int area)					=> _cacheHolder.NewSession(area);
+		public static void SetAreaForSession(int area)					=> _cacheHolder.UpdateGameArea(area);
 
         public static bool GetTester() 									=> _userRegistrator.IsTester();
 		
