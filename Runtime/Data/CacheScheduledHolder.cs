@@ -147,7 +147,7 @@ namespace Advant.Data
 			}
 			catch (Exception e)
 			{
-				Debug,LogError("[ADVANT] RegisterActivity: " + e.Message);
+				Debug.LogError("[ADVANT] RegisterActivity: " + e.Message);
 			}
 		}
 		
