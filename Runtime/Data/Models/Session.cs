@@ -24,7 +24,7 @@ internal struct Session
 	
 	internal void ToJson(long userId, StringBuilder sb)
 	{
-		sb.Append($"{{\"UserId\":{userId}, \"Area\":\"{_area}\", \"SessionStarts\":\"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\",\"LastActivity\":\"{_lastActivity.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\", \"SessionCount\": {_sessionCount}}}");
+		sb.Append($"{{\"UserId\":{userId}, \"Area\":\"{_area}\", \"SessionStarts\":\"{_sessionStart.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\",\"LastActivity\":\"{_lastActivity.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\", \"SessionCount\": {_sessionCount}}}");
 	}
 	
 	// internal void MarkAsRegistered()
