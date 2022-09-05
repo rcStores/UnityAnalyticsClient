@@ -3,7 +3,7 @@ using System.Text;
 using System.Globalization;
 
 [Serializable]
-internal class Session
+internal struct Session
 {
 	private long _sessionCount;
 	private int _area;

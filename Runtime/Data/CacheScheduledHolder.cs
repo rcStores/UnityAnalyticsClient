@@ -144,7 +144,8 @@ namespace Advant.Data
 		{
 			try 
 			{
-				await UpdateSessionCount();
+				UpdateSessionCount();
+				await _backend.PutSessionCount(_userId, _sessions.GetCurrentSession().GetSessionCount());
 				_sessions.GetCurrentSession().SetLastActivity(DateTime.UtcNow);
 			}
 			catch (Exception e)
@@ -153,17 +154,15 @@ namespace Advant.Data
 			}
 		}
 		
-		private async UniTask UpdateSessionCount()
+		private void UpdateSessionCount()
 		{
-			var session = _sessions.GetCurrentSession();
+			ref var session = ref _sessions.GetCurrentSession();
 			var lastActivity = session.GetLastActivity();
 			if (lastActivity != default(DateTime) && DateTime.UtcNow.Subtract(lastActivity) > TimeSpan.FromMinutes(10))
 			{
 				NewSession(
 					session.GetSessionCount() + 1,
-					session.GetArea());
-				
-				await _backend.PutSessionCount(_userId, session.GetSessionCount());
+					session.GetArea());	
 			}
 		}
 
