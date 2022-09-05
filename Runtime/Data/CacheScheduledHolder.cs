@@ -21,6 +21,8 @@ namespace Advant.Data
 		private CancellationTokenSource _sendingCancellationSource; 
 		
 		private Session _session;
+		
+		private long _userId = -1;
 
         private readonly Backend 				_backend;		
 		private readonly GamePropertiesPool 	_properties;
@@ -138,7 +140,7 @@ namespace Advant.Data
 			s.SetArea(newArea);
 		}
 		
-		public async UniTask RegisterActivity(long userId)
+		public async UniTask RegisterActivity()
 		{
 			try 
 			{
@@ -151,17 +153,17 @@ namespace Advant.Data
 			}
 		}
 		
-		private async UniTask UpdateSessionCount(long userId)
+		private async UniTask UpdateSessionCount()
 		{
 			var session = _sessions.GetCurrentSession();
-			var lastActivity = _sessions.GetLastActivity();
+			var lastActivity = session.GetLastActivity();
 			if (lastActivity != default(DateTime) && DateTime.UtcNow.Subtract(lastActivity) > TimeSpan.FromMinutes(10))
 			{
 				NewSession(
 					session.GetSessionCount() + 1,
 					session.GetArea());
 				
-				await _backend.PutSessionCount(userId, session.GetSessionCount());
+				await _backend.PutSessionCount(_userId, session.GetSessionCount());
 			}
 		}
 
@@ -170,7 +172,8 @@ namespace Advant.Data
 			try
 			{
 				//Debug.LogWarning("[ADVANAL] Saving cache locally");
-				RegisterActivity();
+				if (_userId != -1)
+					RegisterActivity();
 				SerializeSessions();
 				SerializeEvents();
 				SerializeProperties();
@@ -185,7 +188,7 @@ namespace Advant.Data
         {
 			Log.Info("Start scheduler");
             Debug.Assert(id != -1);
-
+			_userId = id;
             await RunSendingLoop(id);
         }
 		
@@ -248,7 +251,7 @@ namespace Advant.Data
 			return result;
         }
 
-        private async UniTask RunSendingLoop(long userId)
+        private async UniTask RunSendingLoop()
         {
 			while (true)		
             {
@@ -268,11 +271,11 @@ namespace Advant.Data
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
 				int sessionsBatchSize 		= _sessions.GetCurrentBusyCount();
 				
-				RegisterActivity(userId);
+				RegisterActivity();
 				
-				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(userId));					
-				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJsonAsync(userId));
-				var sessionSending		= _backend.SendToServerAsync<Session>(await _sessions.ToJsonAsync(userId));
+				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(_userId));					
+				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJsonAsync(_userId));
+				var sessionSending		= _backend.SendToServerAsync<Session>(await _sessions.ToJsonAsync(_userId));
 						
 				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded, hasSessionSendingSucceeded) = 
 					await UniTask.WhenAll(eventsSending, propertiesSending, sessionSending);
