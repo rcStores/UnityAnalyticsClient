@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Globalization;
 
 [Serializable]
@@ -14,16 +15,16 @@ internal struct Session
 	internal long 		GetSessionCount()					=> _sessionCount; 		
 	
 	internal void 		SetArea(int area) 					=> _area = area;
-	internal void 		GetArea(int area) 					=> _area;
+	internal int 		GetArea() 							=> _area;
 	
 	internal void 		SetLastActivity(DateTime dateTime)	=> _lastActivity = dateTime;
 	internal DateTime	GetLastActivity() 					=> _lastActivity;
 	
-	internal void 		SetSessionStart(DateTime dateTime)	=> _lsessionStart = dateTime;
+	internal void 		SetSessionStart(DateTime dateTime)	=> _sessionStart = dateTime;
 	
-	internal string ToJson(long userId)
+	internal string ToJson(long userId, StringBuilder sb)
 	{
-		return $"{{\"UserId\":{userId}, \"Area\":\"{_area}\", \"SessionStarts\":\"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\",\"LastActivity\":\"{_lastActivity.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\", \"SessionCount\": {_sessionCount}}}";
+		sb.Append($"{{\"UserId\":{userId}, \"Area\":\"{_area}\", \"SessionStarts\":\"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\",\"LastActivity\":\"{_lastActivity.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\", \"SessionCount\": {_sessionCount}}}");
 	}
 	
 	// internal void MarkAsRegistered()

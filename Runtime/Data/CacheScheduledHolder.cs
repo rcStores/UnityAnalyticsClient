@@ -25,6 +25,7 @@ namespace Advant.Data
         private readonly Backend 				_backend;		
 		private readonly GamePropertiesPool 	_properties;
         private readonly GameEventsPool 		_events;
+		private readonly GameSessionsPool 		_sessions;
 		
 		private readonly string _propsPath;
         private readonly string _eventsPath;
@@ -137,26 +138,30 @@ namespace Advant.Data
 			s.SetArea(newArea);
 		}
 		
-		public async UniTask RegisterActivity()
+		public async UniTask RegisterActivity(long userId, ref Session session)
 		{
-			await UpdateSessionCount();
-			ref var s = ref _sessions.GetCurrentSession();
-			s?.SetLastActivity(DateTime.UtcNow);
+			try 
+			{
+				await UpdateSessionCount(userId);
+				_sessions.GetCurrentSession().SetLastActivity(DateTime.UtcNow);
+			}
+			catch (Exception e)
+			{
+				Debug,LogError("[ADVANT] RegisterActivity: " + e.Message);
+			}
 		}
 		
-		private async UniTask UpdateSessionCount()
+		private async UniTask UpdateSessionCount(long userId)
 		{
-			ref var session = ref _sessions.GetCurrentSession();
-			
-			if (session == null) 
+			if (_sessions.GetCurrentSession() == null) 
 				return UniTask.CompletedTask;
 			
-			var lastActivity = session.GetLastActivity();
+			var lastActivity = _sessions.GetCurrentSession().GetLastActivity();
 			if (lastActivity != default(DateTime) && DateTime.UtcNow.Subtract(lastActivity) > TimeSpan.FromMinutes(10))
 			{
 				NewSession(
-					session.GetSessionCount() + 1,
-					session.GetArea());
+					_sessions.GetCurrentSession().GetSessionCount() + 1,
+					_sessions.GetCurrentSession().GetArea());
 				
 				await _backend.PutSessionCount(userId, _sessions.GetCurrentSession().GetSessionCount());
 			}
@@ -167,7 +172,7 @@ namespace Advant.Data
 			try
 			{
 				//Debug.LogWarning("[ADVANAL] Saving cache locally");
-				RegisterActivity();
+				RegisterActivity(ref _sessions.GetCurrentSession());
 				SerializeSessions();
 				SerializeEvents();
 				SerializeProperties();
@@ -265,11 +270,11 @@ namespace Advant.Data
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
 				int sessionsBatchSize 		= _sessions.GetCurrentBusyCount();
 				
-				RegisterActivity();
+				RegisterActivity(userId, ref _sessions.GetCurrentSession());
 				
 				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(userId));					
 				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJsonAsync(userId));
-				var sessionSending		= _backend.SendToServerAsync<Session>(_session.ToJson(userId));
+				var sessionSending		= _backend.SendToServerAsync<Session>(_sessions.ToJson(userId));
 						
 				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded, hasSessionSendingSucceeded) = 
 					await UniTask.WhenAll(eventsSending, propertiesSending, sessionSending);
