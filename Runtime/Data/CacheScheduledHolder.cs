@@ -130,6 +130,7 @@ namespace Advant.Data
 		{
 			ref var s = ref _sessions.NewElement();
 			s.SetSessionStart(DateTime.UtcNow);
+			s.SetLastActivity(DateTime.UtcNow);
 			s.SetSessionCount(sessionCount);
 			s.SetArea(gameArea);
 		}
@@ -144,8 +145,8 @@ namespace Advant.Data
 		{
 			try 
 			{
-				UpdateSessionCount();
-				await _backend.PutSessionCount(_userId, _sessions.GetCurrentSession().GetSessionCount());
+				if (TryUpdateSessionCount())
+					await _backend.PutSessionCount(_userId, _sessions.GetCurrentSession().GetSessionCount());
 				_sessions.GetCurrentSession().SetLastActivity(DateTime.UtcNow);
 			}
 			catch (Exception e)
@@ -154,7 +155,7 @@ namespace Advant.Data
 			}
 		}
 		
-		private void UpdateSessionCount()
+		private bool TryUpdateSessionCount()
 		{
 			ref var session = ref _sessions.GetCurrentSession();
 			var lastActivity = session.GetLastActivity();
@@ -162,8 +163,10 @@ namespace Advant.Data
 			{
 				NewSession(
 					session.GetSessionCount() + 1,
-					session.GetArea());	
+					session.GetArea());
+				return true;
 			}
+			return false;
 		}
 
         public void SaveCacheLocally()
@@ -171,8 +174,6 @@ namespace Advant.Data
 			try
 			{
 				//Debug.LogWarning("[ADVANAL] Saving cache locally");
-				if (_userId != -1)
-					RegisterActivity();
 				SerializeSessions();
 				SerializeEvents();
 				SerializeProperties();
@@ -203,6 +204,8 @@ namespace Advant.Data
 		
 		private void SerializeSessions()
         {
+			if (_userId != -1)
+				RegisterActivity();
             Serialize<GameSessionsPool>(_sessionsPath, _sessions);
         }
 
