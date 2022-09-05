@@ -84,7 +84,7 @@ namespace Advant.Data
 			
 			if (_events.GetCurrentBusyCount() >= MAX_CACHE_COUNT)
 			{
-				//Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
+				Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
 				_sendingCancellationSource?.Cancel();
 			}
 			//Debug.LogWarning("[ADVANAL] RETURNING EVENT REFERENCE");
@@ -265,7 +265,7 @@ namespace Advant.Data
 						
 				_sendingCancellationSource = null;
 					
-				//Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
+				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 
 				int eventsBatchSize 		= _events.GetCurrentBusyCount();
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
@@ -280,20 +280,21 @@ namespace Advant.Data
 				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded, hasSessionSendingSucceeded) = 
 					await UniTask.WhenAll(eventsSending, propertiesSending, sessionSending);
 				
-				//Debug.LogWarning("[ADVANAL] Getting results of data sending...");
+				Debug.LogWarning("[ADVANAL] Getting results of data sending...");
 				
 				if (hasEventsSendingSucceeded) 
 				{
-					//Debug.LogWarning("[ADVANAL] Clear events");
+					Debug.LogWarning("[ADVANAL] Clear events");
 					_events.FreeFromBeginning(eventsBatchSize);
 				}
 				if (hasPropertiesSendingSucceeded)
 				{
-					//Debug.LogWarning("[ADVANAL] Clear properties");
+					Debug.LogWarning("[ADVANAL] Clear properties");
 					_properties.FreeFromBeginning(propertiesBatchSize);
 				}
 				if (hasSessionSendingSucceeded)
 				{
+					Debug.LogWarning("[ADVANAL] Clear sessions");
 					_sessions.FreeFromBeginning(sessionsBatchSize);
 				}
 			}
