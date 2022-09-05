@@ -144,7 +144,7 @@ namespace Advant.Data
 		{
 			try 
 			{
-				await UpdateSessionCount(userId);
+				await UpdateSessionCount();
 				_sessions.GetCurrentSession().SetLastActivity(DateTime.UtcNow);
 			}
 			catch (Exception e)
@@ -189,7 +189,7 @@ namespace Advant.Data
 			Log.Info("Start scheduler");
             Debug.Assert(id != -1);
 			_userId = id;
-            await RunSendingLoop(id);
+            await RunSendingLoop();
         }
 		
 		private void SerializeEvents()
