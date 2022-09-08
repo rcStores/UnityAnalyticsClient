@@ -164,6 +164,7 @@ namespace Advant.Data
 			{
 				Debug.LogError("Game events JSON serialization failed.");
 			}
+			Debug.LogWarning("[ADVANT] Events in JSON:\n " + result);
 			return result;
 		}
 	}
