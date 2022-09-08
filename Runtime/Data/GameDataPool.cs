@@ -140,7 +140,10 @@ namespace Advant.Data
 			string result = null;
 			
 			if (_currentCount == 0)
+			{
+				Debug.LogWarning("[ADVANT] empty events pool");
 				return result;
+			}
 			
 			try
 			{	
