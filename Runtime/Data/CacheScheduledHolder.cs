@@ -21,9 +21,9 @@ namespace Advant.Data
 		private CancellationTokenSource 	_sendingCancellationSource; 
 		private long 						_userId = -1;
 		
-		private List<int> 					_includedGlobals				= new List<int>();
+		private HashSet<int> 				_excludedGlobals				= new HashSet<int>();
 		private List<Value> 				_globalEventParams				= new List<Value>();
-		private Dictionary<string, int>		_globalEventsIdxsByEventName	= new Dictionary<string, int>();
+		private Dictionary<string, int>		_indicesOfGlobalsByEventName	= new Dictionary<string, int>();
 
         private readonly Backend 				_backend;		
 		private readonly GamePropertiesPool 	_properties;
@@ -73,16 +73,15 @@ namespace Advant.Data
 
             _usersTable = usersTableName;
 			
-			_includedGlobals.Capacity 	= GAME_EVENT_PARAMETER_COUNT;
 			_globalEventParams.Capacity = GAME_EVENT_PARAMETER_COUNT;
         }
 		
 		public ref GameEvent NewEvent(string eventName, params string[] globalsLookupSource)
 		{
-			foreach (var param in globalsLookupSource)
+			foreach (var paramName in globalsLookupSource)
 			{
-				if (!_globalEventParams.Contains(param))
-					_includedGlobals.Add(_globalEventsIdxsByEventName[param]);
+				if (_indicesOfGlobalsByEventName.TryGetValue(paramName, out int idx))
+					_excludedGlobals.Add(idx);
 			}
 			return ref NewEventImpl(eventName);
 		}
@@ -98,12 +97,15 @@ namespace Advant.Data
 			e.SetMaxParameterCount(GAME_EVENT_PARAMETER_COUNT);
 			e.SetName(eventName);
 			
-			foreach (var idx in _includedGlobals)
+			foreach (int i =0; i < _globalEventParams; ++i)
 			{
-				ref var p = ref _globalEventParams[idx];
-				e.Add(p.Name, p.Data, p.Type);
+				if (!_excludedGlobals.Contains(i))
+				{
+					ref var p = ref _globalEventParams[idx];
+					e.Add(p.Name, p.Data, p.Type);
+				}
 			}
-			_includedGlobals.Clear();
+			_excludedGlobals.Clear();
 			
 			if (_events.GetCurrentBusyCount() >= MAX_CACHE_COUNT)
 			{
