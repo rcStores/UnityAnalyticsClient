@@ -53,7 +53,7 @@ public struct GameEvent
 	{
 		if (_currentCount == _parameters.Length)
 			ExtendParameterPool();
-		_parameters[_currentCount++].Set(v.Name, v.Value, v.Type);
+		_parameters[_currentCount++].Set(v.Name, v.Data, v.Type);
 	}
 
 	public void ToJson(long id, StringBuilder sb)

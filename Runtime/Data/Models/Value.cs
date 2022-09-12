@@ -12,7 +12,7 @@ internal struct Value
 	}
 	
 	public string Name { get => _name; }
-	public string Value { get => _value; }
+	public string Data { get => _value; }
 	public EValueType Type { get => _type; }
 
 	private string _name;
