@@ -83,7 +83,7 @@ namespace Advant.Data
 			e.SetMaxParameterCount(GAME_EVENT_PARAMETER_COUNT);
 			e.SetName(eventName);
 			
-			foreach (ref var item in _globalEventParameters)
+			foreach (var item in _globalEventParameters)
 			{
 				if (excludeGlobals != null && !excludeGlobals.Contains(item.Key))
 					e.Add(item.Value.Name, item.Value.Data, item.Value.Type);
@@ -159,28 +159,28 @@ namespace Advant.Data
 		{
 			var param = new Value();
 			param.Set(name, value);
-			_globalEventParameters.Add(param);
+			_globalEventParameters[name] = param;
 		}
 		
 		public void AddGlobalEventParameter(string name, bool value)
 		{
 			var param = new Value();
 			param.Set(name, value);
-			_globalEventParameters.Add(param);
+			_globalEventParameters[name] = param;
 		}
 		
 		public void AddGlobalEventParameter(string name, string value)
 		{
 			var param = new Value();
 			param.Set(name, value);
-			_globalEventParameters.Add(param);
+			_globalEventParameters[name] = param;
 		}
 		
 		public void AddGlobalEventParameter(string name, DateTime value)
 		{
 			var param = new Value();
 			param.Set(name, value);
-			_globalEventParameters.Add(param);
+			_globalEventParameters[name] = param;
 		}
 		
 		public async UniTask RegisterActivity()
@@ -188,8 +188,8 @@ namespace Advant.Data
 			try 
 			{
 				if (TryUpdateSessionCount())
-					await _backend.PutSessionCount(_userId, _sessions.GetCurrentSession().GetSessionCount());
-				_sessions.GetCurrentSession().SetLastActivity(DateTime.UtcNow);
+					await _backend.PutSessionCount(_userId, _sessions.GetCurrentSession().SessionCount);
+				_sessions.GetCurrentSession().LastActivity = DateTime.UtcNow;
 			}
 			catch (Exception e)
 			{

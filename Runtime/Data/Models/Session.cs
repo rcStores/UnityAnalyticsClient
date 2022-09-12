@@ -8,7 +8,7 @@ internal struct Session
 	public DateTime SessionStart 	{ get; set; }
 	public DateTime	LastActivity 	{ get; set; }
 	public int 		Area 			{ get; set; }
-	public int 		SessionCount	{ get; set; }
+	public long 	SessionCount	{ get; set; }
 	public string 	AbMode 			{ get; set; }
 	
 	internal void ToJson(long userId, StringBuilder sb)
