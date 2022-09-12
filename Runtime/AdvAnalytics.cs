@@ -76,8 +76,9 @@ namespace Advant
         }
 		
 		public static ref GameEvent NewEvent(string eventName,
-											 params string[] excludeGlobals = null) 
+											 params string[] excludeGlobals) 
 																		=> ref _cacheHolder.NewEvent(eventName, excludeGlobals);
+		public static ref GameEvent NewEvent(string eventName) 			=> ref _cacheHolder.NewEvent(eventName);																
 		
 		public static void SendProperty(string name, int value)			=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
 		public static void SendProperty(string name, double value)		=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		

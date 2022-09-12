@@ -71,7 +71,10 @@ namespace Advant.Data
             _usersTable = usersTableName;
         }
 		
-		public ref GameEvent NewEvent(string eventName, params string[] excludeGlobals)
+		public ref GameEvent NewEvent(string eventName, params string[] excludeGlobals)	=> ref NewEventImpl(eventName, excludeGlobals);
+		public ref GameEvent NewEvent(string eventName)									=> ref NewEventImpl(eventName);
+		
+		private ref GameEvent NewEventImpl(string eventName, string[] excludeGlobals = null)
 		{
 			ref GameEvent e = ref _events.NewElement();
 			
