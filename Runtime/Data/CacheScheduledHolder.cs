@@ -20,7 +20,7 @@ namespace Advant.Data
     {       
 		private CancellationTokenSource 	_sendingCancellationSource; 
 		private long 						_userId = -1;
-		private Dictionary<string, Value>	_globalEventParameters = new Dictionary<string, Value>();
+		internal Dictionary<string, Value>	_globalEventParameters = new Dictionary<string, Value>();
 
         private readonly Backend 				_backend;		
 		private readonly GamePropertiesPool 	_properties;
