@@ -76,8 +76,8 @@ namespace Advant
         }
 		
 		public static ref GameEvent NewEvent(string eventName,
-											 params string[] excludeGlobals) 
-																		=> ref _cacheHolder.NewEvent(eventName, excludeGlobals);
+											 params string[] globalsLookupSource) 
+																		=> ref _cacheHolder.NewEvent(eventName, globalsLookupSource);
 		public static ref GameEvent NewEvent(string eventName) 			=> ref _cacheHolder.NewEvent(eventName);																
 		
 		public static void SendProperty(string name, int value)			=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
@@ -97,11 +97,11 @@ namespace Advant
 		// In seconds. Note: The set timeout may apply to each URL redirect on Android which can result in a longer response.
 		public static async Task<string> GetCountryAsync(int timeout = 0) 	=> await _userRegistrator.GetCountryAsync(timeout);
 		
-		public static void AddGlobalEventParameter(string name, int value) 		=> _cacheHolder.AddGlobalEventParameter(name, value);
-		public static void AddGlobalEventParameter(string name, double value)	=> _cacheHolder.AddGlobalEventParameter(name, value);
-		public static void AddGlobalEventParameter(string name, bool value) 	=> _cacheHolder.AddGlobalEventParameter(name, value);
-		public static void AddGlobalEventParameter(string name, DateTime value)	=> _cacheHolder.AddGlobalEventParameter(name, value);
-		public static void AddGlobalEventParameter(string name, string value) 	=> _cacheHolder.AddGlobalEventParameter(name, value);
+		public static void SetGlobalEventParam(string name, int value) 		=> _cacheHolder.SetGlobalEventParameter(name, value);
+		public static void SetGlobalEventParam(string name, double value)	=> _cacheHolder.SetGlobalEventParameter(name, value);
+		public static void SetGlobalEventParam(string name, bool value) 	=> _cacheHolder.SetGlobalEventParameter(name, value);
+		public static void SetGlobalEventParam(string name, DateTime value)	=> _cacheHolder.SetGlobalEventParameter(name, value);
+		public static void SetGlobalEventParam(string name, string value) 	=> _cacheHolder.SetGlobalEventParameter(name, value);
 		
 		private static async void InitAsync(Identifier id, int currentGameArea, string abMode)
         {    

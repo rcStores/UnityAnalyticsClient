@@ -20,7 +20,10 @@ namespace Advant.Data
     {       
 		private CancellationTokenSource 	_sendingCancellationSource; 
 		private long 						_userId = -1;
-		internal Dictionary<string, Value>	_globalEventParameters = new Dictionary<string, Value>();
+		
+		private List<Value> 				_includedGlobals				= new List<string>();
+		private List<Value> 				_globalEventParams				= new List<string>();
+		private Dictionary<string, int>		_globalEventsIdxsByEventName	= new Dictionary<string, int>();
 
         private readonly Backend 				_backend;		
 		private readonly GamePropertiesPool 	_properties;
@@ -69,12 +72,23 @@ namespace Advant.Data
 			_sessions	 	= Deserialize<GameSessionsPool>(_sessionsPath);
 
             _usersTable = usersTableName;
+			
+			_includedGlobals.Capacity = 10;
         }
 		
-		public ref GameEvent NewEvent(string eventName, params string[] excludeGlobals)	=> ref NewEventImpl(eventName, excludeGlobals);
-		public ref GameEvent NewEvent(string eventName)									=> ref NewEventImpl(eventName);
+		public ref GameEvent NewEvent(string eventName, params string[] globalsLookupSource)
+		{
+			foreach (var param in globalsLookupSource)
+			{
+				if (!_globalEventParams.Contains(param))
+					_includedGlobals.Add(_globalEventsIdxsByEventName[param]);
+			}
+			return ref NewEventImpl(eventName);
+		}
 		
-		private ref GameEvent NewEventImpl(string eventName, string[] excludeGlobals = null)
+		public ref GameEvent NewEvent(string eventName) => ref NewEventImpl(eventName);
+		
+		private ref GameEvent NewEventImpl(string eventName)
 		{
 			ref GameEvent e = ref _events.NewElement();
 			
@@ -83,11 +97,12 @@ namespace Advant.Data
 			e.SetMaxParameterCount(GAME_EVENT_PARAMETER_COUNT);
 			e.SetName(eventName);
 			
-			foreach (var item in _globalEventParameters)
+			foreach (var idx in _includedGlobals)
 			{
-				if (excludeGlobals != null && !excludeGlobals.Contains(item.Key))
-					e.Add(item.Value.Name, item.Value.Data, item.Value.Type);
+				ref var p = ref _globalEventParams[idx];
+				e.Add(p.Name, p.Data, p.Type);
 			}
+			_includedGlobals.Clear();
 			
 			if (_events.GetCurrentBusyCount() >= MAX_CACHE_COUNT)
 			{
@@ -148,39 +163,79 @@ namespace Advant.Data
 			 _sessions.GetCurrentSession().Area = newArea;
 		}
 		
-		public void AddGlobalEventParameter(string name, int value)
+		public void SetGlobalEventParam(string name, int value)
 		{
-			var param = new Value();
-			param.Set(name, value);
-			_globalEventParameters[name] = param;
+			if (!_globalEventsIdxsByEventName.TryGetValue(name, out int idx))
+			{
+				var param = new Value();
+				param.Set(name, value);
+				_globalEventParams.Add(param);
+				_globalEventsIdxsByEventName[name] = _globalEventParam.Count - 1;
+			}
+			else
+			{
+				_globalEventParams[idx].Set(name, value);
+			}
 		}
 		
-		public void AddGlobalEventParameter(string name, double value)
+		public void SetGlobalEventParam(string name, double value)
 		{
-			var param = new Value();
-			param.Set(name, value);
-			_globalEventParameters[name] = param;
+			if (!_globalEventsIdxsByEventName.TryGetValue(name, out int idx))
+			{
+				var param = new Value();
+				param.Set(name, value);
+				_globalEventParams.Add(param);
+				_globalEventsIdxsByEventName[name] = _globalEventParam.Count - 1;
+			}
+			else
+			{
+				_globalEventParams[idx].Set(name, value);
+			}
 		}
 		
-		public void AddGlobalEventParameter(string name, bool value)
+		public void SetGlobalEventParam(string name, bool value)
 		{
-			var param = new Value();
-			param.Set(name, value);
-			_globalEventParameters[name] = param;
+			if (!_globalEventsIdxsByEventName.TryGetValue(name, out int idx))
+			{
+				var param = new Value();
+				param.Set(name, value);
+				_globalEventParams.Add(param);
+				_globalEventsIdxsByEventName[name] = _globalEventParam.Count - 1;
+			}
+			else
+			{
+				_globalEventParams[idx].Set(name, value);
+			}
 		}
 		
-		public void AddGlobalEventParameter(string name, string value)
+		public void SetGlobalEventParam(string name, string value)
 		{
-			var param = new Value();
-			param.Set(name, value);
-			_globalEventParameters[name] = param;
+			if (!_globalEventsIdxsByEventName.TryGetValue(name, out int idx))
+			{
+				var param = new Value();
+				param.Set(name, value);
+				_globalEventParams.Add(param);
+				_globalEventsIdxsByEventName[name] = _globalEventParam.Count - 1;
+			}
+			else
+			{
+				_globalEventParams[idx].Set(name, value);
+			}
 		}
 		
-		public void AddGlobalEventParameter(string name, DateTime value)
+		public void SetGlobalEventParam(string name, DateTime value)
 		{
-			var param = new Value();
-			param.Set(name, value);
-			_globalEventParameters[name] = param;
+			if (!_globalEventsIdxsByEventName.TryGetValue(name, out int idx))
+			{
+				var param = new Value();
+				param.Set(name, value);
+				_globalEventParams.Add(param);
+				_globalEventsIdxsByEventName[name] = _globalEventParam.Count - 1;
+			}
+			else
+			{
+				_globalEventParams[idx].Set(name, value);
+			}
 		}
 		
 		public async UniTask RegisterActivity()
