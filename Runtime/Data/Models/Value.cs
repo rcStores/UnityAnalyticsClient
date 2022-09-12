@@ -4,13 +4,13 @@ using System.Text;
 
 namespace Advant.Data.Models
 {
+internal enum EValueType
+{
+	Int, Float, Double, String, Bool, DateTime
+}
+
 internal struct Value
 {
-	public enum EValueType
-	{
-		Int, Float, Double, String, Bool, DateTime
-	}
-	
 	public string Name { get => _name; }
 	public string Data { get => _value; }
 	public EValueType Type { get => _type; }
