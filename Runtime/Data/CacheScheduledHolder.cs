@@ -86,7 +86,7 @@ namespace Advant.Data
 			foreach (ref var item in _globalEventParameters)
 			{
 				if (excludeGlobals != null && !excludeGlobals.Contains(item.Key))
-					e.Add(ref item.Value);
+					e.Add(item.Value.Name, item.Value.Data, item.Value.Type);
 			}
 			
 			if (_events.GetCurrentBusyCount() >= MAX_CACHE_COUNT)

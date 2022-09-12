@@ -49,11 +49,11 @@ public struct GameEvent
 		_parameters[_currentCount++].Set(name, value);
 	}
 	
-	public void Add(ref Value v)
+	public void Add(string name, string value, Value.EValueType type)
 	{
 		if (_currentCount == _parameters.Length)
 			ExtendParameterPool();
-		_parameters[_currentCount++].Set(v.Name, v.Data, v.Type);
+		_parameters[_currentCount++].Set(name, value, type);
 	}
 
 	public void ToJson(long id, StringBuilder sb)
