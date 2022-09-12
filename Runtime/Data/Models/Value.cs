@@ -61,6 +61,7 @@ internal struct Value
 		_name = name;
 		_value = value;
 		_type = type;
+	}
 
 	public void ToJson(StringBuilder sb)
 	{
