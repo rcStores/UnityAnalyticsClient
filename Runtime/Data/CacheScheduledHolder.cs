@@ -97,7 +97,7 @@ namespace Advant.Data
 			e.SetMaxParameterCount(GAME_EVENT_PARAMETER_COUNT);
 			e.SetName(eventName);
 			
-			foreach (int i = 0; i < _globalEventParams.Count; ++i)
+			for (int i = 0; i < _globalEventParams.Count; ++i)
 			{
 				if (!_excludedGlobals.Contains(i))
 				{
