@@ -10,6 +10,10 @@ internal struct Value
 	{
 		Int, Float, Double, String, Bool, DateTime
 	}
+	
+	public string Name { get => _name; }
+	public string Value { get => _value; }
+	public EValueType Type { get => _type; }
 
 	private string _name;
 	private string _value;
@@ -51,6 +55,12 @@ internal struct Value
 			$"\"{value.Replace(Environment.NewLine, @"\\n")}\"";
 		_type = EValueType.String;
 	}
+	
+	public void Set(string name, string value, EValueType type)
+	{
+		_name = name;
+		_value = value;
+		_type = type;
 
 	public void ToJson(StringBuilder sb)
 	{

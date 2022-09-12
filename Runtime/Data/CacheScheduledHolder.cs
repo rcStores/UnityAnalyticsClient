@@ -18,11 +18,9 @@ namespace Advant.Data
 {
     internal class CacheScheduledHolder
     {       
-		private CancellationTokenSource _sendingCancellationSource; 
-		
-		private Session _session;
-		
-		private long _userId = -1;
+		private CancellationTokenSource 	_sendingCancellationSource; 
+		private long 						_userId = -1;
+		private Dictionary<string, Value>	_globalEventParameters = new Dictionary<string, Value>();
 
         private readonly Backend 				_backend;		
 		private readonly GamePropertiesPool 	_properties;
@@ -73,7 +71,7 @@ namespace Advant.Data
             _usersTable = usersTableName;
         }
 		
-		public ref GameEvent NewEvent(string eventName)
+		public ref GameEvent NewEvent(string eventName, params string[] excludeGlobals)
 		{
 			ref GameEvent e = ref _events.NewElement();
 			
@@ -81,6 +79,12 @@ namespace Advant.Data
 			e.SetTimestamp(DateTime.UtcNow);
 			e.SetMaxParameterCount(GAME_EVENT_PARAMETER_COUNT);
 			e.SetName(eventName);
+			
+			foreach (ref var item in _globalEventParameters)
+			{
+				if (excludeGlobals != null && !excludeGlobals.Contains(item.Key))
+					e.Add(ref item.Value);
+			}
 			
 			if (_events.GetCurrentBusyCount() >= MAX_CACHE_COUNT)
 			{
@@ -126,19 +130,54 @@ namespace Advant.Data
 			p.SetTableName(tableName);
 		}
 		
-		public void NewSession(long sessionCount, int gameArea)
+		public void NewSession(long sessionCount, int gameArea, string abMode)
 		{
-			ref var s = ref _sessions.NewElement();
-			s.SetSessionStart(DateTime.UtcNow);
-			s.SetLastActivity(DateTime.UtcNow);
-			s.SetSessionCount(sessionCount);
-			s.SetArea(gameArea);
+			ref var s 		= ref _sessions.NewElement();
+			s.SessionStart	= DateTime.UtcNow;
+			s.LastActivity	= DateTime.UtcNow;
+			s.SessionCount 	= sessionCount;
+			s.Area 			= gameArea;
+			s.AbMode 		= abMode;
 		}
 		
 		public void UpdateGameArea(int newArea)
 		{
-			ref var s = ref _sessions.GetCurrentSession();
-			s.SetArea(newArea);
+			 _sessions.GetCurrentSession().Area = newArea;
+		}
+		
+		public void AddGlobalEventParameter(string name, int value)
+		{
+			var param = new Value();
+			param.Set(name, value);
+			_globalEventParameters[name] = param;
+		}
+		
+		public void AddGlobalEventParameter(string name, double value)
+		{
+			var param = new Value();
+			param.Set(name, value);
+			_globalEventParameters.Add(param);
+		}
+		
+		public void AddGlobalEventParameter(string name, bool value)
+		{
+			var param = new Value();
+			param.Set(name, value);
+			_globalEventParameters.Add(param);
+		}
+		
+		public void AddGlobalEventParameter(string name, string value)
+		{
+			var param = new Value();
+			param.Set(name, value);
+			_globalEventParameters.Add(param);
+		}
+		
+		public void AddGlobalEventParameter(string name, DateTime value)
+		{
+			var param = new Value();
+			param.Set(name, value);
+			_globalEventParameters.Add(param);
 		}
 		
 		public async UniTask RegisterActivity()
@@ -158,12 +197,12 @@ namespace Advant.Data
 		private bool TryUpdateSessionCount()
 		{
 			ref var session = ref _sessions.GetCurrentSession();
-			var lastActivity = session.GetLastActivity();
-			if (lastActivity != default(DateTime) && DateTime.UtcNow.Subtract(lastActivity) > TimeSpan.FromMinutes(10))
+			if (session.LastActivity != default(DateTime) && DateTime.UtcNow.Subtract(session.LastActivity) > TimeSpan.FromMinutes(10))
 			{
 				NewSession(
-					session.GetSessionCount() + 1,
-					session.GetArea());
+					session.SessionCount + 1,
+					session.Area,
+					session.AbMode);
 				return true;
 			}
 			return false;
@@ -401,4 +440,17 @@ namespace Advant.Data
 				// Volatile.Write(ref _areEventsProcessing, false);
             // }	
     }
+	
+	public static class ParametersArrayExtension
+	{
+		public static bool Contains(this string[] arr, string value)
+		{
+			foreach (var p in arr)
+			{
+				if (p == value)
+					return true;
+			}
+			return false;
+		}
+	}
 }

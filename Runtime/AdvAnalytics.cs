@@ -35,7 +35,10 @@ namespace Advant
             _userRegistrator 	= new UserRegistrator(USERS_DATA_TABLE, _backend);
         }
 
-        public static void StartInit(string analyticsPathBase, string registrationPathbase, int currentGameArea)
+        public static void StartInit(string analyticsPathBase,
+									 string registrationPathbase, 
+									 int 	currentGameArea, 
+									 string	abMode)
         {
             _backend.SetPathBases(analyticsPathBase, registrationPathbase);
 
@@ -46,7 +49,8 @@ namespace Advant
 #if UNITY_EDITOR && DEBUG_ANAL
             InitAsync(
 				new Identifier(platform: "IOS", "DEBUG", "DEBUG"), 
-				currentGameArea);
+				currentGameArea,
+				abMode);
 // ---------------------------------------------------------------------------------------------			
 #elif UNITY_EDITOR
 			return;
@@ -59,17 +63,21 @@ namespace Advant
 			    }
                 InitAsync(
 					new Identifier(platform: "Android", idfv, gaid), 
-					currentGameArea);
+					currentGameArea,
+					abMode);
             });
 // ---------------------------------------------------------------------------------------------
 #elif UNITY_IOS
             InitAsync(
 				new Identifier(platform: "IOS", idfv, Device.advertisingIdentifier), 
-				currentGameArea);
+				currentGameArea,
+				abMode);
 #endif
         }
 		
-		public static ref GameEvent NewEvent(string eventName) 			=> ref _cacheHolder.NewEvent(eventName);
+		public static ref GameEvent NewEvent(string eventName,
+											 params string[] excludeGlobals = null) 
+																		=> ref _cacheHolder.NewEvent(eventName, excludeGlobals);
 		
 		public static void SendProperty(string name, int value)			=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
 		public static void SendProperty(string name, double value)		=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
@@ -87,17 +95,26 @@ namespace Advant
 		
 		// In seconds. Note: The set timeout may apply to each URL redirect on Android which can result in a longer response.
 		public static async Task<string> GetCountryAsync(int timeout = 0) 	=> await _userRegistrator.GetCountryAsync(timeout);
-
-        private static async void InitAsync(Identifier id, int currentGameArea)
+		
+		public static void AddGlobalEventParameter(string name, ref int value) 		=> _cacheHolder.AddGlobalEventParameter(name, ref value);
+		public static void AddGlobalEventParameter(string name, ref double value)	=> _cacheHolder.AddGlobalEventParameter(name, ref value);
+		public static void AddGlobalEventParameter(string name, ref bool value) 	=> _cacheHolder.AddGlobalEventParameter(name, ref value);
+		public static void AddGlobalEventParameter(string name, ref DateTime value)	=> _cacheHolder.AddGlobalEventParameter(name, ref value);
+		public static void AddGlobalEventParameter(string name, ref string value) 	=> _cacheHolder.AddGlobalEventParameter(name, ref value);
+		
+		private static async void InitAsync(Identifier id, int currentGameArea, string abMode)
         {    
-            SendUserDetails(await _userRegistrator.RegistrateAsync(id), currentGameArea);
+            SendUserDetails(
+				await _userRegistrator.RegistrateAsync(id), 
+				currentGameArea, 
+				abMode);
             _cacheHolder.StartSendingDataAsync(_userRegistrator.GetUserId());
         }
         
-        private static void SendUserDetails(long sessionCount, int currentGameArea)
+        private static void SendUserDetails(long sessionCount, int currentGameArea, string abMode)
         {
 			_cacheHolder.NewEvent("logged_in");
-			_cacheHolder.NewSession(sessionCount, currentGameArea);
+			_cacheHolder.NewSession(sessionCount, currentGameArea, abMode);
 			
 			// _cacheHolder.NewProperty("session_starts", DateTime.UtcNow, SESSIONS_TABLE);
 			// _cacheHolder.NewProperty("session_number", sessionCount, SESSIONS_TABLE);
