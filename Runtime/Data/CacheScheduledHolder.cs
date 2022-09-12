@@ -101,7 +101,6 @@ namespace Advant.Data
 			{
 				if (!_excludedGlobals.Contains(i))
 				{
-					ref var p = ref _globalEventParams[i];
 					e.Add(_globalEventParams[i].Name, 
 						  _globalEventParams[i].Data, 
 						  _globalEventParams[i].Type);
