@@ -21,8 +21,8 @@ namespace Advant.Data
 		private CancellationTokenSource 	_sendingCancellationSource; 
 		private long 						_userId = -1;
 		
-		private List<Value> 				_includedGlobals				= new List<string>();
-		private List<Value> 				_globalEventParams				= new List<string>();
+		private List<int> 					_includedGlobals				= new List<int>();
+		private List<Value> 				_globalEventParams				= new List<Value>();
 		private Dictionary<string, int>		_globalEventsIdxsByEventName	= new Dictionary<string, int>();
 
         private readonly Backend 				_backend;		
@@ -73,7 +73,8 @@ namespace Advant.Data
 
             _usersTable = usersTableName;
 			
-			_includedGlobals.Capacity = 10;
+			_includedGlobals.Capacity 	= GAME_EVENT_PARAMETER_COUNT;
+			_globalEventParams.Capacity = GAME_EVENT_PARAMETER_COUNT;
         }
 		
 		public ref GameEvent NewEvent(string eventName, params string[] globalsLookupSource)
@@ -170,7 +171,7 @@ namespace Advant.Data
 				var param = new Value();
 				param.Set(name, value);
 				_globalEventParams.Add(param);
-				_globalEventsIdxsByEventName[name] = _globalEventParam.Count - 1;
+				_globalEventsIdxsByEventName[name] = _globalEventParams.Count - 1;
 			}
 			else
 			{
@@ -185,7 +186,7 @@ namespace Advant.Data
 				var param = new Value();
 				param.Set(name, value);
 				_globalEventParams.Add(param);
-				_globalEventsIdxsByEventName[name] = _globalEventParam.Count - 1;
+				_globalEventsIdxsByEventName[name] = _globalEventParams.Count - 1;
 			}
 			else
 			{
@@ -200,7 +201,7 @@ namespace Advant.Data
 				var param = new Value();
 				param.Set(name, value);
 				_globalEventParams.Add(param);
-				_globalEventsIdxsByEventName[name] = _globalEventParam.Count - 1;
+				_globalEventsIdxsByEventName[name] = _globalEventParams.Count - 1;
 			}
 			else
 			{
@@ -215,7 +216,7 @@ namespace Advant.Data
 				var param = new Value();
 				param.Set(name, value);
 				_globalEventParams.Add(param);
-				_globalEventsIdxsByEventName[name] = _globalEventParam.Count - 1;
+				_globalEventsIdxsByEventName[name] = _globalEventParams.Count - 1;
 			}
 			else
 			{
@@ -230,7 +231,7 @@ namespace Advant.Data
 				var param = new Value();
 				param.Set(name, value);
 				_globalEventParams.Add(param);
-				_globalEventsIdxsByEventName[name] = _globalEventParam.Count - 1;
+				_globalEventsIdxsByEventName[name] = _globalEventParams.Count - 1;
 			}
 			else
 			{

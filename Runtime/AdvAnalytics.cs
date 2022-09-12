@@ -97,11 +97,11 @@ namespace Advant
 		// In seconds. Note: The set timeout may apply to each URL redirect on Android which can result in a longer response.
 		public static async Task<string> GetCountryAsync(int timeout = 0) 	=> await _userRegistrator.GetCountryAsync(timeout);
 		
-		public static void SetGlobalEventParam(string name, int value) 		=> _cacheHolder.SetGlobalEventParameter(name, value);
-		public static void SetGlobalEventParam(string name, double value)	=> _cacheHolder.SetGlobalEventParameter(name, value);
-		public static void SetGlobalEventParam(string name, bool value) 	=> _cacheHolder.SetGlobalEventParameter(name, value);
-		public static void SetGlobalEventParam(string name, DateTime value)	=> _cacheHolder.SetGlobalEventParameter(name, value);
-		public static void SetGlobalEventParam(string name, string value) 	=> _cacheHolder.SetGlobalEventParameter(name, value);
+		public static void SetGlobalEventParam(string name, int value) 		=> _cacheHolder.SetGlobalEventParam(name, value);
+		public static void SetGlobalEventParam(string name, double value)	=> _cacheHolder.SetGlobalEventParam(name, value);
+		public static void SetGlobalEventParam(string name, bool value) 	=> _cacheHolder.SetGlobalEventParam(name, value);
+		public static void SetGlobalEventParam(string name, DateTime value)	=> _cacheHolder.SetGlobalEventParam(name, value);
+		public static void SetGlobalEventParam(string name, string value) 	=> _cacheHolder.SetGlobalEventParam(name, value);
 		
 		private static async void InitAsync(Identifier id, int currentGameArea, string abMode)
         {    
