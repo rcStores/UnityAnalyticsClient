@@ -6,7 +6,7 @@ namespace Advant.Data.Models
 {
 internal struct Value
 {
-	internal enum EValueType
+	public enum EValueType
 	{
 		Int, Float, Double, String, Bool, DateTime
 	}
