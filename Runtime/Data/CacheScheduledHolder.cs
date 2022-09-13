@@ -22,7 +22,7 @@ namespace Advant.Data
 		private long 						_userId = -1;
 		
 		private HashSet<int> 				_excludedGlobals		= new HashSet<int>();
-		private List<Value> 				_globalEventParams		= new List<Value>();
+		public List<Value> 				_globalEventParams		= new List<Value>();
 		private Dictionary<string, int>		_indicesOfGlobalsByName	= new Dictionary<string, int>();
 
         private readonly Backend 				_backend;		
