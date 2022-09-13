@@ -56,6 +56,13 @@ internal struct Value
 		_type = EValueType.String;
 	}
 	
+	public void Set(ref Value v)
+	{
+		_name = v.Name;
+		_value = v.Data;
+		_type = v.Type;
+	}
+	
 	public void Set(string name, string value, EValueType type)
 	{
 		_name = name;

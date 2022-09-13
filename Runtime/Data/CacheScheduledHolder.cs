@@ -21,9 +21,9 @@ namespace Advant.Data
 		private CancellationTokenSource 	_sendingCancellationSource; 
 		private long 						_userId = -1;
 		
-		private HashSet<int> 				_excludedGlobals				= new HashSet<int>();
-		private List<Value> 				_globalEventParams				= new List<Value>();
-		private Dictionary<string, int>		_indicesOfGlobalsByEventName	= new Dictionary<string, int>();
+		private HashSet<int> 				_excludedGlobals		= new HashSet<int>();
+		private List<Value> 				_globalEventParams		= new List<Value>();
+		private Dictionary<string, int>		_indicesOfGlobalsByName	= new Dictionary<string, int>();
 
         private readonly Backend 				_backend;		
 		private readonly GamePropertiesPool 	_properties;
@@ -80,7 +80,7 @@ namespace Advant.Data
 		{
 			foreach (var paramName in globalsLookupSource)
 			{
-				if (_indicesOfGlobalsByEventName.TryGetValue(paramName, out int idx))
+				if (_indicesOfGlobalsByName.TryGetValue(paramName, out int idx))
 					_excludedGlobals.Add(idx);
 			}
 			return ref NewEventImpl(eventName);
@@ -101,9 +101,10 @@ namespace Advant.Data
 			{
 				if (!_excludedGlobals.Contains(i))
 				{
-					e.Add(_globalEventParams[i].Name, 
-						  _globalEventParams[i].Data, 
-						  _globalEventParams[i].Type);
+					// e.Add(_globalEventParams[i].Name, 
+						  // _globalEventParams[i].Data, 
+						  // _globalEventParams[i].Type);
+					e.Add(_globalEventParams[i]);
 				}
 			}
 			_excludedGlobals.Clear();
@@ -169,12 +170,12 @@ namespace Advant.Data
 		
 		public void SetGlobalEventParam(string name, int value)
 		{
-			if (!_indicesOfGlobalsByEventName.TryGetValue(name, out int idx))
+			if (!_indicesOfGlobalsByName.TryGetValue(name, out int idx))
 			{
 				var param = new Value();
 				param.Set(name, value);
 				_globalEventParams.Add(param);
-				_indicesOfGlobalsByEventName[name] = _globalEventParams.Count - 1;
+				_indicesOfGlobalsByName[name] = _globalEventParams.Count - 1;
 			}
 			else
 			{
@@ -189,7 +190,7 @@ namespace Advant.Data
 				var param = new Value();
 				param.Set(name, value);
 				_globalEventParams.Add(param);
-				_indicesOfGlobalsByEventName[name] = _globalEventParams.Count - 1;
+				_indicesOfGlobalsByName[name] = _globalEventParams.Count - 1;
 			}
 			else
 			{
@@ -199,12 +200,12 @@ namespace Advant.Data
 		
 		public void SetGlobalEventParam(string name, bool value)
 		{
-			if (!_indicesOfGlobalsByEventName.TryGetValue(name, out int idx))
+			if (!_indicesOfGlobalsByName.TryGetValue(name, out int idx))
 			{
 				var param = new Value();
 				param.Set(name, value);
 				_globalEventParams.Add(param);
-				_indicesOfGlobalsByEventName[name] = _globalEventParams.Count - 1;
+				_indicesOfGlobalsByName[name] = _globalEventParams.Count - 1;
 			}
 			else
 			{
@@ -214,12 +215,12 @@ namespace Advant.Data
 		
 		public void SetGlobalEventParam(string name, string value)
 		{
-			if (!_indicesOfGlobalsByEventName.TryGetValue(name, out int idx))
+			if (!_indicesOfGlobalsByName.TryGetValue(name, out int idx))
 			{
 				var param = new Value();
 				param.Set(name, value);
 				_globalEventParams.Add(param);
-				_indicesOfGlobalsByEventName[name] = _globalEventParams.Count - 1;
+				_indicesOfGlobalsByName[name] = _globalEventParams.Count - 1;
 			}
 			else
 			{
@@ -229,12 +230,12 @@ namespace Advant.Data
 		
 		public void SetGlobalEventParam(string name, DateTime value)
 		{
-			if (!_indicesOfGlobalsByEventName.TryGetValue(name, out int idx))
+			if (!_indicesOfGlobalsByName.TryGetValue(name, out int idx))
 			{
 				var param = new Value();
 				param.Set(name, value);
 				_globalEventParams.Add(param);
-				_indicesOfGlobalsByEventName[name] = _globalEventParams.Count - 1;
+				_indicesOfGlobalsByName[name] = _globalEventParams.Count - 1;
 			}
 			else
 			{

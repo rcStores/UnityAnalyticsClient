@@ -49,6 +49,13 @@ public struct GameEvent
 		_parameters[_currentCount++].Set(name, value);
 	}
 	
+	public void Add(ref Value v)
+	{
+		if (_currentCount == _parameters.Length)
+			ExtendParameterPool();
+		_parameters[_currentCount++].Set(v);
+	}
+	
 	public void Add(string name, string value, EValueType type)
 	{
 		if (_currentCount == _parameters.Length)
