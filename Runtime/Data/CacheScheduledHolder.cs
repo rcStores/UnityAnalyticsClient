@@ -104,7 +104,7 @@ namespace Advant.Data
 					// e.Add(_globalEventParams[i].Name, 
 						  // _globalEventParams[i].Data, 
 						  // _globalEventParams[i].Type);
-					Value v = in _globalEventParams[i];
+					Value v = _globalEventParams[i];
 					e.Add(in v);
 				}
 			}

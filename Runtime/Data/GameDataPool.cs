@@ -216,7 +216,7 @@ namespace Advant.Data
 		}
 		
 		public void ClearLastSession() => 
-			_currentCount = _currentCount > 1 ? : _currentCount - 1 : _currentCount; 
+			_currentCount = _currentCount > 1 ? _currentCount - 1 : _currentCount; 
 	}
 
 } // namespace Advant.Data
