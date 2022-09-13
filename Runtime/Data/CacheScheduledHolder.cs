@@ -78,10 +78,13 @@ namespace Advant.Data
 		
 		public ref GameEvent NewEvent(string eventName, params string[] globalsLookupSource)
 		{
-			foreach (var paramName in globalsLookupSource)
+			if (globalsLookupSource != null)
 			{
-				if (_indicesOfGlobalsByName.TryGetValue(paramName, out int idx))
-					_excludedGlobals.Add(idx);
+				foreach (var paramName in globalsLookupSource)
+				{
+					if (_indicesOfGlobalsByName.TryGetValue(paramName, out int idx))
+						_excludedGlobals.Add(idx);
+				}
 			}
 			return ref NewEventImpl(eventName);
 		}
