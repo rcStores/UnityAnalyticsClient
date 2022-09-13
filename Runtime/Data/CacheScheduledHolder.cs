@@ -396,7 +396,7 @@ namespace Advant.Data
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
 				int sessionsBatchSize 		= _sessions.GetCurrentBusyCount();
 				
-				if (await RegisterActivity() is var isSessionNew)
+				if (await RegisterActivity() is var isSessionNew && isSessionNew)
 					NewEvent("logged_in");
 				
 				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(_userId));					
