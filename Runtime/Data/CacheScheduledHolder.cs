@@ -22,7 +22,7 @@ namespace Advant.Data
 		private long 						_userId = -1;
 		
 		private HashSet<int> 				_excludedGlobals		= new HashSet<int>();
-		public List<Value> 				_globalEventParams		= new List<Value>();
+		private List<Value> 				_globalEventParams		= new List<Value>();
 		private Dictionary<string, int>		_indicesOfGlobalsByName	= new Dictionary<string, int>();
 
         private readonly Backend 				_backend;		
@@ -104,7 +104,7 @@ namespace Advant.Data
 					// e.Add(_globalEventParams[i].Name, 
 						  // _globalEventParams[i].Data, 
 						  // _globalEventParams[i].Type);
-					e.Add(_globalEventParams[i]);
+					e.Add(in _globalEventParams[i]);
 				}
 			}
 			_excludedGlobals.Clear();
