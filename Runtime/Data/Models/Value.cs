@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Advant.Data.Models
 {
-public enum EValueType
+internal enum EValueType
 {
 	Int, Float, Double, String, Bool, DateTime
 }
