@@ -214,6 +214,9 @@ namespace Advant.Data
 		{			
 			base.FreeFromBeginning(count - 1);
 		}
+		
+		public void ClearLastSession() => 
+			_currentCount = _currentCount > 1 ? : _currentCount - 1 : _currentCount; 
 	}
 
 } // namespace Advant.Data

@@ -22,11 +22,11 @@ namespace Advant
         private static readonly CacheScheduledHolder 	_cacheHolder;
         private static readonly UserRegistrator 		_userRegistrator;
 		
-		private const string CUSTOM_PROPERTIES_TABLE 	= "custom_properties";
+		private const string CUSTOM_PROPERTIES_TABLE	= "custom_properties";
 		private const string USERS_DATA_TABLE 			= "users";
 
-        private const string APP_VERSION_PREF 	= "AppVersion";
-        private const string USER_ID_PREF 		= "UserId";
+        private const string APP_VERSION_PREF 			= "AppVersion";
+        private const string USER_ID_PREF 				= "UserId";
 
         static AdvAnalytics()
         {

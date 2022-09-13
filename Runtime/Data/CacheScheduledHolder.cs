@@ -104,7 +104,8 @@ namespace Advant.Data
 					// e.Add(_globalEventParams[i].Name, 
 						  // _globalEventParams[i].Data, 
 						  // _globalEventParams[i].Type);
-					e.Add(in _globalEventParams[i]);
+					Value v = in _globalEventParams[i];
+					e.Add(in v);
 				}
 			}
 			_excludedGlobals.Clear();
@@ -245,16 +246,25 @@ namespace Advant.Data
 		
 		public async UniTask RegisterActivity()
 		{
+			bool isSessionNew = false;
 			try 
 			{
-				if (TryUpdateSessionCount())
-					await _backend.PutSessionCount(_userId, _sessions.GetCurrentSession().SessionCount);
+				if (TryUpdateSessionCount() is var isInnerSessionUpdated &&
+					await _backend.PutSessionCount(_userId, _sessions.GetCurrentSession().SessionCount))
+				{
+					isSessionNew = true;
+				}
+				else if (isInnerSessionUpdated)
+				{
+					_sessions.ClearLastSession();
+				}
 				_sessions.GetCurrentSession().LastActivity = DateTime.UtcNow;
 			}
 			catch (Exception e)
 			{
 				Debug.LogError("[ADVANT] RegisterActivity: " + e.Message);
 			}
+			return isSessionNew;
 		}
 		
 		private bool TryUpdateSessionCount()
@@ -375,7 +385,8 @@ namespace Advant.Data
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
 				int sessionsBatchSize 		= _sessions.GetCurrentBusyCount();
 				
-				RegisterActivity();
+				if (RegisterActivity() is var isSessionNew)
+					NewEvent("logged_in");
 				
 				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(_userId));					
 				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJsonAsync(_userId));
