@@ -115,7 +115,7 @@ namespace Advant.Data
 			
 			if (_events.GetCurrentBusyCount() >= MAX_CACHE_COUNT)
 			{
-				Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
+				//Debug.LogWarning("[ADVANAL] STOP DELAYING THE SENDING OPERATION");
 				_sendingCancellationSource?.Cancel();
 			}
 			//Debug.LogWarning("[ADVANAL] RETURNING EVENT REFERENCE");
@@ -250,7 +250,7 @@ namespace Advant.Data
 		
 		public async UniTask<bool> RegisterActivity()
 		{
-			var start = DateTime.UtcNow;
+			//var start = DateTime.UtcNow;
 			bool isSessionNew = false;
 			try 
 			{
@@ -270,7 +270,7 @@ namespace Advant.Data
 			{
 				Debug.LogError("[ADVANT] RegisterActivity: " + e.Message);
 			}
-			Debug.LogWarning($"[ADVANT] RegisterActivity runs for {(DateTime.UtcNow - start).TotalMilliseconds} ms");
+			//Debug.LogWarning($"[ADVANT] RegisterActivity runs for {(DateTime.UtcNow - start).TotalMilliseconds} ms");
 			return isSessionNew;
 		}
 		
@@ -323,13 +323,13 @@ namespace Advant.Data
 		
 		private void SerializeSessions()
         {
-			var start = DateTime.UtcNow;
-			Debug.LogWarning($"[ADVANT] SerializeSessions");
-			if (_userId != -1)
-				RegisterActivity();
-			Debug.LogWarning($"[ADVANT] Activity is registered, start serializing");
+			//var start = DateTime.UtcNow;
+			//Debug.LogWarning($"[ADVANT] SerializeSessions");
+			// if (_userId != -1)
+				// RegisterActivity();
+			//Debug.LogWarning($"[ADVANT] Activity is registered, start serializing");
             Serialize<GameSessionsPool>(_sessionsPath, _sessions);
-			Debug.LogWarning($"[ADVANT] SerializeSessions runs for {(DateTime.UtcNow - start).TotalMilliseconds} ms");
+			//Debug.LogWarning($"[ADVANT] SerializeSessions runs for {(DateTime.UtcNow - start).TotalMilliseconds} ms");
         }
 
         public void Serialize<T>(string filePath, T data)
@@ -390,7 +390,7 @@ namespace Advant.Data
 						
 				_sendingCancellationSource = null;
 					
-				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
+				//Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 
 				int eventsBatchSize 		= _events.GetCurrentBusyCount();
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
@@ -406,21 +406,21 @@ namespace Advant.Data
 				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded, hasSessionSendingSucceeded) = 
 					await UniTask.WhenAll(eventsSending, propertiesSending, sessionSending);
 				
-				Debug.LogWarning("[ADVANAL] Getting results of data sending...");
+				//Debug.LogWarning("[ADVANAL] Getting results of data sending...");
 				
 				if (hasEventsSendingSucceeded) 
 				{
-					Debug.LogWarning("[ADVANAL] Clear events");
+					//Debug.LogWarning("[ADVANAL] Clear events");
 					_events.FreeFromBeginning(eventsBatchSize);
 				}
 				if (hasPropertiesSendingSucceeded)
 				{
-					Debug.LogWarning("[ADVANAL] Clear properties");
+					//Debug.LogWarning("[ADVANAL] Clear properties");
 					_properties.FreeFromBeginning(propertiesBatchSize);
 				}
 				if (hasSessionSendingSucceeded)
 				{
-					Debug.LogWarning("[ADVANAL] Clear sessions");
+					//Debug.LogWarning("[ADVANAL] Clear sessions");
 					_sessions.FreeFromBeginning(sessionsBatchSize);
 				}
 			}
