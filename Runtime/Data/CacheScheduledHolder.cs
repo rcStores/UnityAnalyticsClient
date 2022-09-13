@@ -82,6 +82,8 @@ namespace Advant.Data
 			{
 				foreach (var paramName in globalsLookupSource)
 				{
+					if (paramName == null) break;
+					
 					if (_indicesOfGlobalsByName.TryGetValue(paramName, out int idx))
 						_excludedGlobals.Add(idx);
 				}
