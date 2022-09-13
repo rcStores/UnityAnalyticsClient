@@ -56,7 +56,7 @@ public struct GameEvent
 		_parameters[_currentCount++].Set(in v);
 	}
 	
-	internal void Add(string name, string value, EValueType type)
+	internal void Add(string name, string value, Value.EValueType type)
 	{
 		if (_currentCount == _parameters.Length)
 			ExtendParameterPool();
