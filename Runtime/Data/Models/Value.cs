@@ -4,11 +4,13 @@ using System.Text;
 
 namespace Advant.Data.Models
 {
+[Serializable]
 internal enum EValueType
 {
 	Int, Float, Double, String, Bool, DateTime
 }
 
+[Serializable]
 internal struct Value
 {
 	public string Name { get => _name; }
