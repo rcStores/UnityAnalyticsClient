@@ -244,6 +244,7 @@ namespace Advant.Data
 		
 		public async UniTask<bool> RegisterActivity()
 		{
+			var start = DateTime.UtcNow;
 			bool isSessionNew = false;
 			try 
 			{
@@ -255,13 +256,15 @@ namespace Advant.Data
 				else if (isInnerSessionUpdated)
 				{
 					_sessions.ClearLastSession();
+					return false;
 				}
-				_sessions.GetCurrentSession().LastActivity = DateTime.UtcNow; // what if it is called before serialization?
+				_sessions.GetCurrentSession().LastActivity = DateTime.UtcNow; // what if it gets called before serialization?
 			}
 			catch (Exception e)
 			{
 				Debug.LogError("[ADVANT] RegisterActivity: " + e.Message);
 			}
+			Debug.LogWarning($"[ADVANT] RegisterActivity runs for {(DateTime.UtcNow - start).TotalMillisecods} ms");
 			return isSessionNew;
 		}
 		
@@ -314,9 +317,13 @@ namespace Advant.Data
 		
 		private void SerializeSessions()
         {
+			var start = DateTime.UtcNow;
+			Debug.LogWarning($"[ADVANT] SerializeSessions");
 			if (_userId != -1)
 				RegisterActivity();
+			Debug.LogWarning($"[ADVANT] Activity is registered, start serializing");
             Serialize<GameSessionsPool>(_sessionsPath, _sessions);
+			Debug.LogWarning($"[ADVANT] SerializeSessions runs for {(DateTime.UtcNow - start).TotalMillisecods} ms");
         }
 
         public void Serialize<T>(string filePath, T data)
