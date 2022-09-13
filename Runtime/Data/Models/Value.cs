@@ -5,13 +5,13 @@ using System.Text;
 namespace Advant.Data.Models
 {
 [Serializable]
-public enum EValueType
+internal enum EValueType
 {
 	Int, Float, Double, String, Bool, DateTime
 }
 
 [Serializable]
-public struct Value
+internal struct Value
 {
 	public string Name { get => _name; }
 	public string Data { get => _value; }
@@ -58,14 +58,14 @@ public struct Value
 		_type = EValueType.String;
 	}
 	
-	public void Set(in Value v)
+	internal void Set(in Value v)
 	{
 		_name = v.Name;
 		_value = v.Data;
 		_type = v.Type;
 	}
 	
-	public void Set(string name, string value, EValueType type)
+	internal void Set(string name, string value, EValueType type)
 	{
 		_name = name;
 		_value = value;

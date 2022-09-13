@@ -186,7 +186,7 @@ namespace Advant.Data
 		
 		public void SetGlobalEventParam(string name, double value)
 		{
-			if (!_indicesOfGlobalsByEventName.TryGetValue(name, out int idx))
+			if (!_indicesOfGlobalsByName.TryGetValue(name, out int idx))
 			{
 				var param = new Value();
 				param.Set(name, value);
@@ -244,7 +244,7 @@ namespace Advant.Data
 			}
 		}
 		
-		public async UniTask RegisterActivity()
+		public async UniTask<bool> RegisterActivity()
 		{
 			bool isSessionNew = false;
 			try 
@@ -258,7 +258,7 @@ namespace Advant.Data
 				{
 					_sessions.ClearLastSession();
 				}
-				_sessions.GetCurrentSession().LastActivity = DateTime.UtcNow;
+				_sessions.GetCurrentSession().LastActivity = DateTime.UtcNow; // what if it is called before serialization?
 			}
 			catch (Exception e)
 			{
@@ -385,7 +385,7 @@ namespace Advant.Data
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
 				int sessionsBatchSize 		= _sessions.GetCurrentBusyCount();
 				
-				if (RegisterActivity() is var isSessionNew)
+				if (await RegisterActivity() is var isSessionNew)
 					NewEvent("logged_in");
 				
 				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(_userId));					
