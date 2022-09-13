@@ -169,7 +169,8 @@ namespace Advant.Data
 		
 		public void UpdateGameArea(int newArea)
 		{
-			 _sessions.GetCurrentSession().Area = newArea;
+			if (_sessions.GetCurrentBusyCount() > 0)
+				_sessions.GetCurrentSession().Area = newArea;
 		}
 		
 		public void SetGlobalEventParam(string name, int value)
