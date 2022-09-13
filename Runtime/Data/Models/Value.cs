@@ -4,15 +4,17 @@ using System.Text;
 
 namespace Advant.Data.Models
 {
-[Serializable]
-internal enum EValueType
-{
-	Int, Float, Double, String, Bool, DateTime
-}
+
 
 [Serializable]
 internal struct Value
 {
+	[Serializable]
+	public enum EValueType
+	{
+		Int, Float, Double, String, Bool, DateTime
+	}
+	
 	public string Name { get => _name; }
 	public string Data { get => _value; }
 	public EValueType Type { get => _type; }
@@ -65,12 +67,12 @@ internal struct Value
 		_type = v.Type;
 	}
 	
-	internal void Set(string name, string value, EValueType type)
-	{
-		_name = name;
-		_value = value;
-		_type = type;
-	}
+	// internal void Set(string name, string value, EValueType type)
+	// {
+		// _name = name;
+		// _value = value;
+		// _type = type;
+	// }
 
 	public void ToJson(StringBuilder sb)
 	{
