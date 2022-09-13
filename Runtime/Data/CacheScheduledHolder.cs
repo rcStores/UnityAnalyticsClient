@@ -254,7 +254,7 @@ namespace Advant.Data
 			bool isSessionNew = false;
 			try 
 			{
-				if (TryUpdateSessionCount() is var isInnerSessionUpdated &&
+				if (TryUpdateSessionCount() is var isInnerSessionUpdated && isInnerSessionUpdated &&
 					await _backend.PutSessionCount(_userId, _sessions.GetCurrentSession().SessionCount))
 				{
 					isSessionNew = true;
