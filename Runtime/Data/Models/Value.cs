@@ -67,12 +67,12 @@ internal struct Value
 		_type = v.Type;
 	}
 	
-	// internal void Set(string name, string value, EValueType type)
-	// {
-		// _name = name;
-		// _value = value;
-		// _type = type;
-	// }
+	internal void Set(string name, string value, Value.EValueType type)
+	{
+		_name = name;
+		_value = value;
+		_type = type;
+	}
 
 	public void ToJson(StringBuilder sb)
 	{

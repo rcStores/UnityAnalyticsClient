@@ -56,12 +56,12 @@ public struct GameEvent
 		_parameters[_currentCount++].Set(in v);
 	}
 	
-	// internal void Add(string name, string value, EValueType type)
-	// {
-		// if (_currentCount == _parameters.Length)
-			// ExtendParameterPool();
-		// _parameters[_currentCount++].Set(name, value, type);
-	// }
+	internal void Add(string name, string value, EValueType type)
+	{
+		if (_currentCount == _parameters.Length)
+			ExtendParameterPool();
+		_parameters[_currentCount++].Set(name, value, type);
+	}
 
 	public void ToJson(long id, StringBuilder sb)
 	{
