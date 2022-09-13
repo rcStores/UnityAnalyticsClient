@@ -264,7 +264,7 @@ namespace Advant.Data
 			{
 				Debug.LogError("[ADVANT] RegisterActivity: " + e.Message);
 			}
-			Debug.LogWarning($"[ADVANT] RegisterActivity runs for {(DateTime.UtcNow - start).TotalMillisecods} ms");
+			Debug.LogWarning($"[ADVANT] RegisterActivity runs for {(DateTime.UtcNow - start).TotalMilliseconds} ms");
 			return isSessionNew;
 		}
 		
@@ -323,7 +323,7 @@ namespace Advant.Data
 				RegisterActivity();
 			Debug.LogWarning($"[ADVANT] Activity is registered, start serializing");
             Serialize<GameSessionsPool>(_sessionsPath, _sessions);
-			Debug.LogWarning($"[ADVANT] SerializeSessions runs for {(DateTime.UtcNow - start).TotalMillisecods} ms");
+			Debug.LogWarning($"[ADVANT] SerializeSessions runs for {(DateTime.UtcNow - start).TotalMilliseconds} ms");
         }
 
         public void Serialize<T>(string filePath, T data)
