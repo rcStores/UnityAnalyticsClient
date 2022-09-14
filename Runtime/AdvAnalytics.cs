@@ -35,10 +35,7 @@ namespace Advant
             _userRegistrator 	= new UserRegistrator(USERS_DATA_TABLE, _backend);
         }
 
-        public static void StartInit(string analyticsPathBase,
-									 string registrationPathbase, 
-									 int 	currentGameArea, 
-									 string	abMode)
+        public static void StartInit(string analyticsPathBase, string registrationPathbase)
         {
             _backend.SetPathBases(analyticsPathBase, registrationPathbase);
 
@@ -47,10 +44,7 @@ namespace Advant
 			
 // ---------------------------------------------------------------------------------------------
 #if UNITY_EDITOR && DEBUG_ANAL
-            InitAsync(
-				new Identifier(platform: "IOS", "DEBUG", "DEBUG"), 
-				currentGameArea,
-				abMode);
+            InitAsync(new Identifier(platform: "IOS", "DEBUG", "DEBUG"));
 // ---------------------------------------------------------------------------------------------			
 #elif UNITY_EDITOR
 			return;
@@ -61,17 +55,11 @@ namespace Advant
 			    {
 				    Log.Info("GAID couldn't be received");
 			    }
-                InitAsync(
-					new Identifier(platform: "Android", idfv, gaid), 
-					currentGameArea,
-					abMode);
+                InitAsync(new Identifier(platform: "Android", idfv, gaid));
             });
 // ---------------------------------------------------------------------------------------------
 #elif UNITY_IOS
-            InitAsync(
-				new Identifier(platform: "IOS", idfv, Device.advertisingIdentifier), 
-				currentGameArea,
-				abMode);
+            InitAsync(new Identifier(platform: "IOS", idfv, Device.advertisingIdentifier));
 #endif
         }
 		
@@ -110,19 +98,16 @@ namespace Advant
 		public static void SetCurrentArea(int area) 						=> _cacheHolder.SetCurrentArea(area);
 		public static void SetCurrentAbMode(string mode) 					=> _cacheHolder.SetCurrentAbMode(mode, USERS_DATA_TABLE);
 		
-		private static async void InitAsync(Identifier id, int currentGameArea, string abMode)
+		private static async void InitAsync(Identifier id)
         {
 			_cacheHolder.NewEvent("logged_in");
 			_cacheHolder.SetSessionStart();
 			
-            SendUserDetails(
-				await _userRegistrator.RegistrateAsync(id), 
-				currentGameArea, 
-				abMode);
+            SendUserDetails(await _userRegistrator.RegistrateAsync(id));
             _cacheHolder.StartSendingDataAsync(_userRegistrator.GetUserId());
         }
         
-        private static void SendUserDetails(long sessionCount, int currentGameArea, string abMode)
+        private static void SendUserDetails(long sessionCount)
         {		
 			_cacheHolder.SetSessionCount(sessionCount);
 			
@@ -132,8 +117,10 @@ namespace Advant
             {
                 Log.Info("Create properties for a new user");
 				
+				if (!_userRegistrator.IsCheater())
+					_cacheHolder.NewProperty("cheater", false, USERS_DATA_TABLE);
+				
 				_cacheHolder.NewProperty("tester", 					GetTester(), 						USERS_DATA_TABLE);
-				_cacheHolder.NewProperty("cheater", 				_userRegistrator.IsCheater(), 		USERS_DATA_TABLE);
 				_cacheHolder.NewProperty("first_install_date", 		DateTime.UtcNow.ToUniversalTime(), 	USERS_DATA_TABLE);
 				_cacheHolder.NewProperty("last_install_date", 		DateTime.UtcNow.ToUniversalTime(), 	USERS_DATA_TABLE);
 				_cacheHolder.NewProperty("first_game_version", 		Application.version, 				USERS_DATA_TABLE);
