@@ -224,7 +224,7 @@ namespace Advant.Data
 			return ref s;
 		}
 		
-		public ref Session GetSession() => _currentCount == 0 ? ref _pool[_indices[_currentCount - 1]] : ref _pool[_indices[_currentCount - 1]];
+		public ref Session GetSession() => _currentCount == 0 ? ref NewSession() : ref NewSession(); //ref _pool[_indices[_currentCount - 1]];
 
 		public override void FreeFromBeginning(int count)
 		{			
