@@ -170,9 +170,9 @@ namespace Advant.Data
 			// s.AbMode 		= abMode;
 		// }
 		
-		public void SetCurrentGameArea(int area)
+		public void SetCurrentArea(int area)
 		{
-			_sessions.SetCurrentGameArea(area);
+			_sessions.SetCurrentArea(area);
 			SetGlobalEventParam("area", area);
 		}
 		

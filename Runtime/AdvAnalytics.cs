@@ -95,7 +95,6 @@ namespace Advant
 		}
 		
 		public static void SetTrafficSource(string source)				=> _cacheHolder.NewProperty("traffic", source, USERS_DATA_TABLE);
-		public static void SetAreaForSession(int area)					=> _cacheHolder.UpdateGameArea(area);
 
         public static bool GetTester() 									=> _userRegistrator.IsTester();
 		
@@ -109,7 +108,7 @@ namespace Advant
 		public static void SetGlobalEventParam(string name, string value) 	=> _cacheHolder.SetGlobalEventParam(name, value);
 		
 		public static void SetCurrentArea(int area) 						=> _cacheHolder.SetCurrentArea(area);
-		public static void SetCurrentAbMode(string mode) 					=> _cacheHolder.SetCurrentAbMode(mode, USERS_PROPERTIES_TABLE);
+		public static void SetCurrentAbMode(string mode) 					=> _cacheHolder.SetCurrentAbMode(mode, USERS_DATA_TABLE);
 		
 		private static async void InitAsync(Identifier id, int currentGameArea, string abMode)
         {

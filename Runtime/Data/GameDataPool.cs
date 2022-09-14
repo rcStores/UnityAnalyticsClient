@@ -215,7 +215,7 @@ namespace Advant.Data
 		
 		public ref Session NewSession()
 		{
-			ref var s = NewElement();
+			ref var s = ref NewElement();
 			s.AbMode = _abMode;
 			s.SessionCount = _userSessionCount;
 			s.Area = _gameArea;
@@ -235,9 +235,9 @@ namespace Advant.Data
 			_currentCount = _currentCount > 1 ? _currentCount - 1 : _currentCount;
 			
 		public void SetSessionStart() 				=> GetSession().SessionStart = DateTime.UtcNow;
-		public void SetAbMode(string mode) 			=> GetSession().AbMode = mode;
+		public void SetCurrentAbMode(string mode) 			=> GetSession().AbMode = mode;
 		public void SetUserSessionCount(long count)	=> GetSession().SessionCount = count;
-		public void SetArea(string area) 			=> GetSession().Area = area;
+		public void SetCurrentArea(int area) 			=> GetSession().Area = area;
 	}
 
 } // namespace Advant.Data
