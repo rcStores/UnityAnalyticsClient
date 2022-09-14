@@ -32,8 +32,8 @@ namespace Advant.Http
 			_getCountryEndpoint 							= "https://ipapi.co/json";
 			_putUserIdEndpoint 								= registration + "/Registration/GetOrCreateUserId";
 			_putSessionCountEndpoint 						= registration + "/Sessions/PutSessionCount";
-			_gameDataEndpointsByType[typeof(GameProperty)]	= analytics + "/AnalyticsData/SaveProperties2";
-			_gameDataEndpointsByType[typeof(GameEvent)] 	= analytics + "/AnalyticsData/SaveEvents2";
+			_gameDataEndpointsByType[typeof(GameProperty)]	= analytics + "/AnalyticsData/SendProperties";
+			_gameDataEndpointsByType[typeof(GameEvent)] 	= analytics + "/AnalyticsData/SendEvents";
 			_gameDataEndpointsByType[typeof(Session)] 		= registration + "/Sessions/SaveSession";
         }
 
