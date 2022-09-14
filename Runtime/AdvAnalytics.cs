@@ -92,6 +92,8 @@ namespace Advant
 		{
 			_userRegistrator.SetCheater(value);
 			_cacheHolder.NewProperty("cheater", value, USERS_DATA_TABLE);
+		}
+		
 		public static void SetTrafficSource(string source)				=> _cacheHolder.NewProperty("traffic", source, USERS_DATA_TABLE);
 		public static void SetAreaForSession(int area)					=> _cacheHolder.UpdateGameArea(area);
 

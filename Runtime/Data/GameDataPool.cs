@@ -213,7 +213,7 @@ namespace Advant.Data
 			return result;
 		}
 		
-		public ref NewSession()
+		public ref Session NewSession()
 		{
 			ref var s = NewElement();
 			s.AbMode = _abMode;
