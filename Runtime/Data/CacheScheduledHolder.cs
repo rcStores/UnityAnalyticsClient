@@ -157,20 +157,30 @@ namespace Advant.Data
 			p.SetTableName(tableName);
 		}
 		
-		public void NewSession(long sessionCount, int gameArea, string abMode)
+		public void SetSessionCount(long sessionCount)	=> _sessions.SetUserSessionCount(sessionCount);
+		public void SetSessionStart() 					=> _sessions.SetSessionStart();
+		
+		// public void NewSession(long sessionCount, int gameArea, string abMode)
+		// {
+			// ref var s 		= ref _sessions.NewElement();
+			// s.SessionStart	= DateTime.UtcNow;
+			// s.LastActivity	= DateTime.UtcNow;
+			// s.SessionCount 	= sessionCount;
+			// s.Area 			= gameArea;
+			// s.AbMode 		= abMode;
+		// }
+		
+		public void SetCurrentGameArea(int area)
 		{
-			ref var s 		= ref _sessions.NewElement();
-			s.SessionStart	= DateTime.UtcNow;
-			s.LastActivity	= DateTime.UtcNow;
-			s.SessionCount 	= sessionCount;
-			s.Area 			= gameArea;
-			s.AbMode 		= abMode;
+			_sessions.SetCurrentGameArea(area);
+			SetGlobalEventParam("area", area);
 		}
 		
-		public void UpdateGameArea(int newArea)
+		public void SetCurrentAbMode(string abMode, string propertyTableName)
 		{
-			if (_sessions.GetCurrentBusyCount() > 0)
-				_sessions.GetCurrentSession().Area = newArea;
+			_sessions.SetCurrentAbMode(abMode);	
+			SetGlobalEventParam("ab_mode", abMode);
+			NewProperty("ab_mode", abMode, propertyTableName);
 		}
 		
 		public void SetGlobalEventParam(string name, int value)
@@ -255,7 +265,7 @@ namespace Advant.Data
 			try 
 			{
 				if (TryUpdateSessionCount() is var isInnerSessionUpdated && isInnerSessionUpdated &&
-					await _backend.PutSessionCount(_userId, _sessions.GetCurrentSession().SessionCount))
+					await _backend.PutSessionCount(_userId, _sessions.GetSession().SessionCount))
 				{
 					isSessionNew = true;
 				}
@@ -264,7 +274,7 @@ namespace Advant.Data
 					_sessions.ClearLastSession();
 					return false;
 				}
-				_sessions.GetCurrentSession().LastActivity = DateTime.UtcNow; // what if it gets called before serialization?
+				_sessions.GetSession().LastActivity = DateTime.UtcNow;
 			}
 			catch (Exception e)
 			{
@@ -276,13 +286,11 @@ namespace Advant.Data
 		
 		private bool TryUpdateSessionCount()
 		{
-			ref var session = ref _sessions.GetCurrentSession();
+			ref var session = ref _sessions.GetSession();
 			if (session.LastActivity != default(DateTime) && DateTime.UtcNow.Subtract(session.LastActivity) > TimeSpan.FromMinutes(10))
 			{
-				NewSession(
-					session.SessionCount + 1,
-					session.Area,
-					session.AbMode);
+				_sessions.NewSession();
+				_sessions.SetUserSessionCount(session.SessionCount + 1);
 				return true;
 			}
 			return false;

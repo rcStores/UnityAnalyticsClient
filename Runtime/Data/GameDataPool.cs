@@ -175,6 +175,11 @@ namespace Advant.Data
 	[Serializable]
 	internal class GameSessionsPool : GameDataPool<Session>
 	{
+		private string 		_abMode;
+		private long 		_userSessionCount;
+		private int 		_gameArea;
+		private DateTime	_sessionStart;
+		
 		public override async UniTask<string> ToJsonAsync(long userId)
 		{
 			string result = null;
@@ -208,15 +213,31 @@ namespace Advant.Data
 			return result;
 		}
 		
-		public ref Session GetCurrentSession() => ref _pool[_indices[_currentCount - 1]];
-			
+		public ref NewSession()
+		{
+			ref var s = NewElement();
+			s.AbMode = _abMode;
+			s.SessionCount = _userSessionCount;
+			s.Area = _gameArea;
+			s.SessionStart	= _sessionStart = DateTime.UtcNow;
+			s.LastActivity	= DateTime.UtcNow;
+			return ref s;
+		}
+		
+		public ref Session GetSession() => _currentCount == 0 ? ref NewSession() : ref _pool[_indices[_currentCount - 1]];
+
 		public override void FreeFromBeginning(int count)
 		{			
 			base.FreeFromBeginning(count - 1);
 		}
 		
 		public void ClearLastSession() => 
-			_currentCount = _currentCount > 1 ? _currentCount - 1 : _currentCount; 
+			_currentCount = _currentCount > 1 ? _currentCount - 1 : _currentCount;
+			
+		public void SetSessionStart() 				=> GetSession().SessionStart = DateTime.UtcNow;
+		public void SetAbMode(string mode) 			=> GetSession().AbMode = mode;
+		public void SetUserSessionCount(long count)	=> GetSession().SessionCount = count;
+		public void SetArea(string area) 			=> GetSession().Area = area;
 	}
 
 } // namespace Advant.Data

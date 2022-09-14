@@ -16,6 +16,7 @@ namespace Advant
 
         private long 	_userId;
 		private bool 	_isTester;
+		private bool 	_isCheater;
 		private string 	_country;
 
 		private const int 	GET_ID_RETRY_INTERVAL 	= 15000;
@@ -72,7 +73,10 @@ namespace Advant
 
         public long 	GetUserId() 	=> _userId;
 		public bool 	IsTester() 		=> _isTester;
+		public bool		IsCheater()		=> _isCheater;
 		public string 	GetCountry() 	=> _country;
+		
+		public void SetCheater(bool isCheater) => _isCheater = isCheater;
 		
 		public async UniTask<string> GetCountryAsync(int timeout) 
 		{

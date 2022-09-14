@@ -88,7 +88,10 @@ namespace Advant
 
         public static void SaveCacheLocally() 							=> _cacheHolder.SaveCacheLocally();
         
-        public static void SetCheater(bool value)						=> _cacheHolder.NewProperty("cheater", value, CUSTOM_PROPERTIES_TABLE);
+        public static void SetCheater(bool value) 
+		{
+			_userRegistrator.SetCheater(value);
+			_cacheHolder.NewProperty("cheater", value, USERS_DATA_TABLE);
 		public static void SetTrafficSource(string source)				=> _cacheHolder.NewProperty("traffic", source, USERS_DATA_TABLE);
 		public static void SetAreaForSession(int area)					=> _cacheHolder.UpdateGameArea(area);
 
@@ -103,8 +106,14 @@ namespace Advant
 		public static void SetGlobalEventParam(string name, DateTime value)	=> _cacheHolder.SetGlobalEventParam(name, value);
 		public static void SetGlobalEventParam(string name, string value) 	=> _cacheHolder.SetGlobalEventParam(name, value);
 		
+		public static void SetCurrentArea(int area) 						=> _cacheHolder.SetCurrentArea(area);
+		public static void SetCurrentAbMode(string mode) 					=> _cacheHolder.SetCurrentAbMode(mode, USERS_PROPERTIES_TABLE);
+		
 		private static async void InitAsync(Identifier id, int currentGameArea, string abMode)
-        {    
+        {
+			_cacheHolder.NewEvent("logged_in");
+			_cacheHolder.SetSessionStart();
+			
             SendUserDetails(
 				await _userRegistrator.RegistrateAsync(id), 
 				currentGameArea, 
@@ -113,19 +122,17 @@ namespace Advant
         }
         
         private static void SendUserDetails(long sessionCount, int currentGameArea, string abMode)
-        {
-			_cacheHolder.NewEvent("logged_in");
-			_cacheHolder.NewSession(sessionCount, currentGameArea, abMode);
-			
-			// _cacheHolder.NewProperty("session_starts", DateTime.UtcNow, SESSIONS_TABLE);
-			// _cacheHolder.NewProperty("session_number", sessionCount, SESSIONS_TABLE);
+        {		
+			_cacheHolder.SetSessionCount(sessionCount);
 			
 			if (sessionCount == 0) return;
 			
             if (sessionCount == 1)
             {
                 Log.Info("Create properties for a new user");
-
+				
+				_cacheHolder.NewProperty("tester", 					GetTester(), 						USERS_DATA_TABLE);
+				_cacheHolder.NewProperty("cheater", 				_userRegistrator.IsCheater(), 		USERS_DATA_TABLE);
 				_cacheHolder.NewProperty("first_install_date", 		DateTime.UtcNow.ToUniversalTime(), 	USERS_DATA_TABLE);
 				_cacheHolder.NewProperty("last_install_date", 		DateTime.UtcNow.ToUniversalTime(), 	USERS_DATA_TABLE);
 				_cacheHolder.NewProperty("first_game_version", 		Application.version, 				USERS_DATA_TABLE);
@@ -151,8 +158,10 @@ namespace Advant
 				
                 PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
             }
-
-			_cacheHolder.NewProperty("cheater", false, USERS_DATA_TABLE);
+			if (GetTester())
+			{
+				
+			}
 			_cacheHolder.NewProperty("os", Application.platform == RuntimePlatform.Android ? "android" : "ios", USERS_DATA_TABLE);
 			_cacheHolder.NewProperty("country", _userRegistrator.GetCountry(), USERS_DATA_TABLE);
         }	
