@@ -224,7 +224,7 @@ namespace Advant.Data
 			return ref s;
 		}
 		
-		public ref Session GetSession() => (_currentCount == 0 ? ref NewSession() : ref _pool[_indices[_currentCount - 1]]);
+		public ref Session GetSession() => _currentCount == 0 ? ref _pool[_indices[_currentCount - 1]] : ref _pool[_indices[_currentCount - 1]];
 
 		public override void FreeFromBeginning(int count)
 		{			
@@ -234,10 +234,10 @@ namespace Advant.Data
 		public void ClearLastSession() => 
 			_currentCount = _currentCount > 1 ? _currentCount - 1 : _currentCount;
 			
-		public void SetSessionStart() 				=> GetSession().SessionStart = DateTime.UtcNow;
-		public void SetCurrentAbMode(string mode) 			=> GetSession().AbMode = mode;
-		public void SetUserSessionCount(long count)	=> GetSession().SessionCount = count;
-		public void SetCurrentArea(int area) 			=> GetSession().Area = area;
+		public void SetSessionStart() 				=> GetSession().SessionStart	= DateTime.UtcNow;
+		public void SetCurrentAbMode(string mode) 	=> GetSession().AbMode			= mode;
+		public void SetUserSessionCount(long count)	=> GetSession().SessionCount 	= count;
+		public void SetCurrentArea(int area) 		=> GetSession().Area 			= area;
 	}
 
 } // namespace Advant.Data
