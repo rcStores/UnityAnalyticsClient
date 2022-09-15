@@ -338,8 +338,8 @@ namespace Advant.Data
         {
 			//var start = DateTime.UtcNow;
 			//Debug.LogWarning($"[ADVANT] SerializeSessions");
-			if (_userId != -1)
-				RegisterActivity();
+			// if (_userId != -1)
+				// RegisterActivity();
 			//Debug.LogWarning($"[ADVANT] Activity is registered, start serializing");
             Serialize<GameSessionsPool>(_sessionsPath, _sessions);
 			//Debug.LogWarning($"[ADVANT] SerializeSessions runs for {(DateTime.UtcNow - start).TotalMilliseconds} ms");
