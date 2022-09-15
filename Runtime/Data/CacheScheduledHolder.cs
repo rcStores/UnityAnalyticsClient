@@ -84,7 +84,8 @@ namespace Advant.Data
 				{
 					if (paramName == null) break;
 					
-					if (_indicesOfGlobalsByName.TryGetValue(paramName, out int idx))
+					string formattedName = paramName.Replace('-', '_');
+					if (_indicesOfGlobalsByName.TryGetValue(formattedName, out int idx))
 						_excludedGlobals.Add(idx);
 				}
 			}
@@ -185,76 +186,81 @@ namespace Advant.Data
 		
 		public void SetGlobalEventParam(string name, int value)
 		{
-			if (!_indicesOfGlobalsByName.TryGetValue(name, out int idx))
+			string formattedName = name.Replace('-', '_');
+			if (!_indicesOfGlobalsByName.TryGetValue(formattedName, out int idx))
 			{
 				var param = new Value();
-				param.Set(name, value);
+				param.Set(formattedName, value);
 				_globalEventParams.Add(param);
-				_indicesOfGlobalsByName[name] = _globalEventParams.Count - 1;
+				_indicesOfGlobalsByName[formattedName] = _globalEventParams.Count - 1;
 			}
 			else
 			{
-				_globalEventParams[idx].Set(name, value);
+				_globalEventParams[idx].Set(formattedName, value);
 			}
 		}
 		
 		public void SetGlobalEventParam(string name, double value)
 		{
-			if (!_indicesOfGlobalsByName.TryGetValue(name, out int idx))
+			string formattedName = name.Replace('-', '_');
+			if (!_indicesOfGlobalsByName.TryGetValue(formattedName, out int idx))
 			{
 				var param = new Value();
-				param.Set(name, value);
+				param.Set(formattedName, value);
 				_globalEventParams.Add(param);
-				_indicesOfGlobalsByName[name] = _globalEventParams.Count - 1;
+				_indicesOfGlobalsByName[formattedName] = _globalEventParams.Count - 1;
 			}
 			else
 			{
-				_globalEventParams[idx].Set(name, value);
+				_globalEventParams[idx].Set(formattedName, value);
 			}
 		}
 		
 		public void SetGlobalEventParam(string name, bool value)
 		{
-			if (!_indicesOfGlobalsByName.TryGetValue(name, out int idx))
+			string formattedName = name.Replace('-', '_');
+			if (!_indicesOfGlobalsByName.TryGetValue(formattedName, out int idx))
 			{
 				var param = new Value();
-				param.Set(name, value);
+				param.Set(formattedName, value);
 				_globalEventParams.Add(param);
-				_indicesOfGlobalsByName[name] = _globalEventParams.Count - 1;
+				_indicesOfGlobalsByName[formattedName] = _globalEventParams.Count - 1;
 			}
 			else
 			{
-				_globalEventParams[idx].Set(name, value);
+				_globalEventParams[idx].Set(formattedName, value);
 			}
 		}
 		
 		public void SetGlobalEventParam(string name, string value)
 		{
-			if (!_indicesOfGlobalsByName.TryGetValue(name, out int idx))
+			string formattedName = name.Replace('-', '_');
+			if (!_indicesOfGlobalsByName.TryGetValue(formattedName, out int idx))
 			{
 				var param = new Value();
-				param.Set(name, value);
+				param.Set(formattedName, value);
 				_globalEventParams.Add(param);
-				_indicesOfGlobalsByName[name] = _globalEventParams.Count - 1;
+				_indicesOfGlobalsByName[formattedName] = _globalEventParams.Count - 1;
 			}
 			else
 			{
-				_globalEventParams[idx].Set(name, value);
+				_globalEventParams[idx].Set(formattedName, value);
 			}
 		}
 		
 		public void SetGlobalEventParam(string name, DateTime value)
 		{
-			if (!_indicesOfGlobalsByName.TryGetValue(name, out int idx))
+			string formattedName = name.Replace('-', '_');
+			if (!_indicesOfGlobalsByName.TryGetValue(formattedName, out int idx))
 			{
 				var param = new Value();
-				param.Set(name, value);
+				param.Set(formattedName, value);
 				_globalEventParams.Add(param);
-				_indicesOfGlobalsByName[name] = _globalEventParams.Count - 1;
+				_indicesOfGlobalsByName[formattedName] = _globalEventParams.Count - 1;
 			}
 			else
 			{
-				_globalEventParams[idx].Set(name, value);
+				_globalEventParams[idx].Set(formattedName, value);
 			}
 		}
 		
