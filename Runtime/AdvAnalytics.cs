@@ -35,7 +35,7 @@ namespace Advant
             _userRegistrator 	= new UserRegistrator(USERS_DATA_TABLE, _backend);
         }
 
-        public static void StartInit(string analyticsPathBase, string registrationPathbase)
+        public static void StartInit(string analyticsPathBase, string registrationPathbase, string abMode)
         {
             _backend.SetPathBases(analyticsPathBase, registrationPathbase);
 
@@ -44,7 +44,7 @@ namespace Advant
 			
 // ---------------------------------------------------------------------------------------------
 #if UNITY_EDITOR && DEBUG_ANAL
-            InitAsync(new Identifier(platform: "IOS", "DEBUG", "DEBUG"));
+            InitAsync(new Identifier(platform: "IOS", "DEBUG", "DEBUG"), abMode);
 // ---------------------------------------------------------------------------------------------			
 #elif UNITY_EDITOR
 			return;
@@ -55,11 +55,11 @@ namespace Advant
 			    {
 				    Log.Info("GAID couldn't be received");
 			    }
-                InitAsync(new Identifier(platform: "Android", idfv, gaid));
+                InitAsync(new Identifier(platform: "Android", idfv, gaid), abMode);
             });
 // ---------------------------------------------------------------------------------------------
 #elif UNITY_IOS
-            InitAsync(new Identifier(platform: "IOS", idfv, Device.advertisingIdentifier));
+            InitAsync(new Identifier(platform: "IOS", idfv, Device.advertisingIdentifier), abMode);
 #endif
         }
 		
@@ -98,16 +98,16 @@ namespace Advant
 		public static void SetCurrentArea(int area) 						=> _cacheHolder.SetCurrentArea(area);
 		public static void SetCurrentAbMode(string mode) 					=> _cacheHolder.SetCurrentAbMode(mode, USERS_DATA_TABLE);
 		
-		private static async void InitAsync(Identifier id)
+		private static async void InitAsync(Identifier id, string abMode)
         {
 			_cacheHolder.NewEvent("logged_in");
 			_cacheHolder.SetSessionStart();
 			
-            SendUserDetails(await _userRegistrator.RegistrateAsync(id));
+            SendUserDetails(await _userRegistrator.RegistrateAsync(id), abMode);
             _cacheHolder.StartSendingDataAsync(_userRegistrator.GetUserId());
         }
         
-        private static void SendUserDetails(long sessionCount)
+        private static void SendUserDetails(long sessionCount, string abMode)
         {		
 			_cacheHolder.SetSessionCount(sessionCount);
 			
@@ -125,6 +125,7 @@ namespace Advant
 				_cacheHolder.NewProperty("last_install_date", 		DateTime.UtcNow.ToUniversalTime(), 	USERS_DATA_TABLE);
 				_cacheHolder.NewProperty("first_game_version", 		Application.version, 				USERS_DATA_TABLE);
 				_cacheHolder.NewProperty("current_game_version", 	Application.version, 				USERS_DATA_TABLE);
+				_cacheHolder.NewProperty("first_ab_mode", 			abMode, 							CUSTOM_PROPERTIES_TABLE);
 
                 PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
             }
