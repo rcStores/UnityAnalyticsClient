@@ -86,7 +86,7 @@ namespace Advant
 
         public static bool GetTester() 									=> _userRegistrator.IsTester();
 		
-		// In seconds. Note: The set timeout may apply to each URL redirect on Android which can result in a longer response.
+		// In seconds. Note: The set timeout may apply to each URL redirect on Android which can result in a longer response
 		public static async Task<string> GetCountryAsync(int timeout = 0) 	=> await _userRegistrator.GetCountryAsync(timeout);
 		
 		public static void SetGlobalEventParam(string name, int value) 		=> _cacheHolder.SetGlobalEventParam(name, value);
