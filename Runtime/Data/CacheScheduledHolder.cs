@@ -409,7 +409,7 @@ namespace Advant.Data
 						
 				_sendingCancellationSource = null;
 					
-				//Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
+				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 
 				int eventsBatchSize 		= _events.GetCurrentBusyCount();
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
