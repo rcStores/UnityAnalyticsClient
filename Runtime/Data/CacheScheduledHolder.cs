@@ -294,7 +294,7 @@ namespace Advant.Data
 				
 				if (_sessions.GetSession().Area == 0)
 					_sessions.SetCurrentArea(session.Area);
-				if (string.InNullOrEmpty(_sessions.GetSession().AbMode))
+				if (String.InNullOrEmpty(_sessions.GetSession().AbMode))
 					_sessions.SetCurrentAbMode(session.AbMode);
 				return true;
 			}
