@@ -311,10 +311,11 @@ namespace Advant.Data
         {
 			try
 			{
-				//Debug.LogWarning("[ADVANAL] Saving cache locally");
+				Debug.LogWarning("[ADVANAL] Saving cache locally");
 				SerializeSessions();
 				SerializeEvents();
 				SerializeProperties();
+				Debug.LogWarning("[ADVANAL] Serialization is done");
 			}
 			catch (Exception e)
 			{
@@ -418,12 +419,12 @@ namespace Advant.Data
 				if (await RegisterActivity() is var isSessionNew && isSessionNew)
 					NewEvent("logged_in");
 				
-				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(_userId));					
-				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJsonAsync(_userId));
-				var sessionSending		= _backend.SendToServerAsync<Session>(await _sessions.ToJsonAsync(_userId));
+				// var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(_userId));					
+				// var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJsonAsync(_userId));
+				// var sessionSending		= _backend.SendToServerAsync<Session>(await _sessions.ToJsonAsync(_userId));
 						
-				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded, hasSessionSendingSucceeded) = 
-					await UniTask.WhenAll(eventsSending, propertiesSending, sessionSending);
+				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded, hasSessionSendingSucceeded) = (false, false, false);
+					//await UniTask.WhenAll(eventsSending, propertiesSending, sessionSending);
 				
 				//Debug.LogWarning("[ADVANAL] Getting results of data sending...");
 				

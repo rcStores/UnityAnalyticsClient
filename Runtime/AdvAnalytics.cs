@@ -147,10 +147,6 @@ namespace Advant
 				
                 PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
             }
-			if (GetTester())
-			{
-				
-			}
 			_cacheHolder.NewProperty("os", Application.platform == RuntimePlatform.Android ? "android" : "ios", USERS_DATA_TABLE);
 			_cacheHolder.NewProperty("country", _userRegistrator.GetCountry(), USERS_DATA_TABLE);
         }	
