@@ -430,17 +430,17 @@ namespace Advant.Data
 				
 				if (hasEventsSendingSucceeded) 
 				{
-					//Debug.LogWarning("[ADVANAL] Clear events");
+					Debug.LogWarning("[ADVANAL] Clear events");
 					_events.FreeFromBeginning(eventsBatchSize);
 				}
 				if (hasPropertiesSendingSucceeded)
 				{
-					//Debug.LogWarning("[ADVANAL] Clear properties");
+					Debug.LogWarning("[ADVANAL] Clear properties");
 					_properties.FreeFromBeginning(propertiesBatchSize);
 				}
 				if (hasSessionSendingSucceeded)
 				{
-					//Debug.LogWarning("[ADVANAL] Clear sessions");
+					Debug.LogWarning("[ADVANAL] Clear sessions");
 					_sessions.FreeFromBeginning(sessionsBatchSize);
 				}
 			}
