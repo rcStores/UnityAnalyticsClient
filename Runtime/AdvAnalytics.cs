@@ -74,7 +74,11 @@ namespace Advant
 		public static void SendProperty(string name, DateTime value)	=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
 		public static void SendProperty(string name, string value)		=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);
 
-        public static void SaveCacheLocally() 							=> _cacheHolder.SaveCacheLocally();
+        public static void SaveCacheLocally() 
+		{	
+			Debug.LogWarning($"[ADVANT] AdvAnalytics.SaveCacheLocally");
+			_cacheHolder.SaveCacheLocally();
+		}
         
         public static void SetCheater(bool value) 
 		{
