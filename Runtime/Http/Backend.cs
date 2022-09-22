@@ -73,7 +73,7 @@ namespace Advant.Http
 			}
 				
 			Debug.LogWarning("GetNetworkTime response: " + response);
-            return response is null ? DateTime.UtcNow : DateTime.Parse(response, CultureInfo.InvariantCulture);
+            return DateTime.UtcNow; //response is null ? DateTime.UtcNow : DateTime.Parse(response, CultureInfo.InvariantCulture);
 		}
 
         public async UniTask<bool> GetTester(long userId)
