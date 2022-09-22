@@ -80,7 +80,7 @@ namespace Advant
 			_cacheHolder.SaveCacheLocally();
 		}
 		
-		public static UniTask<DateTime> SynchronizeTimeAsync()
+		public static async UniTask<DateTime> SynchronizeTimeAsync()
 		{
 			await RealDateTime.SynchronizeTimeAsync();
 			return RealDateTime.UtcNow;

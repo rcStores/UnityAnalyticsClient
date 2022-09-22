@@ -7,8 +7,8 @@ internal static class RealDateTime
 {
 	public static DateTime UtcNow
 	{ 
-		get => _isSystemTimeDifferent && _DateTime.UtcNow > systemInitialTime ? 
-			_networkInitialTime.AddSeconds((_DateTime.UtcNow - systemInitialTime).TotalSeconds) :
+		get => _isSystemTimeDifferent && DateTime.UtcNow > _systemInitialTime ? 
+			_networkInitialTime.AddSeconds((DateTime.UtcNow - _systemInitialTime).TotalSeconds) :
 			DateTime.UtcNow; 
 	}
 		
@@ -25,7 +25,7 @@ internal static class RealDateTime
 		await SynchronizeTimeAsync();
 	}
 	
-	public static async UniTask SychronizeTime()
+	public static async UniTask SychronizeTimeAsync()
 	{
 		_networkInitialTime = await _backend.GetNetworkTIme();
 		_systemInitialTime = DateTime.UtcNow;

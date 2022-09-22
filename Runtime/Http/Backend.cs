@@ -59,7 +59,7 @@ namespace Advant.Http
 			return true;
         }
 		
-		public async UniTask<DateTime> GetNetworkTime(long userId)
+		public async UniTask<DateTime> GetNetworkTime()
 		{
 			string response;
 			try
