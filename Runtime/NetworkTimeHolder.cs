@@ -37,6 +37,7 @@ internal static class RealDateTime
 		{
 			Debug.LogError("Unexpected error while getting network time: " + e.Message);
 			Debug.LogError(e.StackTrace);
+			_networkInitialTime = DateTime.UtcNow;
 		}
 			
 		_systemInitialTime = DateTime.UtcNow;
