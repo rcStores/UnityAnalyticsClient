@@ -25,7 +25,7 @@ internal static class RealDateTime
 		await SynchronizeTimeAsync();
 	}
 	
-	public static async UniTask SychronizeTimeAsync()
+	public static async UniTask SynchronizeTimeAsync()
 	{
 		_networkInitialTime = await _backend.GetNetworkTIme();
 		_systemInitialTime = DateTime.UtcNow;
