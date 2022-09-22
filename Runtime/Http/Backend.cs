@@ -30,7 +30,7 @@ namespace Advant.Http
         public void SetPathBases(string analytics, string registration)
         {
 			_getTesterEndpoint 								= registration + "/Registration/GetTester";
-			_getNetworkTimeEndpoint							= registration + "Registration/GetNetworkTime";
+			_getNetworkTimeEndpoint							= registration + "/Registration/GetNetworkTime";
 			_getCountryEndpoint 							= "https://ipapi.co/json";
 			_putUserIdEndpoint 								= registration + "/Registration/GetOrCreateUserId";
 			_putSessionCountEndpoint 						= registration + "/Sessions/PutSessionCount";
