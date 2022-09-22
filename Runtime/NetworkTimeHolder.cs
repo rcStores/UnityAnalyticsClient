@@ -10,7 +10,6 @@ internal static class RealDateTime
 		get => _isSystemTimeDifferent && _DateTime.UtcNow > systemInitialTime ? 
 			_networkInitialTime.AddSeconds((_DateTime.UtcNow - systemInitialTime).TotalSeconds) :
 			DateTime.UtcNow; 
-		private set; 
 	}
 		
 	private static Backend _backend;
