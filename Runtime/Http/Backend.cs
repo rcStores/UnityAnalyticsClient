@@ -61,19 +61,18 @@ namespace Advant.Http
 		
 		public async UniTask<DateTime> GetNetworkTime()
 		{
-			string response;
+			string response = null;
 			try
 			{
 				response = await ExecuteWebRequestAsync(_getNetworkTimeEndpoint, RequestType.GET);
 			}
 			catch (Exception e)
 			{
-				Debug.Log("Error while getting tester info: " + e.Message);
-				response = default(DateTime).ToString();;
+				Debug.Log("Error while getting network time: " + e.Message);
 			}
 				
 			Debug.LogWarning("GetNetworkTime response: " + response);
-            return DateTime.Parse(response);
+            return response is null ? DateTime.UtcNow : DateTime.Parse(response);
 		}
 
         public async UniTask<bool> GetTester(long userId)
