@@ -27,9 +27,18 @@ internal static class RealDateTime
 	
 	public static async UniTask SynchronizeTimeAsync()
 	{
-		_networkInitialTime = _backend is null ? 
-			DateTime.UtcNow :
-			await _backend.GetNetworkTime();
+		try
+		{
+			_networkInitialTime = _backend is null ? 
+				DateTime.UtcNow :
+				await _backend.GetNetworkTime();
+		}
+		catch (Exception e)
+		{
+			Debug.LogError("Unexpected error while getting network time: " + e.Message);
+			Debug.LogError(e.StackTrace);
+		}
+			
 		_systemInitialTime = DateTime.UtcNow;
 		
 		if (_networkInitialTime - _systemInitialTime > TimeSpan.FromSeconds(10))
