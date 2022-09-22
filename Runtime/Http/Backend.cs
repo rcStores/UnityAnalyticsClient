@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.Networking;
 using System.Text;
-using System.Globaliztion;
+using System.Globalization;
 using System.Threading.Tasks;
 using UnityEngine;
 using System.Threading;
