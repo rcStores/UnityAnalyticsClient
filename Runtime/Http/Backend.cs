@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.Networking;
 using System.Text;
+using System.Text.Globaliztion;
 using System.Threading.Tasks;
 using UnityEngine;
 using System.Threading;
@@ -72,7 +73,7 @@ namespace Advant.Http
 			}
 				
 			Debug.LogWarning("GetNetworkTime response: " + response);
-            return response is null ? DateTime.UtcNow : DateTime.Parse(response);
+            return response is null ? DateTime.UtcNow : DateTime.Parse(response, CultureInfo.InvariantCulture);
 		}
 
         public async UniTask<bool> GetTester(long userId)
