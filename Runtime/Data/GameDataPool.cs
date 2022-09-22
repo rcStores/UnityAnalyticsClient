@@ -219,8 +219,8 @@ namespace Advant.Data
 			s.AbMode = _abMode;
 			s.SessionCount = _userSessionCount;
 			s.Area = _gameArea;
-			s.SessionStart	= _sessionStart = DateTime.UtcNow;
-			s.LastActivity	= DateTime.UtcNow;
+			s.SessionStart	= _sessionStart = RealDateTime.UtcNow;
+			s.LastActivity	= RealDateTime.UtcNow;
 			return ref s;
 		}
 		
@@ -240,7 +240,7 @@ namespace Advant.Data
 		public void ClearLastSession() => 
 			_currentCount = _currentCount > 1 ? _currentCount - 1 : _currentCount;
 			
-		public void SetSessionStart() 				=> GetSession().SessionStart	= DateTime.UtcNow;
+		public void SetSessionStart() 				=> GetSession().SessionStart	= RealDateTime.UtcNow;
 		public void SetCurrentAbMode(string mode) 	=> GetSession().AbMode			= mode;
 		public void SetUserSessionCount(long count)	=> GetSession().SessionCount 	= count;
 		public void SetCurrentArea(int area) 		=> GetSession().Area 			= area;

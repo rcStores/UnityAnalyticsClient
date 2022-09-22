@@ -8,7 +8,7 @@ using AndroidUtils;
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine; 
 #if UNITY_IOS
 using UnityEngine.iOS;
@@ -79,6 +79,12 @@ namespace Advant
 			Debug.LogWarning($"[ADVANT] AdvAnalytics.SaveCacheLocally");
 			_cacheHolder.SaveCacheLocally();
 		}
+		
+		public static UniTask<DateTime> SynchronizeTimeAsync()
+		{
+			await RealDateTime.SynchronizeTimeAsync();
+			return RealDateTime.UtcNow;
+		}		
         
         public static void SetCheater(bool value) 
 		{
@@ -100,10 +106,11 @@ namespace Advant
 		public static void SetGlobalEventParam(string name, string value) 	=> _cacheHolder.SetGlobalEventParam(name, value);
 		
 		public static void SetCurrentArea(int area) 						=> _cacheHolder.SetCurrentArea(area);
-		public static void SetCurrentAbMode(string mode) 					=> _cacheHolder.SetCurrentAbMode(mode, USERS_DATA_TABLE);
+		public static void SetCurrentAbMode(string mode) 					=> _cacheHolder.SetCurrentAbMode(mode, CUSTOM_PROPERTIES_TABLE);
 		
 		private static async void InitAsync(Identifier id, string abMode)
         {
+			await RealDateTime.InitAsync(_backend);
 			_cacheHolder.NewEvent("logged_in");
 			_cacheHolder.SetSessionStart();
 			
@@ -124,12 +131,12 @@ namespace Advant
 				if (!_userRegistrator.IsCheater())
 					_cacheHolder.NewProperty("cheater", false, USERS_DATA_TABLE);
 				
-				_cacheHolder.NewProperty("tester", 					GetTester(), 						USERS_DATA_TABLE);
-				_cacheHolder.NewProperty("first_install_date", 		DateTime.UtcNow.ToUniversalTime(), 	USERS_DATA_TABLE);
-				_cacheHolder.NewProperty("last_install_date", 		DateTime.UtcNow.ToUniversalTime(), 	USERS_DATA_TABLE);
-				_cacheHolder.NewProperty("first_game_version", 		Application.version, 				USERS_DATA_TABLE);
-				_cacheHolder.NewProperty("current_game_version", 	Application.version, 				USERS_DATA_TABLE);
-				_cacheHolder.NewProperty("first_ab_mode", 			abMode, 							CUSTOM_PROPERTIES_TABLE);
+				_cacheHolder.NewProperty("tester", 					GetTester(), 			USERS_DATA_TABLE);
+				_cacheHolder.NewProperty("first_install_date", 		RealDateTime.UtcNow, 	USERS_DATA_TABLE);
+				_cacheHolder.NewProperty("last_install_date", 		RealDateTime.UtcNow,	USERS_DATA_TABLE);
+				_cacheHolder.NewProperty("first_game_version", 		Application.version, 	USERS_DATA_TABLE);
+				_cacheHolder.NewProperty("current_game_version", 	Application.version, 	USERS_DATA_TABLE);
+				_cacheHolder.NewProperty("first_ab_mode", 			abMode, 				CUSTOM_PROPERTIES_TABLE);
 
                 PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
             }
@@ -140,11 +147,11 @@ namespace Advant
                 string appVersion = PlayerPrefs.GetString(APP_VERSION_PREF);
                 if (appVersion != "" && appVersion != Application.version)
                 {
-					_cacheHolder.NewProperty("last_update_date", DateTime.UtcNow.ToUniversalTime(), USERS_DATA_TABLE);
+					_cacheHolder.NewProperty("last_update_date", RealDateTime.UtcNow, USERS_DATA_TABLE);
                 }
                 else if (appVersion == "")
                 {
-					_cacheHolder.NewProperty("last_install_date", DateTime.UtcNow.ToUniversalTime(), USERS_DATA_TABLE);
+					_cacheHolder.NewProperty("last_install_date", RealDateTime.UtcNow, USERS_DATA_TABLE);
                 }
 				
 				_cacheHolder.NewProperty("current_game_version", Application.version, USERS_DATA_TABLE);

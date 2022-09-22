@@ -20,6 +20,7 @@ namespace Advant.Http
         private readonly Dictionary<Type, string> _gameDataEndpointsByType = new Dictionary<Type, string>();
         
         private string _getTesterEndpoint;
+		private string _getNetworkTimeEndpoint;
 		private string _getCountryEndpoint;
         private string _putUserIdEndpoint;
 		private string _putSessionCountEndpoint;
@@ -29,6 +30,7 @@ namespace Advant.Http
         public void SetPathBases(string analytics, string registration)
         {
 			_getTesterEndpoint 								= registration + "/Registration/GetTester";
+			_getNetworkTimeEndpoint							= registration + "Registration/GetNetworkTime";
 			_getCountryEndpoint 							= "https://ipapi.co/json";
 			_putUserIdEndpoint 								= registration + "/Registration/GetOrCreateUserId";
 			_putSessionCountEndpoint 						= registration + "/Sessions/PutSessionCount";
@@ -56,6 +58,23 @@ namespace Advant.Http
 			}
 			return true;
         }
+		
+		public async UniTask<DateTime> GetNetworkTime(long userId)
+		{
+			string response;
+			try
+			{
+				response = await ExecuteWebRequestAsync(_getNetworkTimeEndpoint, RequestType.GET);
+			}
+			catch (Exception e)
+			{
+				Debug.Log("Error while getting tester info: " + e.Message);
+				response = default(DateTime).ToString();;
+			}
+				
+			Debug.LogWarning("GetNetworkTime response: " + response);
+            return DateTime.Parse(response);
+		}
 
         public async UniTask<bool> GetTester(long userId)
         {

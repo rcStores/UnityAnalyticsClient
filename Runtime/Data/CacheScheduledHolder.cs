@@ -99,7 +99,7 @@ namespace Advant.Data
 			ref GameEvent e = ref _events.NewElement();
 			
 			e.Free();
-			e.SetTimestamp(DateTime.UtcNow);
+			e.SetTimestamp(RealDateTime.UtcNow);
 			e.SetMaxParameterCount(GAME_EVENT_PARAMETER_COUNT);
 			e.SetName(eventName);
 			
@@ -181,7 +181,7 @@ namespace Advant.Data
 		{
 			_sessions.SetCurrentAbMode(abMode);	
 			SetGlobalEventParam("ab_mode", abMode);
-			NewProperty("ab_mode", abMode, propertyTableName);
+			NewProperty("current_ab_mode", abMode, propertyTableName);
 		}
 		
 		public void SetGlobalEventParam(string name, int value)
@@ -280,7 +280,7 @@ namespace Advant.Data
 					_sessions.ClearLastSession();
 					return false;
 				}
-				_sessions.GetSession().LastActivity = DateTime.UtcNow;
+				_sessions.GetSession().LastActivity = RealDateTime.UtcNow;
 			}
 			catch (Exception e)
 			{
@@ -293,7 +293,7 @@ namespace Advant.Data
 		private bool TryUpdateSessionCount()
 		{
 			ref var session = ref _sessions.GetSession();
-			if (session.LastActivity != default(DateTime) && DateTime.UtcNow.Subtract(session.LastActivity) > TimeSpan.FromMinutes(10))
+			if (session.LastActivity != default(DateTime) && RealDateTime.UtcNow.Subtract(session.LastActivity) > TimeSpan.FromMinutes(10))
 			{
 				_sessions.NewSession();
 				_sessions.SetUserSessionCount(session.SessionCount + 1);
