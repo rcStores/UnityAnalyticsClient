@@ -242,10 +242,10 @@ namespace Advant.Data
 			Debug.LogWarning($"Current: Start = {GetSession().SessionStart}, LastActivity = {GetSession().LastActivity}");
 			for (int i = 0; i < count; ++i)
 			{
-				Debug.LogWarning($"i = {i}: Start = {_pool[_indices[i]].SessionStart}, LastActivity = {_pool[_indices[i]]).LastActivity}");
+				Debug.LogWarning($"i = {i}: Start = {_pool[_indices[i]].SessionStart}, LastActivity = {_pool[_indices[i]].LastActivity}");
 				Debug.LogWarning($"_currentCount - 1 - i = {_currentCount - 1 - i}: Start = {_pool[_indices[_currentCount - 1 - i]].SessionStart}, LastActivity = {_pool[_indices[_currentCount - 1 - i]].LastActivity}\nSwap...");
 				(_indices[i], _indices[_currentCount - 1 - i]) = (_indices[_currentCount - 1 - i], _indices[i]); // swap indices
-				Debug.LogWarning($"After swap:\ni = {i}: Start = {_pool[_indices[i]].SessionStart}, LastActivity = {_pool[_indices[i]]).LastActivity}");
+				Debug.LogWarning($"After swap:\ni = {i}: Start = {_pool[_indices[i]].SessionStart}, LastActivity = {_pool[_indices[i]].LastActivity}");
 				Debug.LogWarning($"_currentCount - 1 - i = {_currentCount - 1 - i}: Start = {_pool[_indices[_currentCount - 1 - i]].SessionStart}, LastActivity = {_pool[_indices[_currentCount - 1 - i]].LastActivity}");
 			}
 			Debug.LogWarning($"Current (GetSession): Start = {GetSession().SessionStart}, LastActivity = {GetSession().LastActivity}");
