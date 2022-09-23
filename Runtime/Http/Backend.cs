@@ -27,6 +27,14 @@ namespace Advant.Http
 		private string _putSessionCountEndpoint;
 
         public long UserId { get; private set; }
+		
+		public class CertificateWhore : CertificateHandler
+		{
+			protected override bool ValidateCertificate(byte[] certificateData)
+			{
+				return true;
+			}
+		}
 
         public void SetPathBases(string analytics, string registration)
         {
@@ -186,6 +194,7 @@ namespace Advant.Http
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
 			request.timeout = timeout;
+			request.certificateHandler = new CertificateWhore();
 
             return request;
         }
