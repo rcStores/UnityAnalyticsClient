@@ -444,7 +444,7 @@ namespace Advant.Data
 				}
 				if (hasSessionSendingSucceeded)
 				{
-					Debug.LogWarning("[ADVANAL] Clear sessions");
+					Debug.LogWarning("[ADVANAL] Clear sessions, batch size = " + sessionsBatchSize);
 					_sessions.FreeFromBeginning(sessionsBatchSize);
 				}
 			}
