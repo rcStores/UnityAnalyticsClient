@@ -235,7 +235,7 @@ namespace Advant.Data
 		public override void FreeFromBeginning(int count)
 		{			
 			base.FreeFromBeginning(count - 1);
-			ref var s = ref GetSession();
+			ref var session = ref GetSession();
 			Debug.LogWarning($"session.SessionCount = {session.SessionCount}, session.SessionStart = {session.SessionStart}, session.LastActivity = {session.LastActivity}");
 		}
 		
