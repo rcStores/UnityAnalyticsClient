@@ -293,6 +293,7 @@ namespace Advant.Data
 		private bool TryUpdateSessionCount()
 		{
 			ref var session = ref _sessions.GetSession();
+			Debug.LogWarning($"[ADVANT] RealDateTime.UtcNow = {RealDateTime.UtcNow}, session.LastActivity = {session.LastActivity}");
 			if (session.LastActivity != default(DateTime) && RealDateTime.UtcNow.Subtract(session.LastActivity) > TimeSpan.FromMinutes(10))
 			{
 				_sessions.NewSession();
@@ -417,7 +418,10 @@ namespace Advant.Data
 				int sessionsBatchSize 		= _sessions.GetCurrentBusyCount();
 				
 				if (await RegisterActivity() is var isSessionNew && isSessionNew)
+				{
+					Debug.LogWarning($"[ADVANAL] Add new session event (logged_in). SessionStart = {_sessions.GetSession().SessionStart}, LastActivity = {_sessions.GetSession().LastActivity}}");
 					NewEvent("logged_in");
+				}
 				
 				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(_userId));					
 				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJsonAsync(_userId));
