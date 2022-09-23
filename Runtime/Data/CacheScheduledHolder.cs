@@ -412,16 +412,16 @@ namespace Advant.Data
 				_sendingCancellationSource = null;
 					
 				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
-
-				int eventsBatchSize 		= _events.GetCurrentBusyCount();
-				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
-				int sessionsBatchSize 		= _sessions.GetCurrentBusyCount();
 				
 				if (await RegisterActivity() is var isSessionNew && isSessionNew)
 				{
 					Debug.LogWarning($"[ADVANAL] Add new session event (logged_in). SessionStart = {_sessions.GetSession().SessionStart}, LastActivity = {_sessions.GetSession().LastActivity}");
 					NewEvent("logged_in");
 				}
+				
+				int eventsBatchSize 		= _events.GetCurrentBusyCount();
+				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
+				int sessionsBatchSize 		= _sessions.GetCurrentBusyCount();
 				
 				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(_userId));					
 				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJsonAsync(_userId));
