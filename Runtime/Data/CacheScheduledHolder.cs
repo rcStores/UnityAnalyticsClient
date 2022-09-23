@@ -419,7 +419,7 @@ namespace Advant.Data
 				
 				if (await RegisterActivity() is var isSessionNew && isSessionNew)
 				{
-					Debug.LogWarning($"[ADVANAL] Add new session event (logged_in). SessionStart = {_sessions.GetSession().SessionStart}, LastActivity = {_sessions.GetSession().LastActivity}}");
+					Debug.LogWarning($"[ADVANAL] Add new session event (logged_in). SessionStart = {_sessions.GetSession().SessionStart}, LastActivity = {_sessions.GetSession().LastActivity}");
 					NewEvent("logged_in");
 				}
 				
