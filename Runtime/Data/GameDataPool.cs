@@ -262,7 +262,7 @@ namespace Advant.Data
 				Debug.LogWarning($"After swap:\ni = {i}: Start = {_pool[_indices[i]].SessionStart}, LastActivity = {_pool[_indices[i]].LastActivity}");
 				Debug.LogWarning($"_currentCount - 1 - i = {_currentCount - 1 - i}: Start = {_pool[_indices[_currentCount - 1 - i]].SessionStart}, LastActivity = {_pool[_indices[_currentCount - 1 - i]].LastActivity}");
 			}
-			Debug.LogWarning($"Current (CurrentSession): Start = {CurrentSession().SessionStart}, LastActivity = {CurrenttSession().LastActivity}");
+			Debug.LogWarning($"Current (CurrentSession): Start = {CurrentSession().SessionStart}, LastActivity = {CurrentSession().LastActivity}");
 			Debug.LogWarning($"Current (raw): Start = {_pool[_indices[_currentCount - 1]].SessionStart}, LastActivity = {_pool[_indices[_currentCount - 1]].LastActivity}\nRecalculating _currentCount...");
 			_currentCount = _currentCount - count;
 			Debug.LogWarning($"Current (CurrentSession): Start = {CurrentSession().SessionStart}, LastActivity = {CurrentSession().LastActivity}");
