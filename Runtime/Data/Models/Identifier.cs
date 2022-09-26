@@ -8,6 +8,7 @@
             Platform = platform;
             DeviceId = idfv;
             IdForAdvertising = idfa;
+			SessionId = default;
         }
 
         public string ToJson()

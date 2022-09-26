@@ -405,7 +405,7 @@ namespace Advant.Data
 					
 				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 				
-				if (await _sessions.RegisterActivity() is var isSessionNew && isSessionNew)
+				if (_sessions.RegisterActivity() is var isSessionNew && isSessionNew)
 				{
 					Debug.LogWarning($"[ADVANAL] Add new session event (logged_in). SessionStart = {_sessions.CurrentSession().SessionStart}, LastActivity = {_sessions.CurrentSession().LastActivity}");
 					NewEvent("logged_in");

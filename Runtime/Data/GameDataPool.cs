@@ -227,10 +227,15 @@ namespace Advant.Data
 		
 		public bool RegisterActivity()
 		{
+			bool hasNewSession = false;
 			if (CurrentSession().LastActivity != default(DateTime) && RealDateTime.UtcNow.Subtract(CurrentSession().LastActivity) > TimeSpan.FromMinutes(10))
+			{
 				NewSession();
+				hasNewSession = true;
+			}
 			else
 				CurrentSession().LastActivity = RealDateTime.UtcNow;
+			return hasNewSession;
 		}
 		
 		public ref Session CurrentSession() 
@@ -248,7 +253,7 @@ namespace Advant.Data
 			if (count > _pool.Length)
 				count = _pool.Length;
 			Debug.LogWarning("Pool elements:");
-			Debug.LogWarning($"Current: Start = {GetSession().SessionStart}, LastActivity = {GetSession().LastActivity}");
+			Debug.LogWarning($"Current: Start = {CurrentSession().SessionStart}, LastActivity = {CurrentSession().LastActivity}");
 			for (int i = 0; i < count; ++i)
 			{
 				Debug.LogWarning($"i = {i}: Start = {_pool[_indices[i]].SessionStart}, LastActivity = {_pool[_indices[i]].LastActivity}");
@@ -257,13 +262,13 @@ namespace Advant.Data
 				Debug.LogWarning($"After swap:\ni = {i}: Start = {_pool[_indices[i]].SessionStart}, LastActivity = {_pool[_indices[i]].LastActivity}");
 				Debug.LogWarning($"_currentCount - 1 - i = {_currentCount - 1 - i}: Start = {_pool[_indices[_currentCount - 1 - i]].SessionStart}, LastActivity = {_pool[_indices[_currentCount - 1 - i]].LastActivity}");
 			}
-			Debug.LogWarning($"Current (GetSession): Start = {GetSession().SessionStart}, LastActivity = {GetSession().LastActivity}");
+			Debug.LogWarning($"Current (CurrentSession): Start = {CurrentSession().SessionStart}, LastActivity = {CurrenttSession().LastActivity}");
 			Debug.LogWarning($"Current (raw): Start = {_pool[_indices[_currentCount - 1]].SessionStart}, LastActivity = {_pool[_indices[_currentCount - 1]].LastActivity}\nRecalculating _currentCount...");
 			_currentCount = _currentCount - count;
-			Debug.LogWarning($"Current (GetSession): Start = {GetSession().SessionStart}, LastActivity = {GetSession().LastActivity}");
+			Debug.LogWarning($"Current (CurrentSession): Start = {CurrentSession().SessionStart}, LastActivity = {CurrentSession().LastActivity}");
 			Debug.LogWarning($"Current (raw): Start = {_pool[_indices[_currentCount - 1]].SessionStart}, LastActivity = {_pool[_indices[_currentCount - 1]].LastActivity}");
 			
-			ref var session = ref GetSession();
+			ref var session = ref CurrentSession();
 			Debug.LogWarning($"session.SessionCount = {session.SessionCount}, session.SessionStart = {session.SessionStart}, session.LastActivity = {session.LastActivity}");
 		}
 		
@@ -275,7 +280,7 @@ namespace Advant.Data
 		public void SetUserSessionCount(long count)	=> _userSessionCount	= count;
 		public void SetCurrentArea(int area) 		=> _gameArea			= area;
 		
-		public void GetCurrentArea() 				=> _gameArea;
+		public int GetCurrentArea() 				=> _gameArea;
 	}
 
 } // namespace Advant.Data
