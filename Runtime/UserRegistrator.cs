@@ -54,6 +54,7 @@ namespace Advant
 						false, 
 						PlayerLoopTiming.PostLateUpdate);
                     Log.Info("retry");
+					Debug.LogWarning("[ADVANAL] User registration failed. Retry...");
                 }
                 else
                 {

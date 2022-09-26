@@ -124,6 +124,7 @@ namespace Advant.Http
                 var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_putUserIdEndpoint, RequestType.PUT, dto.ToJson()));
                 result.UserId = jsonNode["userId"];
                 result.SessionCount = jsonNode["sessionCount"];
+				Debug.LogWarning($"[ADVANAL] GetOrCreateUserIdAsync. UserId = {result.UserId}, SessionCount = {result.SessionCount}");
             }
             catch (Exception e)
             {
