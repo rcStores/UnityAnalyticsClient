@@ -13,7 +13,7 @@
 
         public string ToJson()
         {
-            return $"{{\"UserId\": {UserId}, \"Platform\": \"{Platform}\", \"DeviceId\":\"{DeviceId}\", \"IdForAdvertising\":\"{IdForAdvertising}, \"SessionId\":\"{SessionId}\"}}";
+            return $"{{\"UserId\": {UserId}, \"Platform\": \"{Platform}\", \"DeviceId\":\"{DeviceId}\", \"IdForAdvertising\":\"{IdForAdvertising}\", \"SessionId\":\"{SessionId}\"}}";
         }
 
 		public long UserId { get; set; }
