@@ -10,6 +10,7 @@ internal struct Session
 	public int 		Area 			{ get; set; }
 	public long 	SessionCount	{ get; set; }
 	public string 	AbMode 			{ get; set; }
+	public string 	SessionId 		{ get; set; }
 	
 	internal void ToJson(long userId, StringBuilder sb)
 	{

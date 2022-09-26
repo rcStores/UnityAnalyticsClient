@@ -111,8 +111,9 @@ namespace Advant
 		private static async void InitAsync(Identifier id, string abMode)
         {
 			await RealDateTime.InitAsync(_backend);
+			id.SessionId = _cacheHolder.NewSession();
+			//_cacheHolder.SetSessionStart();
 			_cacheHolder.NewEvent("logged_in");
-			_cacheHolder.SetSessionStart();
 			
             SendUserDetails(await _userRegistrator.RegistrateAsync(id), abMode);
             _cacheHolder.StartSendingDataAsync(_userRegistrator.GetUserId());
@@ -120,7 +121,7 @@ namespace Advant
         
         private static void SendUserDetails(long sessionCount, string abMode)
         {		
-			_cacheHolder.SetSessionCount(sessionCount);
+			//_cacheHolder.SetSessionCount(sessionCount);
 			
 			if (sessionCount == 0) return;
 			

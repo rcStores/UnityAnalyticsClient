@@ -161,15 +161,7 @@ namespace Advant.Data
 		public void SetSessionCount(long sessionCount)	=> _sessions.SetUserSessionCount(sessionCount);
 		public void SetSessionStart() 					=> _sessions.SetSessionStart();
 		
-		// public void NewSession(long sessionCount, int gameArea, string abMode)
-		// {
-			// ref var s 		= ref _sessions.NewElement();
-			// s.SessionStart	= DateTime.UtcNow;
-			// s.LastActivity	= DateTime.UtcNow;
-			// s.SessionCount 	= sessionCount;
-			// s.Area 			= gameArea;
-			// s.AbMode 		= abMode;
-		// }
+		public string NewSession() => _sessions.NewSession();
 		
 		public void SetCurrentArea(int area)
 		{
@@ -264,49 +256,49 @@ namespace Advant.Data
 			}
 		}
 		
-		public async UniTask<bool> RegisterActivity()
-		{
-			//var start = DateTime.UtcNow;
-			bool isSessionNew = false;
-			try 
-			{
-				if (TryUpdateSessionCount() is var isInnerSessionUpdated && isInnerSessionUpdated &&
-					await _backend.PutSessionCount(_userId, _sessions.GetSession().SessionCount))
-				{
-					isSessionNew = true;
-				}
-				else if (isInnerSessionUpdated)
-				{
-					_sessions.ClearLastSession();
-					return false;
-				}
-				_sessions.GetSession().LastActivity = RealDateTime.UtcNow;
-			}
-			catch (Exception e)
-			{
-				Debug.LogError("[ADVANT] RegisterActivity: " + e.Message);
-			}
-			//Debug.LogWarning($"[ADVANT] RegisterActivity runs for {(DateTime.UtcNow - start).TotalMilliseconds} ms");
-			return isSessionNew;
-		}
+		// public async UniTask<bool> RegisterActivity()
+		// {
+			// //var start = DateTime.UtcNow;
+			// bool isSessionNew = false;
+			// try 
+			// {
+				// if (TryUpdateSessionCount() is var isInnerSessionUpdated && isInnerSessionUpdated &&
+					// await _backend.PutSessionCount(_userId, _sessions.GetSession().SessionCount))
+				// {
+					// isSessionNew = true;
+				// }
+				// else if (isInnerSessionUpdated)
+				// {
+					// _sessions.ClearLastSession();
+					// return false;
+				// }
+				// _sessions.GetSession().LastActivity = RealDateTime.UtcNow;
+			// }
+			// catch (Exception e)
+			// {
+				// Debug.LogError("[ADVANT] RegisterActivity: " + e.Message);
+			// }
+			// //Debug.LogWarning($"[ADVANT] RegisterActivity runs for {(DateTime.UtcNow - start).TotalMilliseconds} ms");
+			// return isSessionNew;
+		// }
 		
-		private bool TryUpdateSessionCount()
-		{
-			ref var session = ref _sessions.GetSession();
-			Debug.LogWarning($"[ADVANT] RealDateTime.UtcNow = {RealDateTime.UtcNow}, session.LastActivity = {session.LastActivity}");
-			if (session.LastActivity != default(DateTime) && RealDateTime.UtcNow.Subtract(session.LastActivity) > TimeSpan.FromMinutes(10))
-			{
-				_sessions.NewSession();
-				_sessions.SetUserSessionCount(session.SessionCount + 1);
+		// private bool TryUpdateSessionCount()
+		// {
+			// ref var session = ref _sessions.GetSession();
+			// Debug.LogWarning($"[ADVANT] RealDateTime.UtcNow = {RealDateTime.UtcNow}, session.LastActivity = {session.LastActivity}");
+			// if (session.LastActivity != default(DateTime) && RealDateTime.UtcNow.Subtract(session.LastActivity) > TimeSpan.FromMinutes(10))
+			// {
+				// _sessions.NewSession();
+				// _sessions.SetUserSessionCount(session.SessionCount + 1);
 				
-				if (_sessions.GetSession().Area == 0)
-					_sessions.SetCurrentArea(session.Area);
-				if (string.IsNullOrEmpty(_sessions.GetSession().AbMode))
-					_sessions.SetCurrentAbMode(session.AbMode);
-				return true;
-			}
-			return false;
-		}
+				// if (_sessions.GetSession().Area == 0)
+					// _sessions.SetCurrentArea(session.Area);
+				// if (string.IsNullOrEmpty(_sessions.GetSession().AbMode))
+					// _sessions.SetCurrentAbMode(session.AbMode);
+				// return true;
+			// }
+			// return false;
+		// }
 
         public void SaveCacheLocally()
         {
@@ -413,9 +405,9 @@ namespace Advant.Data
 					
 				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 				
-				if (await RegisterActivity() is var isSessionNew && isSessionNew)
+				if (await _sessions.RegisterActivity() is var isSessionNew && isSessionNew)
 				{
-					Debug.LogWarning($"[ADVANAL] Add new session event (logged_in). SessionStart = {_sessions.GetSession().SessionStart}, LastActivity = {_sessions.GetSession().LastActivity}");
+					Debug.LogWarning($"[ADVANAL] Add new session event (logged_in). SessionStart = {_sessions.CurrentSession().SessionStart}, LastActivity = {_sessions.CurrentSession().LastActivity}");
 					NewEvent("logged_in");
 				}
 				

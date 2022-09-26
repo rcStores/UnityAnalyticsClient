@@ -213,7 +213,7 @@ namespace Advant.Data
 			return result;
 		}
 		
-		public ref Session NewSession()
+		public string NewSession()
 		{
 			ref var s = ref NewElement();
 			s.AbMode = _abMode;
@@ -221,15 +221,24 @@ namespace Advant.Data
 			s.Area = _gameArea;
 			s.SessionStart	= _sessionStart = RealDateTime.UtcNow;
 			s.LastActivity	= RealDateTime.UtcNow;
-			return ref s;
+			s.SessionId = Guid.NewGuid().ToString();
+			return s.SessionId;
 		}
 		
-		public ref Session GetSession() 
+		public bool RegisterActivity()
+		{
+			if (CurrentSession().LastActivity != default(DateTime) && RealDateTime.UtcNow.Subtract(CurrentSession().LastActivity) > TimeSpan.FromMinutes(10))
+				NewSession();
+			else
+				CurrentSession().LastActivity = RealDateTime.UtcNow;
+		}
+		
+		public ref Session CurrentSession() 
 		{
 			if (_currentCount == 0)
-				return ref NewSession();
-			else 
-				return ref _pool[_indices[_currentCount - 1]];
+				NewSession();
+			 
+			return ref _pool[_indices[_currentCount - 1]];
 		}
 
 		public override void FreeFromBeginning(int count)
@@ -258,13 +267,15 @@ namespace Advant.Data
 			Debug.LogWarning($"session.SessionCount = {session.SessionCount}, session.SessionStart = {session.SessionStart}, session.LastActivity = {session.LastActivity}");
 		}
 		
-		public void ClearLastSession() => 
-			_currentCount = _currentCount > 1 ? _currentCount - 1 : _currentCount;
+		// public void ClearLastSession() => 
+			// _currentCount = _currentCount > 1 ? _currentCount - 1 : _currentCount;
 			
-		public void SetSessionStart() 				=> GetSession().SessionStart	= RealDateTime.UtcNow;
-		public void SetCurrentAbMode(string mode) 	=> GetSession().AbMode			= mode;
-		public void SetUserSessionCount(long count)	=> GetSession().SessionCount 	= count;
-		public void SetCurrentArea(int area) 		=> GetSession().Area 			= area;
+		public void SetSessionStart() 				=> _sessionStart		= RealDateTime.UtcNow;
+		public void SetCurrentAbMode(string mode) 	=> _abMode				= mode;
+		public void SetUserSessionCount(long count)	=> _userSessionCount	= count;
+		public void SetCurrentArea(int area) 		=> _gameArea			= area;
+		
+		public void GetCurrentArea() 				=> _gameArea;
 	}
 
 } // namespace Advant.Data
