@@ -305,7 +305,7 @@ namespace Advant.Data
 			try
 			{
 				Debug.LogWarning("[ADVANAL] Saving cache locally");
-				SerializeSessions();
+				SerializeSessions(); // must be called before SerializeEvents for adding a new event in some cases (look at RegisterActivity)
 				SerializeEvents();
 				SerializeProperties();
 				Debug.LogWarning("[ADVANAL] Serialization is done");
@@ -341,9 +341,19 @@ namespace Advant.Data
 			// if (_userId != -1)
 				// RegisterActivity();
 			//Debug.LogWarning($"[ADVANT] Activity is registered, start serializing");
+			RegisterActivity();
             Serialize<GameSessionsPool>(_sessionsPath, _sessions);
 			//Debug.LogWarning($"[ADVANT] SerializeSessions runs for {(DateTime.UtcNow - start).TotalMilliseconds} ms");
         }
+		
+		private void RegisterActivity()
+		{
+			if (_sessions.RegisterActivity() is var isSessionNew && isSessionNew)
+			{
+				Debug.LogWarning($"[ADVANAL] Add new session event (logged_in). SessionStart = {_sessions.CurrentSession().SessionStart}, LastActivity = {_sessions.CurrentSession().LastActivity}");
+				NewEvent("logged_in");
+			}
+		}
 
         public void Serialize<T>(string filePath, T data)
         {
@@ -405,11 +415,7 @@ namespace Advant.Data
 					
 				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 				
-				if (_sessions.RegisterActivity() is var isSessionNew && isSessionNew)
-				{
-					Debug.LogWarning($"[ADVANAL] Add new session event (logged_in). SessionStart = {_sessions.CurrentSession().SessionStart}, LastActivity = {_sessions.CurrentSession().LastActivity}");
-					NewEvent("logged_in");
-				}
+				RegisterActivity();
 				
 				int eventsBatchSize 		= _events.GetCurrentBusyCount();
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
