@@ -222,6 +222,7 @@ namespace Advant.Data
 			s.SessionStart	= _sessionStart = RealDateTime.UtcNow;
 			s.LastActivity	= RealDateTime.UtcNow;
 			s.SessionId = Guid.NewGuid().ToString();
+			Debug.LogWarning("[ADVANT] SessionId = " + s.SessionId);
 			return s.SessionId;
 		}
 		
