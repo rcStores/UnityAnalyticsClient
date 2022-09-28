@@ -217,7 +217,7 @@ namespace Advant.Data
 		{
 			if (_currentCount > 0)
 			{
-				ref var prevSession = _pool[_indices[_currentCount - 1]];
+				ref var prevSession = ref _pool[_indices[_currentCount - 1]];
 				_abMode = prevSession.AbMode;
 				_currentSessionCount = prevSession.SessionCount;
 				_gameArea = prevSession.Area;
@@ -239,7 +239,7 @@ namespace Advant.Data
 			//return s.SessionId;
 		}
 		
-		public bool RegisterActivity()
+		public void RegisterActivity()
 		{
 			CurrentSession().LastActivity = RealDateTime.UtcNow;
 		}
@@ -295,12 +295,12 @@ namespace Advant.Data
 				_pool[_indices[_currentCount - 1]].AbMode = _abMode;
 		}
 		
-		public void SetUserSessionCount(long count)	
-		{
-			_userSessionCount = count;
-			if (_currentCount != 0)
-				_pool[_indices[_currentCount - 1]].SessionCount = _userSessionCount;
-		}
+		// public void SetUserSessionCount(long count)	
+		// {
+			// _userSessionCount = count;
+			// if (_currentCount != 0)
+				// _pool[_indices[_currentCount - 1]].SessionCount = _userSessionCount;
+		// }
 		
 		public void SetCurrentArea(int area)
 		{

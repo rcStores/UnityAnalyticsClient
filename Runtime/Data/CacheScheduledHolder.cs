@@ -76,7 +76,7 @@ namespace Advant.Data
 			_globalEventParams.Capacity = GAME_EVENT_PARAMETER_COUNT;
         }
 		
-		public async void RefreshAsync()
+		public async UniTask RefreshAsync()
 		{
 			if (RealDateTime.UtcNow.Subtract(_sessions.CurrentSession().LastActivity) > TimeSpan.FromMinutes(10))
 			{
@@ -173,7 +173,7 @@ namespace Advant.Data
 		public void SetSessionCount(long sessionCount)	=> _sessions.SetUserSessionCount(sessionCount);
 		public void SetSessionStart() 					=> _sessions.SetSessionStart();
 		
-		public string NewSession(long dbSessionCount = 0) => _sessions.NewSession(dbSessionCount);
+		public void NewSession(long dbSessionCount = 0) => _sessions.NewSession(dbSessionCount);
 		
 		public void SetCurrentArea(int area)
 		{
