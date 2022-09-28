@@ -116,7 +116,6 @@ namespace Advant
 				_userRegistrator.RegistrateAsync(id));
 				
 			_cacheHolder.NewSession(sessionCount);
-			//_cacheHolder.SetSessionStart();
 			_cacheHolder.NewEvent("logged_in");
 			
             SendUserDetails(dbSessionCount, abMode);
@@ -131,10 +130,6 @@ namespace Advant
         
         private static void SendUserDetails(long sessionCount, string abMode)
         {		
-			//_cacheHolder.SetSessionCount(sessionCount);
-			
-			if (sessionCount == 0) return;
-			
             if (sessionCount == 1)
             {
                 Log.Info("Create properties for a new user");

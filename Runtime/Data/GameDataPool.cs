@@ -228,7 +228,6 @@ namespace Advant.Data
 			s.Area = _gameArea;
 			s.SessionStart	= _sessionStart = RealDateTime.UtcNow;
 			s.LastActivity	= RealDateTime.UtcNow;
-			s.SessionId = Guid.NewGuid().ToString();
 			Debug.LogWarning($"[ADVANT] Cached session count = {_currentSessionCount}");
 			if (newSessionCount == 0)
 				s.SessionCount = ++_currentSessionCount;

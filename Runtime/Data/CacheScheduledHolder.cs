@@ -80,9 +80,8 @@ namespace Advant.Data
 		{
 			if (RealDateTime.UtcNow.Subtract(_sessions.CurrentSession().LastActivity > TimeSpan.FromMinutes(10))
 			{
-				await _backend.PutSessionCount(
-					_userId, 
-					_sessions.NewSession().CurrentCount);
+				if (!await _backend.PutSessionCount(_userId, _sessions.NewSession().CurrentCount))
+					_sessions.CurrentSession().Unregistered = true;
 				NewEvent("logged_in");
 			}
 			else
