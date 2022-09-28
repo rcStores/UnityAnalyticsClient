@@ -78,7 +78,7 @@ namespace Advant.Data
 		
 		public async void RefreshAsync()
 		{
-			if (RealDateTime.UtcNow.Subtract(_sessions.CurrentSession().LastActivity > TimeSpan.FromMinutes(10))
+			if (RealDateTime.UtcNow.Subtract(_sessions.CurrentSession().LastActivity) > TimeSpan.FromMinutes(10))
 			{
 				if (!await _backend.PutSessionCount(_userId, _sessions.NewSession().CurrentCount))
 					_sessions.CurrentSession().Unregistered = true;
