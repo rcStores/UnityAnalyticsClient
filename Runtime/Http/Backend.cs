@@ -41,6 +41,7 @@ namespace Advant.Http
 			_getTesterEndpoint 								= registration + "/Registration/GetTester";
 			_getNetworkTimeEndpoint							= registration + "/Registration/GetNetworkTime";
 			_getCountryEndpoint 							= "https://ipapi.co/json";
+			_getSessionCountEndpoint 						= registration + "/Sessions/GetSessionCount";
 			_putUserIdEndpoint 								= registration + "/Registration/GetOrCreateUserId";
 			_putSessionCountEndpoint 						= registration + "/Sessions/PutSessionCount";
 			_gameDataEndpointsByType[typeof(GameProperty)]	= analytics + "/AnalyticsData/SendProperties";
@@ -115,6 +116,21 @@ namespace Advant.Http
 			}
             return country;		
 		}
+		
+		public async UniTask<long> GetCurrentSessionCount(long userId)
+		{
+			string count;	
+			try
+			{
+				count = Convert.ToInt64(await ExecuteWebRequestAsync(_getSessionCountEndpoint + $"/{userId}", RequestType.GET));
+			}
+			catch (Exception e)
+			{
+				Debug.Log("Error while getting current session count: " + e.Message);
+			}
+            return count;	
+		}
+			
 
         public async UniTask<UserIdResponse> GetOrCreateUserIdAsync(Identifier dto)
         {

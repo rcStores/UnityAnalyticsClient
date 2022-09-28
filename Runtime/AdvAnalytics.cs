@@ -83,6 +83,7 @@ namespace Advant
 		public static async UniTask<DateTime> SynchronizeTimeAsync()
 		{
 			await RealDateTime.SynchronizeTimeAsync();
+			// _cacheHolder.NewSession(_userRegistrator.RegistrateOnAwakeningAsync());
 			return RealDateTime.UtcNow;
 		}		
         
@@ -110,14 +111,23 @@ namespace Advant
 		
 		private static async void InitAsync(Identifier id, string abMode)
         {
-			await RealDateTime.InitAsync(_backend);
-			id.SessionId = _cacheHolder.NewSession();
+			var (_, dbSessionCount) = await UniTask.WhenAll(
+				RealDateTime.InitAsync(_backend),
+				_userRegistrator.RegistrateAsync(id));
+				
+			_cacheHolder.NewSession(sessionCount);
 			//_cacheHolder.SetSessionStart();
 			_cacheHolder.NewEvent("logged_in");
 			
-            SendUserDetails(await _userRegistrator.RegistrateAsync(id), abMode);
+            SendUserDetails(dbSessionCount, abMode);
             _cacheHolder.StartSendingDataAsync(_userRegistrator.GetUserId());
         }
+		
+		public static async void Refresh()
+		{
+			await RealDateTime.SynchronizeTimeAsync();
+			await _cacheHolder.RefreshAsync();
+		}
         
         private static void SendUserDetails(long sessionCount, string abMode)
         {		

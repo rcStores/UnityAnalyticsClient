@@ -176,7 +176,7 @@ namespace Advant.Data
 	internal class GameSessionsPool : GameDataPool<Session>
 	{
 		private string 		_abMode;
-		private long 		_userSessionCount;
+		private long 		_currentSessionCount;
 		private int 		_gameArea;
 		private DateTime	_sessionStart;
 		
@@ -213,30 +213,36 @@ namespace Advant.Data
 			return result;
 		}
 		
-		public string NewSession()
+		public void NewSession(long newSessionCount)
 		{
+			if (_currentCount > 0)
+			{
+				ref var prevSession = _pool[_indices[_currentCount - 1]];
+				_abMode = prevSession.AbMode;
+				_currentSessionCount = prevSession.SessionCount;
+				_gameArea = prevSession.Area;
+			}
+			
 			ref var s = ref NewElement();
 			s.AbMode = _abMode;
-			s.SessionCount = _userSessionCount;
 			s.Area = _gameArea;
 			s.SessionStart	= _sessionStart = RealDateTime.UtcNow;
 			s.LastActivity	= RealDateTime.UtcNow;
 			s.SessionId = Guid.NewGuid().ToString();
-			Debug.LogWarning("[ADVANT] SessionId = " + s.SessionId);
-			return s.SessionId;
+			Debug.LogWarning($"[ADVANT] Cached session count = {_currentSessionCount}");
+			if (newSessionCount == 0)
+				s.SessionCount = ++_currentSessionCount;
+			else
+				s.SessionCount = _currentSessionCount = newSessionCount;
+			Debug.LogWarning($"[ADVANT] NEW SESSION:\nab_mode = {s.AbMode}\narea = {s.Area}\nstart = {s.SessionStart}\nend = {s.LastActivity}\ncount = {s.SessionCount}");
+			
+						
+			//return s.SessionId;
 		}
 		
 		public bool RegisterActivity()
 		{
-			bool hasNewSession = false;
-			if (CurrentSession().LastActivity != default(DateTime) && RealDateTime.UtcNow.Subtract(CurrentSession().LastActivity) > TimeSpan.FromMinutes(10))
-			{
-				NewSession();
-				hasNewSession = true;
-			}
-			else
-				CurrentSession().LastActivity = RealDateTime.UtcNow;
-			return hasNewSession;
+			CurrentSession().LastActivity = RealDateTime.UtcNow;
 		}
 		
 		public ref Session CurrentSession() 
@@ -276,12 +282,35 @@ namespace Advant.Data
 		// public void ClearLastSession() => 
 			// _currentCount = _currentCount > 1 ? _currentCount - 1 : _currentCount;
 			
-		public void SetSessionStart() 				=> _sessionStart		= RealDateTime.UtcNow;
-		public void SetCurrentAbMode(string mode) 	=> _abMode				= mode;
-		public void SetUserSessionCount(long count)	=> _userSessionCount	= count;
-		public void SetCurrentArea(int area) 		=> _gameArea			= area;
+		public void SetSessionStart()
+		{
+			_sessionStart = RealDateTime.UtcNow;
+			if (_currentCount != 0)
+				_pool[_indices[_currentCount - 1]].SessionStart = _sessionStart;
+		}
 		
-		public int GetCurrentArea() 				=> _gameArea;
+		public void SetCurrentAbMode(string mode)
+		{
+			_abMode = mode;
+			if (_currentCount != 0)
+				_pool[_indices[_currentCount - 1]].AbMode = _abMode;
+		}
+		
+		public void SetUserSessionCount(long count)	
+		{
+			_userSessionCount = count;
+			if (_currentCount != 0)
+				_pool[_indices[_currentCount - 1]].SessionCount = _userSessionCount;
+		}
+		
+		public void SetCurrentArea(int area)
+		{
+			_gameArea = area;
+			if (_currentCount != 0)
+				_pool[_indices[_currentCount - 1]].Area = _gameArea;
+		}
+		
+		public int GetCurrentArea()	=> _gameArea;
 	}
 
 } // namespace Advant.Data
