@@ -115,7 +115,7 @@ namespace Advant
 				RealDateTime.InitAsync(_backend),
 				_userRegistrator.RegistrateAsync(id));
 				
-			_cacheHolder.NewSession(sessionCount);
+			_cacheHolder.NewSession(dbSessionCount);
 			_cacheHolder.NewEvent("logged_in");
 			
             SendUserDetails(dbSessionCount, abMode);

@@ -87,11 +87,11 @@ namespace Advant
 			return _country;
 		}
 		
-		public async UniTask<long> GetCurrentSessionCountAsync()
-		{
-			if (_sessionCount == 0)
-				_sessionCount = await _backend.GetCurrentSessionCount(_userId);
-			return _sessionCount;
-		}
+		// public async UniTask<long> GetCurrentSessionCountAsync()
+		// {
+			// if (_sessionCount == 0)
+				// _sessionCount = await _backend.GetCurrentSessionCount(_userId);
+			// return _sessionCount;
+		// }
     }
 }

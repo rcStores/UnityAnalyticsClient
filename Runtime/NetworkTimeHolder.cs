@@ -20,10 +20,11 @@ internal static class RealDateTime
 	
 	private static bool _isSystemTimeDifferent;
 	
-	public static async UniTask InitAsync(Backend backend)
+	public static async UniTask<DateTime> InitAsync(Backend backend)
 	{
 		_backend = backend;
 		await SynchronizeTimeAsync();
+		return UtcNow;
 	}
 	
 	public static async UniTask SynchronizeTimeAsync()

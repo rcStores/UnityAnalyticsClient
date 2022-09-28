@@ -213,7 +213,7 @@ namespace Advant.Data
 			return result;
 		}
 		
-		public void NewSession(long newSessionCount)
+		public void NewSession(long newSessionCount = 0)
 		{
 			if (_currentCount > 0)
 			{
