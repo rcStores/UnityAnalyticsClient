@@ -122,7 +122,7 @@ namespace Advant
             _cacheHolder.StartSendingDataAsync(_userRegistrator.GetUserId());
         }
 		
-		public static async void Refresh()
+		public static async UniTask Refresh()
 		{
 			await RealDateTime.SynchronizeTimeAsync();
 			await _cacheHolder.RefreshAsync();
