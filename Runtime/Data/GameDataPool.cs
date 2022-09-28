@@ -213,7 +213,7 @@ namespace Advant.Data
 			return result;
 		}
 		
-		public void NewSession(long newSessionCount = 0)
+		public ref Session NewSession(long newSessionCount = 0)
 		{
 			if (_currentCount > 0)
 			{
@@ -234,9 +234,8 @@ namespace Advant.Data
 			else
 				s.SessionCount = _currentSessionCount = newSessionCount;
 			Debug.LogWarning($"[ADVANT] NEW SESSION:\nab_mode = {s.AbMode}\narea = {s.Area}\nstart = {s.SessionStart}\nend = {s.LastActivity}\ncount = {s.SessionCount}");
-			
-						
-			//return s.SessionId;
+				
+			return ref s;
 		}
 		
 		public void RegisterActivity()

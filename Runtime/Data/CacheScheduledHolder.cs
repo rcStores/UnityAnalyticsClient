@@ -170,10 +170,10 @@ namespace Advant.Data
 			p.SetTableName(tableName);
 		}
 		
-		public void SetSessionCount(long sessionCount)	=> _sessions.SetUserSessionCount(sessionCount);
+		// public void SetSessionCount(long sessionCount)	=> _sessions.SetUserSessionCount(sessionCount);
 		public void SetSessionStart() 					=> _sessions.SetSessionStart();
 		
-		public void NewSession(long dbSessionCount = 0) => _sessions.NewSession(dbSessionCount);
+		public ref Session NewSession(long dbSessionCount = 0) => ref _sessions.NewSession(dbSessionCount);
 		
 		public void SetCurrentArea(int area)
 		{
