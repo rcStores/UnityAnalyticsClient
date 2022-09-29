@@ -170,7 +170,7 @@ namespace Advant
 
 		// In seconds. Note: The set timeout may apply to each URL redirect on Android which can result in a longer response
 		public static async UniTask<string> 	GetCountryAsync(int timeout = 0)		=> await _userRegistrator.GetCountryAsync(timeout);
-		public static async UniTask<DateTime>	GetNetworkTimeAsync(int timeout = 0)	=> _backend.GetNetworkTimeAsync(timeout);		
+		public static async UniTask<DateTime>	GetNetworkTimeAsync(int timeout = 0)	=> _backend.GetNetworkTime(timeout);		
         public static 		bool 				GetTester() 							=> _userRegistrator.IsTester();
 
 #endregion

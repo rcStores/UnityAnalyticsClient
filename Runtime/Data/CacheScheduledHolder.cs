@@ -265,7 +265,7 @@ namespace Advant.Data
 		public ref Session NewSession(long dbSessionCount = 0)
 		{
 			ref var s = ref _sessions.NewSession(dbSessionCount);
-			SetGlobalEventParam("session_id", $"{s.UserId}_{s.SessionCount}");
+			SetGlobalEventParam("session_id", $"{_userId}_{s.SessionCount}");
 			return ref s;
 		}
 		
