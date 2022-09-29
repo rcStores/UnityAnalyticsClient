@@ -127,7 +127,6 @@ namespace Advant
 			_cacheHolder.NewProperty("os", Application.platform == RuntimePlatform.Android ? "android" : "ios", USERS_DATA_TABLE);
 			_cacheHolder.NewProperty("country", _userRegistrator.GetCountry(), USERS_DATA_TABLE);
         }	
-    }
 
 #region Analytic data sending
 
@@ -172,5 +171,6 @@ namespace Advant
 		public static async UniTask<DateTime>	GetNetworkTimeAsync(int timeout = 0)	=> _backend.GetNetworkTimeAsync(timeout);		
         public static 		bool 				GetTester() 							=> _userRegistrator.IsTester();
 
-#endregion      
+#endregion
+	}
 }
