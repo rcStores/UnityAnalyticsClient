@@ -16,6 +16,7 @@ internal struct Session
 	internal void ToJson(long userId, StringBuilder sb)
 	{
 		sb.Append($"{{\"UserId\":{userId}, \"Area\":\"{Area}\", \"SessionStarts\":\"{SessionStart.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\"," 
-		+ $"\"LastActivity\":\"{LastActivity.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\", \"AbMode\":\"{AbMode}\", \"IsUnregistered\": {Unregistered.ToString().ToLower()}}}");
+		+ $"\"LastActivity\":\"{LastActivity.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\"," 
+		+ $"\"AbMode\":\"{AbMode}\", \"SessionCount\": {SessionCount}, \"IsUnregistered\": {Unregistered.ToString().ToLower()}}}");
 	}
 }
