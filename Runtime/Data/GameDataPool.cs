@@ -231,8 +231,14 @@ namespace Advant.Data
 			Debug.LogWarning($"[ADVANT] Cached session count = {_currentSessionCount}");
 			if (newSessionCount == 0)
 				s.SessionCount = ++_currentSessionCount;
-			else
+			else if (_currentSessionCount + 1 < newSessionCount)
 				s.SessionCount = _currentSessionCount = newSessionCount;
+			else
+			{
+				s.SessionCount = ++_currentSessionCount;
+				s.Unregistered = true;
+			}
+			
 			Debug.LogWarning($"[ADVANT] NEW SESSION:\nab_mode = {s.AbMode}\narea = {s.Area}\nstart = {s.SessionStart}\nend = {s.LastActivity}\ncount = {s.SessionCount}");
 				
 			return ref s;
