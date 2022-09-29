@@ -152,7 +152,6 @@ namespace Advant.Http
 		public async UniTask<bool> PutSessionCount(long userId, long sessionCount)
         {
 			var result = false;
-			return result;
             try
             {
                 result = Convert.ToBoolean(
