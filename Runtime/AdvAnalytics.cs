@@ -126,7 +126,9 @@ namespace Advant
             }
 			_cacheHolder.NewProperty("os", Application.platform == RuntimePlatform.Android ? "android" : "ios", USERS_DATA_TABLE);
 			_cacheHolder.NewProperty("country", _userRegistrator.GetCountry(), USERS_DATA_TABLE);
-        }	
+        }
+
+#endregion		
 
 #region Analytic data sending
 
