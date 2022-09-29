@@ -80,13 +80,17 @@ namespace Advant.Data
 		{
 			if (RealDateTime.UtcNow.Subtract(_sessions.CurrentSession().LastActivity) > TimeSpan.FromMinutes(10))
 			{
-				if (!await _backend.PutSessionCount(_userId, _sessions.NewSession().SessionCount))
+				if (!await _backend.PutSessionCount(_userId, NewSession().SessionCount))
 					_sessions.CurrentSession().Unregistered = true;
 				NewEvent("logged_in");
 			}
 			else
 				_sessions.RegisterActivity();
 		}
+
+#region Events
+
+		public ref GameEvent NewEvent(string eventName) => ref NewEventImpl(eventName);
 		
 		public ref GameEvent NewEvent(string eventName, params string[] globalsLookupSource)
 		{
@@ -103,9 +107,7 @@ namespace Advant.Data
 			}
 			return ref NewEventImpl(eventName);
 		}
-		
-		public ref GameEvent NewEvent(string eventName) => ref NewEventImpl(eventName);
-		
+				
 		private ref GameEvent NewEventImpl(string eventName)
 		{
 			ref GameEvent e = ref _events.NewElement();
@@ -133,59 +135,6 @@ namespace Advant.Data
 			}
 			//Debug.LogWarning("[ADVANAL] RETURNING EVENT REFERENCE");
 			return ref e;
-		}
-		
-		public void NewProperty(string name, int value, string tableName)
-		{
-			ref var p = ref _properties.NewElement();
-			p.Set(name, value);
-			p.SetTableName(tableName);
-		}
-		
-		public void NewProperty(string name, double value, string tableName)
-		{
-			ref var p = ref _properties.NewElement();
-			p.Set(name, value);
-			p.SetTableName(tableName);
-		}
-		
-		public void NewProperty(string name, string value, string tableName)
-		{
-			ref var p = ref _properties.NewElement();
-			p.Set(name, value);
-			p.SetTableName(tableName);
-		}
-		
-		public void NewProperty(string name, bool value, string tableName)
-		{
-			ref var p = ref _properties.NewElement();
-			p.Set(name, value);
-			p.SetTableName(tableName);
-		}
-		
-		public void NewProperty(string name, DateTime value, string tableName)
-		{
-			ref var p = ref _properties.NewElement();
-			p.Set(name, value);
-			p.SetTableName(tableName);
-		}
-		
-		// public void SetSessionCount(long sessionCount)	=> _sessions.SetUserSessionCount(sessionCount);
-		public void SetSessionStart() 					=> _sessions.SetSessionStart();
-		
-		public ref Session NewSession(long dbSessionCount = 0) => ref _sessions.NewSession(dbSessionCount);
-		
-		public void SetCurrentArea(int area)
-		{
-			_sessions.SetCurrentArea(area);
-			SetGlobalEventParam("area", area);
-		}
-		
-		public void SetCurrentAbMode(string abMode, string propertyTableName)
-		{
-			_sessions.SetCurrentAbMode(abMode);	
-			SetGlobalEventParam("ab_mode", abMode);
-			NewProperty("current_ab_mode", abMode, propertyTableName);
 		}
 		
 		public void SetGlobalEventParam(string name, int value)
@@ -268,67 +217,63 @@ namespace Advant.Data
 			}
 		}
 		
-		// public async UniTask<bool> RegisterActivity()
-		// {
-			// //var start = DateTime.UtcNow;
-			// bool isSessionNew = false;
-			// try 
-			// {
-				// if (TryUpdateSessionCount() is var isInnerSessionUpdated && isInnerSessionUpdated &&
-					// await _backend.PutSessionCount(_userId, _sessions.GetSession().SessionCount))
-				// {
-					// isSessionNew = true;
-				// }
-				// else if (isInnerSessionUpdated)
-				// {
-					// _sessions.ClearLastSession();
-					// return false;
-				// }
-				// _sessions.GetSession().LastActivity = RealDateTime.UtcNow;
-			// }
-			// catch (Exception e)
-			// {
-				// Debug.LogError("[ADVANT] RegisterActivity: " + e.Message);
-			// }
-			// //Debug.LogWarning($"[ADVANT] RegisterActivity runs for {(DateTime.UtcNow - start).TotalMilliseconds} ms");
-			// return isSessionNew;
-		// }
+#endregion
+
+#region Properties
+
+		public void NewProperty(string name, int value, string tableName)
+		{
+			ref var p = ref _properties.NewElement();
+			p.Set(name, value);
+			p.SetTableName(tableName);
+		}
 		
-		// private bool TryUpdateSessionCount()
-		// {
-			// ref var session = ref _sessions.GetSession();
-			// Debug.LogWarning($"[ADVANT] RealDateTime.UtcNow = {RealDateTime.UtcNow}, session.LastActivity = {session.LastActivity}");
-			// if (session.LastActivity != default(DateTime) && RealDateTime.UtcNow.Subtract(session.LastActivity) > TimeSpan.FromMinutes(10))
-			// {
-				// _sessions.NewSession();
-				// _sessions.SetUserSessionCount(session.SessionCount + 1);
-				
-				// if (_sessions.GetSession().Area == 0)
-					// _sessions.SetCurrentArea(session.Area);
-				// if (string.IsNullOrEmpty(_sessions.GetSession().AbMode))
-					// _sessions.SetCurrentAbMode(session.AbMode);
-				// return true;
-			// }
-			// return false;
-		// }
+		public void NewProperty(string name, double value, string tableName)
+		{
+			ref var p = ref _properties.NewElement();
+			p.Set(name, value);
+			p.SetTableName(tableName);
+		}
+		
+		public void NewProperty(string name, string value, string tableName)
+		{
+			ref var p = ref _properties.NewElement();
+			p.Set(name, value);
+			p.SetTableName(tableName);
+		}
+		
+		public void NewProperty(string name, bool value, string tableName)
+		{
+			ref var p = ref _properties.NewElement();
+			p.Set(name, value);
+			p.SetTableName(tableName);
+		}
+		
+		public void NewProperty(string name, DateTime value, string tableName)
+		{
+			ref var p = ref _properties.NewElement();
+			p.Set(name, value);
+			p.SetTableName(tableName);
+		}
 
-        public void SaveCacheLocally()
-        {
-			try
-			{
-				Debug.LogWarning("[ADVANAL] Saving cache locally");
-				SerializeSessions(); // must be called before SerializeEvents for adding a new event in some cases (look at RegisterActivity)
-				SerializeEvents();
-				SerializeProperties();
-				Debug.LogWarning("[ADVANAL] Serialization is done");
-			}
-			catch (Exception e)
-			{
-				Debug.LogWarning("Saving cache failure: " + e.Message);
-			}
-        }
+#endregion
 
-        public async UniTask StartSendingDataAsync(long id)
+#region Sessions
+
+		public void SetSessionStart() => _sessions.SetSessionStart();
+		
+		public ref Session NewSession(long dbSessionCount = 0)
+		{
+			ref var s = ref _sessions.NewSession(dbSessionCount);
+			SetGlobalEventParam("session_id", $"{s.UserId}_{s.SessionCount}");
+			return ref s;
+		}
+		
+#endregion
+
+#region Sending loop
+
+		public async UniTask StartSendingDataAsync(long id)
         {
 			Log.Info("Start scheduler");
             Debug.Assert(id != -1);
@@ -336,82 +281,7 @@ namespace Advant.Data
             await RunSendingLoop();
         }
 		
-		private void SerializeEvents()
-        {
-            Serialize<GameEventsPool>(_eventsPath, _events);
-        }
-
-        private void SerializeProperties()
-        {
-            Serialize<GamePropertiesPool>(_propsPath, _properties);
-        }
-		
-		private void SerializeSessions()
-        {
-			//var start = DateTime.UtcNow;
-			//Debug.LogWarning($"[ADVANT] SerializeSessions");
-			// if (_userId != -1)
-				// RegisterActivity();
-			//Debug.LogWarning($"[ADVANT] Activity is registered, start serializing");
-			_sessions.RegisterActivity();
-            Serialize<GameSessionsPool>(_sessionsPath, _sessions);
-			//Debug.LogWarning($"[ADVANT] SerializeSessions runs for {(DateTime.UtcNow - start).TotalMilliseconds} ms");
-        }
-		
-		// private void RegisterActivity()
-		// {
-			// if (_sessions.RegisterActivity() is var isSessionNew && isSessionNew)
-			// {
-				// Debug.LogWarning($"[ADVANAL] Add new session event (logged_in). SessionStart = {_sessions.CurrentSession().SessionStart}, LastActivity = {_sessions.CurrentSession().LastActivity}");
-				// NewEvent("logged_in");
-			// }
-		// }
-
-        public void Serialize<T>(string filePath, T data)
-        {
-            BinaryFormatter formatter = new BinaryFormatter();
-            try
-            {
-				using var fs = new FileStream(filePath, FileMode.OpenOrCreate);
-                formatter.Serialize(fs, data);
-            }
-            catch (Exception e)
-            {
-                Log.Info("Failed to serialize. Reason: " + e.Message);
-            }
-        }
-
-        public TPool Deserialize<TPool>(string filePath) where TPool : new()
-        {
-			TPool result = default(TPool);
-			
-            if (!File.Exists(filePath))
-            {
-                result = new TPool();
-            }
-			else 
-			{
-				try
-				{
-					using var fs 	= new FileStream(filePath, FileMode.Open);
-					var formatter 	= new BinaryFormatter();
-				
-					result = (TPool)formatter.Deserialize(fs);
-				}
-				catch (Exception)
-				{
-					result = new TPool();
-				}
-				finally
-				{
-					File.Delete(filePath);
-				}
-			}
-			
-			return result;
-        }
-
-        private async UniTask RunSendingLoop()
+		private async UniTask RunSendingLoop()
         {
 			while (true)		
             {
@@ -459,106 +329,107 @@ namespace Advant.Data
 				}
 			}
         }
+
+#endregion	
+
+#region Serialization
+
+		public void SaveCacheLocally()
+        {
+			try
+			{
+				Debug.LogWarning("[ADVANAL] Saving cache locally");
+				SerializeSessions(); 
+				SerializeEvents();
+				SerializeProperties();
+				Debug.LogWarning("[ADVANAL] Serialization is done");
+			}
+			catch (Exception e)
+			{
+				Debug.LogWarning("Saving cache failure: " + e.Message);
+			}
+        }
 		
-				// var continuationTask = Task.Delay(SENDING_INTERVAL, _sendingCancellationSource.Token)
-					// .ContinueWith(task => { });
-				// await continuationTask;
+		private void SerializeEvents()
+        {
+            Serialize<GameEventsPool>(_eventsPath, _events);
+        }
+
+        private void SerializeProperties()
+        {
+            Serialize<GamePropertiesPool>(_propsPath, _properties);
+        }
 		
-				// bool hasPropertiesSendingSucceeded = true;
-                // bool hasEventsSendingSucceeded = true;
+		private void SerializeSessions()
+        {
+			_sessions.RegisterActivity();
+            Serialize<GameSessionsPool>(_sessionsPath, _sessions);
+        }
+		
 
-                // //_arePropertiesProcessing = true;
-                // //_areEventsProcessing = true;
-				// Volatile.Write(ref _areEventsProcessing, true);
+        private void Serialize<T>(string filePath, T data)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            try
+            {
+				using var fs = new FileStream(filePath, FileMode.OpenOrCreate);
+                formatter.Serialize(fs, data);
+            }
+            catch (Exception e)
+            {
+                Log.Info("Failed to serialize. Reason: " + e.Message);
+            }
+        }
+		
+		private TPool Deserialize<TPool>(string filePath) where TPool : new()
+        {
+			TPool result = default(TPool);
+			
+            if (!File.Exists(filePath))
+            {
+                result = new TPool();
+            }
+			else 
+			{
+				try
+				{
+					using var fs 	= new FileStream(filePath, FileMode.Open);
+					var formatter 	= new BinaryFormatter();
 				
-                // var gameEvents = new Cache<GameEvent>(_gameEvents.ToArray());
-                // var gameProperties = new Cache<GameProperty>(_gameProperties.ToArray());
-				
-				// // Debug.LogWarning("[ADVANAL] BUFFER SNAPSHOT\nEVENTS:\n");
-				// // foreach (var e in gameEvents.Get())
-				// // {
-					// // Debug.LogWarning(e.Name);
-					// // if (e._parameters != null)
-					// // {
-						// // foreach (var param in e._parameters)
-						// // {
-							// // Debug.Log(param.Key + "=" + param.Value);
-						// // }
-					// // }
-				// // }
+					result = (TPool)formatter.Deserialize(fs);
+				}
+				catch (Exception)
+				{
+					result = new TPool();
+				}
+				finally
+				{
+					File.Delete(filePath);
+				}
+			}
+			
+			return result;
+        }
+		
+#endregion
 
-                // Task propertiesSending = null, eventsSending = null;
-                // try
-                // {
-                    // if (gameEvents == null || gameProperties == null)
-                    // {
-                        // Debug.LogWarning("Cache instance(s) == null");
-                    // }
+#region Complex setters (several analytic data types etc.)
 
-					// if (gameEvents.Count == 0)
-					// {
-						// Debug.LogWarning("Events buffer is empty");
-					// } 
-					// else
-					// {
-						// eventsSending =  _backend.SendToServerAsync(userId, gameEvents);
-					// }
-					
-					// if (gameProperties.Count == 0)
-					// {
-						// Debug.LogWarning("Properties buffer is empty");
-					// } 
-					// else
-					// {
-						// propertiesSending =  _backend.SendToServerAsync(userId, gameProperties);
-					// }
+		public void SetCurrentArea(int area)
+		{
+			_sessions.SetCurrentArea(area);
+			SetGlobalEventParam("area", area);
+		}
+		
+		public void SetCurrentAbMode(string abMode, string propertyTableName)
+		{
+			_sessions.SetCurrentAbMode(abMode);	
+			SetGlobalEventParam("ab_mode", abMode);
+			NewProperty("current_ab_mode", abMode, propertyTableName);
+		}
 
-                    // await Task.WhenAll(new Task[] { eventsSending, propertiesSending }.Where(i => i != null));
-                // }
-                // catch (Exception e)
-                // {
-					// Debug.LogWarning("[ADVANAL] Error while sending data: " + e.Message);
-                    // Debug.LogWarning("Stack trace: " + e.StackTrace);
-                    // Debug.LogWarning("Source: " + e.Source);
-                // }
-                // finally
-				// {
-					// Debug.LogWarning("[ADVANAL] Getting results of data sending...");
-					// hasPropertiesSendingSucceeded = propertiesSending == null ? 
-						// false : !propertiesSending.IsFaulted;
-                    // hasEventsSendingSucceeded = eventsSending == null ?
-						// false : !eventsSending.IsFaulted;
-				// }
-                
-                // if (hasPropertiesSendingSucceeded)
-                // {
-                    // Debug.LogWarning("[ADVANAL] Clear properties");
-					// //_gameProperties.Clear();
-                    // foreach (var _ in gameProperties.Get())
-                    // {
-						// if (!_gameProperties.TryDequeue(out var _))
-                        // {
-							// Debug.LogWarning("[ADVANAL] GameProperty isn't taken from the queue");
-                        // }
-					// }
-                // }
-
-                // if (hasEventsSendingSucceeded)
-                // {
-                    // Debug.LogWarning("[ADVANAL] Clear events");
-					// //_gameEvents.Clear();
-                    // foreach (var _ in gameEvents.Get())
-                    // {
-						// if (!_gameEvents.TryDequeue(out var _))
-                        // {
-							// Debug.LogWarning("[ADVANAL] GameEvent isn't taken from the queue");
-                        // }
-						// else Interlocked.Decrement(ref _currentEventsCount);
-                    // }
-                // }
-				// Volatile.Write(ref _areEventsProcessing, false);
-            // }	
-    }
+#endregion
+	}     
 	
 	public static class ParametersArrayExtension
 	{

@@ -24,7 +24,6 @@ namespace Advant
 		
 		private const string CUSTOM_PROPERTIES_TABLE	= "custom_properties";
 		private const string USERS_DATA_TABLE 			= "users";
-
         private const string APP_VERSION_PREF 			= "AppVersion";
         private const string USER_ID_PREF 				= "UserId";
 
@@ -34,7 +33,14 @@ namespace Advant
             _cacheHolder 		= new CacheScheduledHolder(USERS_DATA_TABLE, _backend);
             _userRegistrator 	= new UserRegistrator(USERS_DATA_TABLE, _backend);
         }
+		
+		public static void SaveCacheLocally() 
+		{	
+			Debug.LogWarning($"[ADVANT] AdvAnalytics.SaveCacheLocally");
+			_cacheHolder.SaveCacheLocally();
+		} 
 
+#region Initialization
         public static void StartInit(string analyticsPathBase, string registrationPathbase, string abMode)
         {
             _backend.SetPathBases(analyticsPathBase, registrationPathbase);
@@ -63,52 +69,12 @@ namespace Advant
 #endif
         }
 		
-		public static ref GameEvent NewEvent(string eventName,
-											 params string[] globalsLookupSource) 
-																		=> ref _cacheHolder.NewEvent(eventName, globalsLookupSource);
-		public static ref GameEvent NewEvent(string eventName) 			=> ref _cacheHolder.NewEvent(eventName);																
-		
-		public static void SendProperty(string name, int value)			=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
-		public static void SendProperty(string name, double value)		=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
-		public static void SendProperty(string name, bool value)		=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);	
-		public static void SendProperty(string name, DateTime value)	=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
-		public static void SendProperty(string name, string value)		=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);
-
-        public static void SaveCacheLocally() 
-		{	
-			Debug.LogWarning($"[ADVANT] AdvAnalytics.SaveCacheLocally");
-			_cacheHolder.SaveCacheLocally();
-		}
-		
-		public static async UniTask<DateTime> SynchronizeTimeAsync()
+		public static async UniTask Refresh()
 		{
 			await RealDateTime.SynchronizeTimeAsync();
-			// _cacheHolder.NewSession(_userRegistrator.RegistrateOnAwakeningAsync());
-			return RealDateTime.UtcNow;
-		}		
-        
-        public static void SetCheater(bool value) 
-		{
-			_userRegistrator.SetCheater(value);
-			_cacheHolder.NewProperty("cheater", value, USERS_DATA_TABLE);
+			await _cacheHolder.RefreshAsync();
 		}
-		
-		public static void SetTrafficSource(string source)				=> _cacheHolder.NewProperty("traffic", source, USERS_DATA_TABLE);
-
-        public static bool GetTester() 									=> _userRegistrator.IsTester();
-		
-		// In seconds. Note: The set timeout may apply to each URL redirect on Android which can result in a longer response
-		public static async UniTask<string> GetCountryAsync(int timeout = 0)=> await _userRegistrator.GetCountryAsync(timeout);
-		
-		public static void SetGlobalEventParam(string name, int value) 		=> _cacheHolder.SetGlobalEventParam(name, value);
-		public static void SetGlobalEventParam(string name, double value)	=> _cacheHolder.SetGlobalEventParam(name, value);
-		public static void SetGlobalEventParam(string name, bool value) 	=> _cacheHolder.SetGlobalEventParam(name, value);
-		public static void SetGlobalEventParam(string name, DateTime value)	=> _cacheHolder.SetGlobalEventParam(name, value);
-		public static void SetGlobalEventParam(string name, string value) 	=> _cacheHolder.SetGlobalEventParam(name, value);
-		
-		public static void SetCurrentArea(int area) 						=> _cacheHolder.SetCurrentArea(area);
-		public static void SetCurrentAbMode(string mode) 					=> _cacheHolder.SetCurrentAbMode(mode, CUSTOM_PROPERTIES_TABLE);
-		
+				
 		private static async void InitAsync(Identifier id, string abMode)
         {
 			var (_, dbSessionCount) = await UniTask.WhenAll(
@@ -122,13 +88,7 @@ namespace Advant
             _cacheHolder.StartSendingDataAsync(_userRegistrator.GetUserId());
         }
 		
-		public static async UniTask Refresh()
-		{
-			await RealDateTime.SynchronizeTimeAsync();
-			await _cacheHolder.RefreshAsync();
-		}
-        
-        private static void SendUserDetails(long sessionCount, string abMode)
+		private static void SendUserDetails(long sessionCount, string abMode)
         {		
             if (sessionCount == 1)
             {
@@ -168,4 +128,49 @@ namespace Advant
 			_cacheHolder.NewProperty("country", _userRegistrator.GetCountry(), USERS_DATA_TABLE);
         }	
     }
+
+#region Analytic data sending
+
+		public static ref GameEvent NewEvent(string eventName,
+											 params string[] globalsLookupSource) 
+																		=> ref _cacheHolder.NewEvent(eventName, globalsLookupSource);
+		public static ref GameEvent NewEvent(string eventName) 			=> ref _cacheHolder.NewEvent(eventName);																
+		
+		public static void SendProperty(string name, int value)			=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
+		public static void SendProperty(string name, double value)		=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
+		public static void SendProperty(string name, bool value)		=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);	
+		public static void SendProperty(string name, DateTime value)	=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
+		public static void SendProperty(string name, string value)		=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);
+		
+#endregion
+
+#region Setters
+
+		public static void SetCheater(bool value) 
+		{
+			_userRegistrator.SetCheater(value);
+			_cacheHolder.NewProperty("cheater", value, USERS_DATA_TABLE);
+		}
+		
+		public static void SetTrafficSource(string source)	=> _cacheHolder.NewProperty("traffic", source, USERS_DATA_TABLE);
+		
+		public static void SetCurrentArea(int area) 		=> _cacheHolder.SetCurrentArea(area);
+		public static void SetCurrentAbMode(string mode) 	=> _cacheHolder.SetCurrentAbMode(mode, CUSTOM_PROPERTIES_TABLE);
+		
+		public static void SetGlobalEventParam(string name, int value) 		=> _cacheHolder.SetGlobalEventParam(name, value);
+		public static void SetGlobalEventParam(string name, double value)	=> _cacheHolder.SetGlobalEventParam(name, value);
+		public static void SetGlobalEventParam(string name, bool value) 	=> _cacheHolder.SetGlobalEventParam(name, value);
+		public static void SetGlobalEventParam(string name, DateTime value)	=> _cacheHolder.SetGlobalEventParam(name, value);
+		public static void SetGlobalEventParam(string name, string value) 	=> _cacheHolder.SetGlobalEventParam(name, value);
+
+#endregion
+
+#region Getters
+
+		// In seconds. Note: The set timeout may apply to each URL redirect on Android which can result in a longer response
+		public static async UniTask<string> 	GetCountryAsync(int timeout = 0)		=> await _userRegistrator.GetCountryAsync(timeout);
+		public static async UniTask<DateTime>	GetNetworkTimeAsync(int timeout = 0)	=> _backend.GetNetworkTimeAsync(timeout);		
+        public static 		bool 				GetTester() 							=> _userRegistrator.IsTester();
+
+#endregion      
 }

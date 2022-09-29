@@ -76,7 +76,7 @@ namespace Advant
         public long 	GetUserId() 	=> _userId;
 		public bool 	IsTester() 		=> _isTester;
 		public bool		IsCheater()		=> _isCheater;
-		public string 	GetCountry() 	=> _country;
+		public string 	GetCountry()	=> _country;
 		
 		public void SetCheater(bool isCheater) => _isCheater = isCheater;
 		

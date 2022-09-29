@@ -25,9 +25,16 @@ namespace Advant.Http
 		private string _getCountryEndpoint;
         private string _putUserIdEndpoint;
 		private string _putSessionCountEndpoint;
-
-        public long UserId { get; private set; }
 		
+#region Helper data types definition
+
+		public enum RequestType
+		{
+			GET = 0,
+			POST = 1,
+			PUT = 2
+		}
+	
 		public class CertificateWhore : CertificateHandler
 		{
 			protected override bool ValidateCertificate(byte[] certificateData)
@@ -35,6 +42,10 @@ namespace Advant.Http
 				return true;
 			}
 		}
+		
+#endregion
+
+#region Init
 
         public void SetPathBases(string analytics, string registration)
         {
@@ -47,6 +58,10 @@ namespace Advant.Http
 			_gameDataEndpointsByType[typeof(GameEvent)] 	= analytics + "/AnalyticsData/SendEvents";
 			_gameDataEndpointsByType[typeof(Session)] 		= registration + "/Sessions/SaveSession";
         }
+		
+#endregion
+
+#region Public request executors
 
         public async UniTask<bool> SendToServerAsync<T>(string data)
         {
@@ -68,12 +83,12 @@ namespace Advant.Http
 			return true;
         }
 		
-		public async UniTask<DateTime> GetNetworkTime()
+		public async UniTask<DateTime> GetNetworkTime(int timeout = 0)
 		{
 			string response = null;
 			try
 			{
-				response = await ExecuteWebRequestAsync(_getNetworkTimeEndpoint, RequestType.GET);
+				response = await ExecuteWebRequestAsync(_getNetworkTimeEndpoint, RequestType.GET, null, timeout);
 			}
 			catch (Exception e)
 			{
@@ -164,7 +179,11 @@ namespace Advant.Http
             return result;         
         }
 
-        private async UniTask<string> ExecuteWebRequestAsync(string path, RequestType type, string jsonData = null, int timeout = 0)
+#endregion
+
+#region Implementation
+        
+		private async UniTask<string> ExecuteWebRequestAsync(string path, RequestType type, string jsonData = null, int timeout = 0)
         {
 			using var request = CreateRequest(path, type, jsonData, timeout);
 			UnityWebRequest operation = null;
@@ -179,21 +198,6 @@ namespace Advant.Http
 					Encoding.UTF8.GetString(request.uploadHandler.data));
 				throw e;
 			}
-				
-            // while (!operation.isDone)
-				// await UniTask.Yield(PlayerLoopTiming.PostLateUpdate);
-                //await Task.Yield();
-            // if (operation.responseCode != 201 && operation.responseCode != 200)
-            // {
-				// File.WriteAllText(
-					// Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
-					// Encoding.UTF8.GetString(request.uploadHandler.data));
-
-                // throw new Exception(
-					// "Http request failure. Response code: " + operation.responseCode + 
-					// "\nError: " + operation.error +
-					// "\nUpdload handler data: " + Encoding.UTF8.GetString(operation.uploadHandler.data));
-            // }
             return operation.downloadHandler.text;
         }
 
@@ -219,13 +223,9 @@ namespace Advant.Http
         {
             request.SetRequestHeader(key, value);
         }
-    }
-
-    internal enum RequestType
-    {
-        GET = 0,
-        POST = 1,
-        PUT = 2
-    }
+		
+	}
+	
+#endregion
 }
 
