@@ -80,12 +80,13 @@ namespace Advant
 			var (_, dbSessionCount) = await UniTask.WhenAll(
 				RealDateTime.InitAsync(_backend),
 				_userRegistrator.RegistrateAsync(id));
-				
+			
+			_cacheHolder.SetUserId(_userRegistrator.GetUserId());
 			_cacheHolder.NewSession(dbSessionCount);
 			_cacheHolder.NewEvent("logged_in");
 			
             SendUserDetails(dbSessionCount, abMode);
-            _cacheHolder.StartSendingDataAsync(_userRegistrator.GetUserId());
+            _cacheHolder.StartSendingDataAsync();
         }
 		
 		private static void SendUserDetails(long sessionCount, string abMode)

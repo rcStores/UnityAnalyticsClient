@@ -81,12 +81,18 @@ namespace Advant.Data
 			if (RealDateTime.UtcNow.Subtract(_sessions.CurrentSession().LastActivity) > TimeSpan.FromMinutes(10))
 			{
 				if (!await _backend.PutSessionCount(_userId, NewSession().SessionCount))
+				{
+					Debug.LogWarning("[ADVANAL] PutSessionCount returns false");
 					_sessions.CurrentSession().Unregistered = true;
+				}
 				NewEvent("logged_in");
+				Debug.LogWarning("[ADVANAL] logged_in was added to the events batch");
 			}
 			else
 				_sessions.RegisterActivity();
 		}
+		
+		public void SetUserId(long id) => _userId = id;
 
 #region Events
 
@@ -273,11 +279,10 @@ namespace Advant.Data
 
 #region Sending loop
 
-		public async UniTask StartSendingDataAsync(long id)
+		public async UniTask StartSendingDataAsync()
         {
 			Log.Info("Start scheduler");
             Debug.Assert(id != -1);
-			_userId = id;
             await RunSendingLoop();
         }
 		
