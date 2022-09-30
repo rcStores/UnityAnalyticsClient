@@ -53,6 +53,7 @@ internal static class RealDateTime
 				Debug.LogWarning($"[ADVANT] System time was changed by the user");
 				_isSystemTimeDifferent = true;
 			}
+			Debug.LogWarning($"[ADVANT] _isSystemTimeDifferent = {_isSystemTimeDifferent}");
 		}
 	}
 }
