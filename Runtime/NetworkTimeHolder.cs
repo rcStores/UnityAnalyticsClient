@@ -46,7 +46,7 @@ internal static class RealDateTime
 			}
 		}
 		Debug.LogWarning($"[ADVANT] System time = {_systemInitialTime}, network time = {_networkInitialTime}");
-		if (_networkInitialTime - _systemInitialTime > TimeSpan.FromSeconds(10))
+		if (_systemInitialTime.Subtract(_networkInitialTime) > TimeSpan.FromSeconds(10))
 		{
 			Debug.LogWarning($"[ADVANT] System time was changed by the user");
 			_isSystemTimeDifferent = true;
