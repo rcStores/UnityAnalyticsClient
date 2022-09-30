@@ -45,6 +45,8 @@ internal static class RealDateTime
 			}
 			_systemInitialTime = DateTime.UtcNow;
 			Debug.LogWarning($"[ADVANT] System time = {_systemInitialTime}, network time = {_networkInitialTime}");
+			Debug.LogWarning($"[ADVANT] _systemInitialTime.Subtract(_networkInitialTime) = {_systemInitialTime.Subtract(_networkInitialTime)}");
+			Debug.LogWarning($"[ADVANT] _networkInitialTime.Subtract(_systemInitialTime) = {_systemInitialTime.Subtract(_networkInitialTime)}");
 			if (_systemInitialTime.Subtract(_networkInitialTime) > TimeSpan.FromSeconds(10))
 			{
 				Debug.LogWarning($"[ADVANT] System time was changed by the user");
