@@ -282,7 +282,7 @@ namespace Advant.Data
 		public async UniTask StartSendingDataAsync()
         {
 			Log.Info("Start scheduler");
-            Debug.Assert(id != -1);
+            Debug.Assert(_userId != -1);
             await RunSendingLoop();
         }
 		
