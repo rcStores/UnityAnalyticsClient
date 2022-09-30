@@ -31,6 +31,7 @@ internal static class RealDateTime
 	{
 		if (DateTime.UtcNow.Subtract(_systemInitialTime) > TimeSpan.FromSeconds(60) && DateTime.UtcNow > _systemInitialTime)
 		{
+			_systemInitialTime = DateTime.UtcNow;
 			try
 			{
 				_networkInitialTime = _backend is null ? 
@@ -44,10 +45,11 @@ internal static class RealDateTime
 				_networkInitialTime = DateTime.UtcNow;
 			}
 		}
-			
-		_systemInitialTime = DateTime.UtcNow;
-		
+		Debug.LogWarning($"[ADVANT] System time = {_systemInitialTime}, network time = {_networkInitialTime}");
 		if (_networkInitialTime - _systemInitialTime > TimeSpan.FromSeconds(10))
+		{
+			Debug.LogWarning($"[ADVANT] System time was changed by the user");
 			_isSystemTimeDifferent = true;
+		}
 	}
 }

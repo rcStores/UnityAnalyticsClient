@@ -87,6 +87,7 @@ public struct GameEvent
 		
 	internal void SetTimestamp(DateTime timestamp)
 	{
+		Debug.LogWarning($"[ADVANT] event time = {timestamp}");
 		_timestamp = timestamp.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture);
 	}
 		
