@@ -50,7 +50,7 @@ namespace Advant
 			
 // ---------------------------------------------------------------------------------------------
 #if UNITY_EDITOR && DEBUG_ANAL
-            InitAsync(new Identifier(platform: "IOS", "DEBUG", "DEBUG"), abMode);
+            InitAsync(new Identifier(platform: "IOS", "DEBUG", "DEBUG"), abMode).Forget();
 // ---------------------------------------------------------------------------------------------			
 #elif UNITY_EDITOR
 			return;
@@ -61,21 +61,21 @@ namespace Advant
 			    {
 				    Log.Info("GAID couldn't be received");
 			    }
-                InitAsync(new Identifier(platform: "Android", idfv, gaid), abMode);
+                InitAsync(new Identifier(platform: "Android", idfv, gaid), abMode).Forget();
             });
 // ---------------------------------------------------------------------------------------------
 #elif UNITY_IOS
-            InitAsync(new Identifier(platform: "IOS", idfv, Device.advertisingIdentifier), abMode);
+            InitAsync(new Identifier(platform: "IOS", idfv, Device.advertisingIdentifier), abMode).Forget();
 #endif
         }
 		
-		public static async UniTask Refresh()
+		public static async UniTaskVoid Refresh()
 		{
 			await RealDateTime.SynchronizeTimeAsync();
 			await _cacheHolder.RefreshAsync();
 		}
 				
-		private static async void InitAsync(Identifier id, string abMode)
+		private static async UniTaskVoid InitAsync(Identifier id, string abMode)
         {
 			var (_, dbSessionCount) = await UniTask.WhenAll(
 				RealDateTime.InitAsync(_backend),

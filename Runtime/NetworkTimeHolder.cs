@@ -29,7 +29,7 @@ internal static class RealDateTime
 	
 	public static async UniTask SynchronizeTimeAsync()
 	{
-		if (DateTime.UtcNow.Subtract(_systemInitialTime) > TimeSpan.FromSeconds(60) || DateTime.UtcNow < _systemInitialTime)
+		if (DateTime.UtcNow.Subtract(_systemInitialTime) > TimeSpan.FromSeconds(60) && DateTime.UtcNow > _systemInitialTime)
 		{
 			try
 			{
