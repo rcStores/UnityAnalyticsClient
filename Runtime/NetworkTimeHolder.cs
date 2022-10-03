@@ -18,7 +18,7 @@ internal static class RealDateTime
 	private static DateTime _systemInitialTime	= DateTime.UtcNow;
 	private static DateTime _networkInitialTime	= DateTime.UtcNow;
 	
-	private UniTask _networkTask;
+	private static UniTask _networkTask;
 	
 	private static bool _isSystemTimeDifferent;
 	
@@ -66,6 +66,15 @@ internal static class RealDateTime
 		}
 	}
 	
+	public static async UniTask<DateTime> ExposeAsync(DateTime timestamp) 
+	{
+		await _networkTask; // is similar to awaiting on SynchronizeTime itself in a synchronous code 
+		return _isSystemTimeDifferent && timestamp > _systemInitialTime ? 
+			_networkInitialTime.AddSeconds((timestamp - _systemInitialTime).TotalSeconds) :
+			timestamp;
+	}
+	
+
 	// public static async UniTask SynchronizeTimeAsync(bool isCalledOnInit = false)
 	// {
 		// if (DateTime.UtcNow.Subtract(_systemInitialTime) > TimeSpan.FromSeconds(60) && DateTime.UtcNow > _systemInitialTime || isCalledOnInit)
@@ -98,14 +107,5 @@ internal static class RealDateTime
 			// }
 			// Debug.LogWarning($"[ADVANT] _isSystemTimeDifferent = {_isSystemTimeDifferent}");
 		// }
-	// }
-	
-	public static async DateTime ExposeAsync(DateTime timestamp) 
-	{
-		await _networkTask; // is similar to awaiting on SynchronizeTime itself in a synchronous code 
-		return _isSystemTimeDifferent && timestamp > _systemInitialTime ? 
-			_networkInitialTime.AddSeconds((timestamp - _systemInitialTime).TotalSeconds) :
-			timestamp;
-	}
-		
+	// }	
 }
