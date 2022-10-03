@@ -29,7 +29,7 @@ internal static class RealDateTime
 		return UtcNow;
 	}
 	
-	public static async UniTask SynchronizeTimeAsync(bool isCalledOnInit = false)
+	public static async UniTask<DateTime> SynchronizeTimeAsync(bool isCalledOnInit = false)
 	{
 		if (DateTime.UtcNow.Subtract(_systemInitialTime) > TimeSpan.FromSeconds(60) && DateTime.UtcNow > _systemInitialTime || isCalledOnInit)
 		{	
@@ -39,7 +39,7 @@ internal static class RealDateTime
             {
 #if UNITY_EDITOR
 				if (!Application.isPlaying)
-					return 0;
+					return;
 #endif				
                 if (_networkInitialTime == default)
                 {
@@ -63,6 +63,7 @@ internal static class RealDateTime
 					break;
                 }
             }
+			return _networkInitialTime;
 		}
 	}
 	
