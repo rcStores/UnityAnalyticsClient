@@ -105,6 +105,7 @@ internal static class RealDateTime
 		await _networkTask; // is similar to awaiting on SynchronizeTime itself in a synchronous code 
 		return _isSystemTimeDifferent && timestamp > _systemInitialTime ? 
 			_networkInitialTime.AddSeconds((timestamp - _systemInitialTime).TotalSeconds) :
-			timestamp; 
+			timestamp;
+	}
 		
 }
