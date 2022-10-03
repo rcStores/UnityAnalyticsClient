@@ -66,7 +66,7 @@ public struct GameEvent
 
 	public async UniTask ToJsonAsync(long id, StringBuilder sb)
 	{
-		string eventTime = await RealTime.ExposeAsync(_timestamp).ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture);
+		string eventTime = await RealDateTime.ExposeAsync(_timestamp).ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture);
 		sb.Append($"{{\"user_id\":{id}, \"name\":\"{_name}\", \"event_time\":\"{eventTime}\", \"current_app_version\":\"{Application.version}\", \"parameters\":");
 		ParametersToJson(sb);
 		sb.Append('}');

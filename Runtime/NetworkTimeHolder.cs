@@ -48,7 +48,6 @@ internal static class RealDateTime
 						TimeSpan.FromMinutes(2), 
 						false, 
 						PlayerLoopTiming.PostLateUpdate);
-                    Log.Info("Retry time synchronization");
 					Debug.LogWarning("[ADVANAL] Time synchronization failed. Retry...");
                 }
                 else
@@ -63,8 +62,8 @@ internal static class RealDateTime
 					break;
                 }
             }
-			return _networkInitialTime;
 		}
+		return _networkInitialTime;
 	}
 	
 	public static async UniTask<DateTime> ExposeAsync(DateTime timestamp) 
