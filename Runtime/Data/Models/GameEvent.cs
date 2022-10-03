@@ -11,7 +11,7 @@ public struct GameEvent
 	private int _currentCount;
 
 	private string 		_name;
-	private string 		_timestamp;
+	private DateTime 	_timestamp;
 	private Value[] 	_parameters;
 
 	public void Add(string name, int value)
@@ -63,9 +63,10 @@ public struct GameEvent
 		_parameters[_currentCount++].Set(name, value, type);
 	}
 
-	public void ToJson(long id, StringBuilder sb)
+	public async UniTask ToJsonAsync(long id, StringBuilder sb)
 	{
-		sb.Append($"{{\"user_id\":{id}, \"name\":\"{_name}\", \"event_time\":\"{_timestamp}\", \"current_app_version\":\"{Application.version}\", \"parameters\":");
+		string eventTime = await RealTime.ExposeAsync(_timestamp).ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture);
+		sb.Append($"{{\"user_id\":{id}, \"name\":\"{_name}\", \"event_time\":\"{eventTime}\", \"current_app_version\":\"{Application.version}\", \"parameters\":");
 		ParametersToJson(sb);
 		sb.Append('}');
 	}
@@ -88,7 +89,7 @@ public struct GameEvent
 	internal void SetTimestamp(DateTime timestamp)
 	{
 		Debug.LogWarning($"[ADVANT] event time = {timestamp}");
-		_timestamp = timestamp.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture);
+		_timestamp = timestamp; //.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture);
 	}
 		
 	private void ExtendParameterPool()

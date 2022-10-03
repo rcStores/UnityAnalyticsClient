@@ -90,7 +90,7 @@ namespace Advant
         }
 		
 		private static void SendUserDetails(long sessionCount, string abMode)
-        {		
+        {
             if (sessionCount == 1)
             {
                 Log.Info("Create properties for a new user");

@@ -96,7 +96,7 @@ namespace Advant.Http
 			}
 				
 			Debug.LogWarning("GetNetworkTime response: " + response);
-            return response is null ? DateTime.UtcNow : DateTime.ParseExact(response, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture);
+            return response is null ? default : DateTime.ParseExact(response, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture);
 		}
 
         public async UniTask<bool> GetTester(long userId)

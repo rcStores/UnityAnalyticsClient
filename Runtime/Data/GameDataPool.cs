@@ -158,7 +158,7 @@ namespace Advant.Data
 						await UniTask.Delay(20, false, PlayerLoopTiming.PostLateUpdate);
 					}
 				
-					_pool[_indices[i]].ToJson(userId, _sb);	
+					await _pool[_indices[i]].ToJsonAsync(userId, _sb);	
 				}
 				result = _sb.Append(']').ToString();
 				_sb.Clear();
