@@ -25,7 +25,8 @@ namespace Advant.Data
 		private List<Value> 				_globalEventParams		= new List<Value>();
 		private Dictionary<string, int>		_indicesOfGlobalsByName	= new Dictionary<string, int>();
 
-        private readonly Backend 				_backend;		
+        private readonly Backend 				_backend;
+		private readonly NetworkTimeHolder 		_timeHolder;		
 		private readonly GamePropertiesPool 	_properties;
         private readonly GameEventsPool 		_events;
 		private readonly GameSessionsPool 		_sessions;
@@ -44,8 +45,9 @@ namespace Advant.Data
 		private const int SENDING_INTERVAL 				= 120000; // 2 min in ms
 		private const int MAX_CACHE_COUNT 				= 10; 
 		private const int GAME_EVENT_PARAMETER_COUNT 	= 10;
+		private const int SESSION_TIMEOUT				= 10; // in minutes
 
-        public CacheScheduledHolder(string usersTableName, Backend backend)
+        public CacheScheduledHolder(string usersTableName, Backend backend, NetworkTimeHolder timeHolder)
         {
 			string serializationPath = null;
 // ------------------------------------------------------------------------------------------------------
@@ -58,6 +60,7 @@ namespace Advant.Data
 // ------------------------------------------------------------------------------------------------------
 
             _backend = backend;
+			_timeHolder = timeHolder;
 			
             if (!Directory.Exists(serializationPath))
             {
@@ -87,6 +90,28 @@ namespace Advant.Data
 				}
 				NewEvent("logged_in");
 				Debug.LogWarning("[ADVANAL] logged_in was added to the events batch");
+			}
+			else
+				_sessions.RegisterActivity();
+		}
+		
+		public async UniTask StartOrContinueSessionAsync(DateTime start, long dbSessionCount = 0)
+		{
+			if (!_sessions.HasCurrentSession())
+			{
+				NewSession(start, dbSessionCount);
+				_sessions.CurrentSession().Unregistered = false;
+				NewEvent("logged_in").Time = start;
+			}
+			else if ((_sessions.CurrentSession().LastActivity - start).TotalMinutes > SESSION_TIMEOUT)
+			{
+				if (await _backend.PutSessionCount(_userId, NewSession(start, dbSessionCount).SessionCount))
+				{
+					Debug.LogWarning("[ADVANAL] PutSessionCount returns true");
+					_sessions.CurrentSession().Unregistered = false;
+				}
+				NewEvent("logged_in").Time = start;
+				Debug.LogWarning("[ADVANAL] logged_in was added to the events batch, event_time = " + start);
 			}
 			else
 				_sessions.RegisterActivity();
@@ -268,9 +293,10 @@ namespace Advant.Data
 
 		public void SetSessionStart() => _sessions.SetSessionStart();
 		
-		public ref Session NewSession(long dbSessionCount = 0)
+		public ref Session NewSession(DateTime start, long dbSessionCount = 0)
 		{
 			ref var s = ref _sessions.NewSession(dbSessionCount);
+			s.SessionStart = start;
 			SetGlobalEventParam("session_id", $"{_userId}_{s.SessionCount}");
 			return ref s;
 		}
@@ -302,15 +328,17 @@ namespace Advant.Data
 					
 				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 				
-				_sessions.RegisterActivity();
+				_sessions.RegisterActivity(DateTime.UtcNow);
+				
+				if (!_timeHolder.IsServerReached) continue;
 				
 				int eventsBatchSize 		= _events.GetCurrentBusyCount();
 				int propertiesBatchSize 	= _properties.GetCurrentBusyCount();
 				int sessionsBatchSize 		= _sessions.GetCurrentBusyCount();
 				
-				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(_userId));					
+				var eventsSending 		= _backend.SendToServerAsync<GameEvent>(await _events.ToJsonAsync(_userId, _timeHolder));					
 				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJsonAsync(_userId));
-				var sessionSending		= _backend.SendToServerAsync<Session>(await _sessions.ToJsonAsync(_userId));
+				var sessionSending		= _backend.SendToServerAsync<Session>(await _sessions.ToJsonAsync(_userId, _timeHolder));
 						
 				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded, hasSessionSendingSucceeded) = 
 					await UniTask.WhenAll(eventsSending, propertiesSending, sessionSending);
@@ -357,17 +385,20 @@ namespace Advant.Data
 		
 		private void SerializeEvents()
         {
+			_timeHolder.ValidateTimestamps(_events);
             Serialize<GameEventsPool>(_eventsPath, _events);
         }
 
         private void SerializeProperties()
         {
+			_timeHolder.ValidateTimestamps(_properties);
             Serialize<GamePropertiesPool>(_propsPath, _properties);
         }
 		
 		private void SerializeSessions()
         {
 			_sessions.RegisterActivity();
+			_timeHolder.ValidateTimestamps(_sessions);
             Serialize<GameSessionsPool>(_sessionsPath, _sessions);
         }
 		

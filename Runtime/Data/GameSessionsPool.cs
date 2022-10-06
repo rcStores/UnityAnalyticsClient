@@ -43,7 +43,7 @@ namespace Advant.Data
 		
 #region Sending routines
 
-		public override async UniTask<string> ToJsonAsync(long userId)
+		public override async UniTask<string> ToJsonAsync(long userId, NetworkTimeHolder timeHolder)
 		{
 			string result = null;
 			
@@ -62,7 +62,7 @@ namespace Advant.Data
 					{
 						await UniTask.Delay(20, false, PlayerLoopTiming.PostLateUpdate);
 					}
-					
+					timeHolder.ValidateTimestamps(ref _pool[_indices[i]]);
 					_pool[_indices[i]].ToJson(userId, _sb);	
 				}
 				result = _sb.Append(']').ToString();
@@ -103,10 +103,18 @@ namespace Advant.Data
 			Debug.LogWarning($"session.SessionCount = {session.SessionCount}, session.SessionStart = {session.SessionStart}, session.LastActivity = {session.LastActivity}");
 			*/
 		}
+		
+		public override void ValidateTimestamps(NetworkTimeHolder timeHolder)
+		{
+			for (int i = 0; i < _currentCount; ++i)
+			{
+				timeHolder.ValidateTimestamps(ref _pool[_indices[i]]);
+			}
+		}
 
 #endregion
 				
-		public ref Session NewSession(long newSessionCount = 0)
+		public ref Session NewSession(long newSessionCount = 0) // timestamp
 		{
 			if (_currentCount > 0)
 			{
@@ -119,9 +127,9 @@ namespace Advant.Data
 			ref var s = ref NewElement();
 			s.AbMode = _abMode;
 			s.Area = _gameArea;
-			s.SessionStart	= _sessionStart = RealDateTime.UtcNow;
-			s.LastActivity	= RealDateTime.UtcNow;
-			s.Unregistered = false;
+			s.SessionStart	= _sessionStart = DateTime.UtcNow;
+			s.LastActivity	= DateTime.UtcNow;
+			s.Unregistered = true;
 			Debug.LogWarning($"[ADVANT] Cached session count = {_currentSessionCount}");
 			
 			if (newSessionCount == 0)
@@ -139,9 +147,9 @@ namespace Advant.Data
 			return ref s;
 		}
 		
-		public void RegisterActivity()
+		public void RegisterActivity() 
 		{
-			CurrentSession().LastActivity = RealDateTime.UtcNow;
+			CurrentSession().LastActivity = DateTime.UtcNow;
 		}
 		
 		public ref Session CurrentSession() 

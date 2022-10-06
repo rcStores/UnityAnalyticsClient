@@ -98,7 +98,7 @@ namespace Advant.Data
 	[Serializable]
 	internal class GamePropertiesPool : GameDataPool<GameProperty>
 	{
-		public override async UniTask<string> ToJsonAsync(long userId)
+		public override async UniTask<string> ToJsonAsync(long userId, NetworkTimeHolder timeHolder = null)
 		{
 			string result = null;
 			
@@ -117,7 +117,7 @@ namespace Advant.Data
 					{
 						await UniTask.Delay(20, false, PlayerLoopTiming.PostLateUpdate);
 					}
-					
+					timeHolder?.ValidateTimestamps(ref _pool[_indices[i]]);
 					_pool[_indices[i]].ToJson(userId, _sb);	
 				}
 				result = _sb.Append(']').ToString();
@@ -130,12 +130,20 @@ namespace Advant.Data
 			
 			return result;
 		}
+		
+		public override void ValidateTimestamps(NetworkTimeHolder timeHolder)
+		{
+			for (int i = 0; i < _currentCount; ++i)
+			{
+				timeHolder.ValidateTimestamps(ref _pool[_indices[i]]);
+			}
+		}
 	}
 	
 	[Serializable]
 	internal class GameEventsPool : GameDataPool<GameEvent>
 	{
-		public override async UniTask<string> ToJsonAsync(long userId)
+		public override async UniTask<string> ToJsonAsync(long userId, NetworkTimeHolder timeHolder)
 		{
 			string result = null;
 			
@@ -157,8 +165,8 @@ namespace Advant.Data
 					{
 						await UniTask.Delay(20, false, PlayerLoopTiming.PostLateUpdate);
 					}
-				
-					await _pool[_indices[i]].ToJsonAsync(userId, _sb);	
+					timeHolder.ValidateTimestamps(ref _pool[_indices[i]]);
+					_pool[_indices[i]].ToJson(userId, _sb);	
 				}
 				result = _sb.Append(']').ToString();
 				_sb.Clear();
@@ -169,6 +177,14 @@ namespace Advant.Data
 			}
 			//Debug.LogWarning("[ADVANT] Events in JSON:\n " + result);
 			return result;
+		}
+		
+		public override void ValidateTimestamps(NetworkTimeHolder timeHolder)
+		{
+			for (int i = 0; i < _currentCount; ++i)
+			{
+				timeHolder.ValidateTimestamps(ref _pool[_indices[i]]);
+			}
 		}
 	}
 } // namespace Advant.Data

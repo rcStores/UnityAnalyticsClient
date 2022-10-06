@@ -4,9 +4,126 @@ using UnityEngine;
 
 using Advant.Http;
 
+internal class NetworkTimeHolder
+{
+	private DateTime _systemInitialTime = DateTime.UtcNow;
+	private DateTime _networkInitialTime;
+	
+	private readonly _backend;
+	
+	public NetworkTimeHolder(Backend backend)
+	{
+		_backend = backend;
+	}
+	
+	//public DateTime CurrentTime { get => _networkInitialTime.AddSeconds((DateTime.UtcNow - _systemInitialTime).TotalSeconds); }
+	
+	public bool IsServerReached { get => _networkInitialTime != default; }
+	
+	public DateTime GetVerifiedTime(DateTime timestamp) => IsServerReached? 
+		_networkInitialTime.AddSeconds((timestamp - _systemInitialTime).TotalSeconds) :
+		timestamp;
+		
+	
+	public async UniTask<DateTime> GetInitialTimeAsync() 
+	{
+		_networkInitialTime = default;
+		while (true)
+        {
+#if UNITY_EDITOR
+			if (!Application.isPlaying)
+				return;
+#endif		
+			var currentNetworkTime = await _backend.GetNetworkTime();
+			
+            if (currentNetworkTime == default)
+            {
+				await UniTask.Delay(
+					TimeSpan.FromMinutes(2), 
+					false, 
+					PlayerLoopTiming.PostLateUpdate);
+				Debug.LogWarning("[ADVANAL] Time synchronization failed. Retry...");
+            }
+            else
+            {
+				_networkInitialTime.AddSeconds((currentNetworkTime - DateTime.UtcNow + _systemInitialTime).TotalSeconds);
+				Debug.LogWarning("[ADVANAL] network initial time: " + _networkInitialTime);
+				break;
+            }
+        }
+		return _networkInitialTime;
+	}
+	
+	// public async UniTask<DateTime?> GetTimeAsync()
+	// {
+		// DateTime networkTime = await _backend.GetNetworkTime();
+		// if (networkTime != default)
+			// _networkInitialTime.AddSeconds((networkTime - DateTime.UtcNow + _systemInitialTime).TotalSeconds);
+		// return Now;
+	// }
+	
+	public void ValidateTimestamps(GamePropertiesPool pool)
+	{
+		if (!IsServerReached) return;
+		
+		for (int i = 0; i < pool.GetCurrentBusyCount(); ++i)
+		{
+			ValidateTimestamps(ref pool.Elements[i]);
+		}
+	}
+	
+	public void ValidateTimestamps(GameEventsPool pool)
+	{
+		if (!IsServerReached) return;
+		
+		for (int i = 0; i < pool.GetCurrentBusyCount(); ++i)
+		{
+			ValidateTimestamps(ref pool.Elements[i]);
+		}
+	}
+	
+	public void ValidateTimestamps(GameSessionsPool pool)
+	{
+		if (pool.HasCurrentSession() && IsServerReached)
+			ValidateTimestamps(ref pool.CurrentSession());
+	}
+	
+	public void ValidateTimestamps(ref GameProperty p)
+	{
+		ValidateTimestamps(ref p.GetValue());
+	}
+	
+	public void ValidateTimestamps(ref Session s)
+	{
+		// SessionStart must be already valid 
+		s.LastActivity = GetVerifiedTime(s.LastActivity);
+	}
+	
+	public void ValidateTimestamps(ref GameEvent e)
+	{
+		e.Time = GetVerifiedTime(e.Time);
+		for (int i = 0; i < e.ParamsCount; ++i)
+		{
+			ValidateTimestamps(ref e.Params[i]);
+		}
+	}
+	
+	public void ValidateTimestamps(ref Value v)
+	{
+		if (v.Type == Value.EValueType.DateTime)
+		{
+			// it's so fucking nasty, i hate it
+			var timestamp = DateTime.ParseExact(v.Data,"yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture);
+			v.Set(v.Name, GetVerifiedTime(timestamp));
+		}
+	}
+}
+
+// not static
 internal static class RealDateTime
 {
-	public static DateTime UtcNow
+	// nullable?
+	public static DateTime UtcNow // remove or nullable 
 	{ 
 		get => _isSystemTimeDifferent && DateTime.UtcNow > _systemInitialTime ? 
 			_networkInitialTime.AddSeconds((DateTime.UtcNow - _systemInitialTime).TotalSeconds) :
@@ -20,7 +137,7 @@ internal static class RealDateTime
 	
 	private static UniTask _networkTask;
 	
-	private static bool _isSystemTimeDifferent;
+	private static bool _isSystemTimeDifferent; // gtfo
 	
 	public static async UniTask<DateTime> InitAsync(Backend backend)
 	{
@@ -29,9 +146,17 @@ internal static class RealDateTime
 		return UtcNow;
 	}
 	
+	// GetTimeAsync:
+	// 1 - fire and forget
+	// 2 - await 
+	// _isServerReached
+	// GetTimeAsync
+	// ForceGettingTime: cancel prev tasl, flag = false await GetTimeAsync
 	public static async UniTask<DateTime> SynchronizeTimeAsync(bool isCalledOnInit = false)
 	{
-		if (DateTime.UtcNow.Subtract(_systemInitialTime) > TimeSpan.FromSeconds(60) && DateTime.UtcNow > _systemInitialTime || isCalledOnInit)
+		// minute is too much
+		// 60 const
+		if (DateTime.UtcNow.Subtract(_systemInitialTime) > TimeSpan.FromSeconds(60) && DateTime.UtcNow > _systemInitialTime || isCalledOnInit) // rewrite
 		{	
 			_networkInitialTime = _systemInitialTime = DateTime.UtcNow;
 			_networkTask = _backend.GetNetworkTime().Preserve();

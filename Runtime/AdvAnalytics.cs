@@ -21,6 +21,9 @@ namespace Advant
         private static readonly Backend 				_backend;
         private static readonly CacheScheduledHolder 	_cacheHolder;
         private static readonly UserRegistrator 		_userRegistrator;
+		private static readonly NetworkTimeHolder 		_timeHolder;
+		
+		private static readonly _initTime;
 		
 		private const string CUSTOM_PROPERTIES_TABLE	= "custom_properties";
 		private const string USERS_DATA_TABLE 			= "users";
@@ -30,9 +33,27 @@ namespace Advant
         static AdvAnalytics()
         {
             _backend 			= new Backend();
-            _cacheHolder 		= new CacheScheduledHolder(USERS_DATA_TABLE, _backend);
+			_timeHolder			= new NetworkTimeHolder(_backend);
+            _cacheHolder 		= new CacheScheduledHolder(USERS_DATA_TABLE, _backend, _timeHolder);
             _userRegistrator 	= new UserRegistrator(USERS_DATA_TABLE, _backend);
         }
+		
+		// public void StartOrContinueSession()
+		// {
+			// var sessionValidation = (NetworkTimeHolder timeHolder, ref Session session) =>
+			// {
+				// session.SessionStart = timeHolder.GetValidTimestamp(session.SessionStart, networkTime);
+			// }
+			
+			// if (_sessions.CurrentSession() is var session && session is null)
+			// {
+				// _sessions.NewSession(DateTime.UtcNow);
+			// }
+			// else //
+			
+			// _timeValidator.AddCallback(() => { sessionValidation(_networkTimeHolder, session); });
+		// }
+				
 		
 		public static void SaveCacheLocally() 
 		{	
@@ -71,25 +92,23 @@ namespace Advant
 		
 		public static async UniTaskVoid Refresh()
 		{
-			await RealDateTime.SynchronizeTimeAsync();
-			await _cacheHolder.RefreshAsync();
+			_cacheHolder.StartOrContinueSessionAsync(await _timeHolder.GetInitialTimeAsync());
 		}
 				
 		private static async UniTaskVoid InitAsync(Identifier id, string abMode)
         {
-			var (_, dbSessionCount) = await UniTask.WhenAll(
-				RealDateTime.InitAsync(_backend),
+			var (initialTime, dbSessionCount) = await UniTask.WhenAll(
+				_timeHolder.GetInitialTimeAsync(),
 				_userRegistrator.RegistrateAsync(id));
-			
+
 			_cacheHolder.SetUserId(_userRegistrator.GetUserId());
-			_cacheHolder.NewSession(dbSessionCount);
-			_cacheHolder.NewEvent("logged_in");
+			_cacheHolder.StartOrContinueSessionAsync(initialTime, dbSessionCount);
 			
-            SendUserDetails(dbSessionCount, abMode);
+            SendUserDetails(dbSessionCount, abMode, initialTime);
             _cacheHolder.StartSendingDataAsync();
         }
 		
-		private static void SendUserDetails(long sessionCount, string abMode)
+		private static void SendUserDetails(long sessionCount, string abMode, DateTime initialTime)
         {
             if (sessionCount == 1)
             {
@@ -99,9 +118,9 @@ namespace Advant
 					_cacheHolder.NewProperty("cheater", false, USERS_DATA_TABLE);
 				
 				_cacheHolder.NewProperty("tester", 					GetTester(), 			USERS_DATA_TABLE);
-				_cacheHolder.NewProperty("first_install_date", 		RealDateTime.UtcNow, 	USERS_DATA_TABLE);
-				_cacheHolder.NewProperty("last_install_date", 		RealDateTime.UtcNow,	USERS_DATA_TABLE);
-				_cacheHolder.NewProperty("first_game_version", 		Application.version, 	USERS_DATA_TABLE);
+				_cacheHolder.NewProperty("first_install_date", 		initialTime, 			USERS_DATA_TABLE);
+				_cacheHolder.NewProperty("last_install_date", 		initialTime,			USERS_DATA_TABLE);
+				_cacheHolder.NewProperty("first_game_version", 		Application.version,	USERS_DATA_TABLE);
 				_cacheHolder.NewProperty("current_game_version", 	Application.version, 	USERS_DATA_TABLE);
 				_cacheHolder.NewProperty("first_ab_mode", 			abMode, 				CUSTOM_PROPERTIES_TABLE);
 
@@ -114,11 +133,11 @@ namespace Advant
                 string appVersion = PlayerPrefs.GetString(APP_VERSION_PREF);
                 if (appVersion != "" && appVersion != Application.version)
                 {
-					_cacheHolder.NewProperty("last_update_date", RealDateTime.UtcNow, USERS_DATA_TABLE);
+					_cacheHolder.NewProperty("last_update_date", initialTime, USERS_DATA_TABLE);
                 }
                 else if (appVersion == "")
                 {
-					_cacheHolder.NewProperty("last_install_date", RealDateTime.UtcNow, USERS_DATA_TABLE);
+					_cacheHolder.NewProperty("last_install_date", initialTime, USERS_DATA_TABLE);
                 }
 				
 				_cacheHolder.NewProperty("current_game_version", Application.version, USERS_DATA_TABLE);
