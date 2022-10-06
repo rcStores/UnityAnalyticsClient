@@ -79,21 +79,21 @@ namespace Advant.Data
 			_globalEventParams.Capacity = GAME_EVENT_PARAMETER_COUNT;
         }
 		
-		public async UniTask RefreshAsync()
-		{
-			if (RealDateTime.UtcNow.Subtract(_sessions.CurrentSession().LastActivity) > TimeSpan.FromMinutes(10))
-			{
-				if (!await _backend.PutSessionCount(_userId, NewSession().SessionCount))
-				{
-					Debug.LogWarning("[ADVANAL] PutSessionCount returns false");
-					_sessions.CurrentSession().Unregistered = true;
-				}
-				NewEvent("logged_in");
-				Debug.LogWarning("[ADVANAL] logged_in was added to the events batch");
-			}
-			else
-				_sessions.RegisterActivity();
-		}
+		// public async UniTask RefreshAsync()
+		// {
+			// if (RealDateTime.UtcNow.Subtract(_sessions.CurrentSession().LastActivity) > TimeSpan.FromMinutes(10))
+			// {
+				// if (!await _backend.PutSessionCount(_userId, NewSession().SessionCount))
+				// {
+					// Debug.LogWarning("[ADVANAL] PutSessionCount returns false");
+					// _sessions.CurrentSession().Unregistered = true;
+				// }
+				// NewEvent("logged_in");
+				// Debug.LogWarning("[ADVANAL] logged_in was added to the events batch");
+			// }
+			// else
+				// _sessions.RegisterActivity();
+		// }
 		
 		public async UniTask StartOrContinueSessionAsync(DateTime start, long dbSessionCount = 0)
 		{

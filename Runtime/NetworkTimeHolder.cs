@@ -93,7 +93,7 @@ internal class NetworkTimeHolder
 	
 	public void ValidateTimestamps(ref GameProperty p)
 	{
-		ValidateTimestamps(ref p.GetValue());
+		// ValidateTimestamps(ref p.GetValue());
 	}
 	
 	public void ValidateTimestamps(ref Session s)

@@ -158,7 +158,7 @@ namespace Advant
 		public static void SendProperty(string name, int value)			=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
 		public static void SendProperty(string name, double value)		=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
 		public static void SendProperty(string name, bool value)		=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);	
-		public static void SendProperty(string name, DateTime value)	=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
+		//public static void SendProperty(string name, DateTime value)	=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
 		public static void SendProperty(string name, string value)		=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);
 		
 #endregion

@@ -11,8 +11,10 @@ namespace Advant.Data
 {
 	[Serializable]
 	internal abstract class GameDataPool<T>
-	{     
-		protected T[] 	_pool;
+	{
+		internal T[] Elements { get => _pool; }
+		
+		internal T[] 	_pool;
 		protected int[] 	_indices;		
 		protected int 	_currentCount;
 		

@@ -14,12 +14,9 @@ internal struct GameProperty
 	public void Set(string name, double value) 		=> _value.Set(name, value);
 	public void Set(string name, string value) 		=> _value.Set(name, value);
 	public void Set(string name, bool value) 		=> _value.Set(name, value);
-	public void Set(string name, DateTime value) 	=> _value.Set(name, value);
+	internal void Set(string name, DateTime value) 	=> _value.Set(name, value);
 	
-	public ref Value GetValue() => ref _value;
-
-	public void SetTableName(string table) 			=> _table = table;
-		
+	public void SetTableName(string table) 			=> _table = table;	
 		
 	public void ToJson(long id, StringBuilder sb)
 	{
