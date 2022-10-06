@@ -68,10 +68,9 @@ public struct GameEvent
 		_parameters[_currentCount++].Set(name, value, type);
 	}
 
-	public void ToJson(long id, StringBuilder sb, NetworkTimeHolder timeHolder)
+	public void ToJson(long id, StringBuilder sb)
 	{
-		string eventTime = timeHolder.GetVerifiedTime(_timestamp).ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture);
-		sb.Append($"{{\"user_id\":{id}, \"name\":\"{_name}\", \"event_time\":\"{eventTime}\", \"current_app_version\":\"{Application.version}\", \"parameters\":");
+		sb.Append($"{{\"user_id\":{id}, \"name\":\"{_name}\", \"event_time\":\"{_timestamp.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\", \"current_app_version\":\"{Application.version}\", \"parameters\":");
 		ParametersToJson(sb);
 		sb.Append('}');
 	}
