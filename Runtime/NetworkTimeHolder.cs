@@ -45,7 +45,7 @@ internal class NetworkTimeHolder
 	// нескольо запросов подряд?
 	public async UniTask<DateTime> GetInitialTimeAsync() 
 	{
-		var timeSincePrevInit = timestamp - _systemInitialTime;
+		var timeSincePrevInit = DateTime.UtcNow - _systemInitialTime;
 		if (_networkInitialTime != default && timeSincePrevInit.TotalSeconds > 0 && timeSincePrevInit.TotalSeconds <= 1) return _networkInitialTime;
 		
 		_networkInitialTime = default;
@@ -126,9 +126,9 @@ internal class NetworkTimeHolder
 			s.LastActivity = GetVerifiedTime(s.LastActivity);
 			s.HasValidTimestamps = true;
 		}
-		catch (Exception e)
+		catch (Exception ex)
 		{
-			Debug.LogWarning($"[ADVANT] Error while validating Session timestamp. Session number: {s.SessionCount}, error message: {e.Message}");
+			Debug.LogWarning($"[ADVANT] Error while validating Session timestamp. Session number: {s.SessionCount}, error message: {ex.Message}");
 		}
 	}
 	
@@ -145,9 +145,9 @@ internal class NetworkTimeHolder
 			}
 			e.HasValidTimestamps = true;
 		}
-		catch (Exception e)
+		catch (Exception ex)
 		{
-			Debug.LogWarning($"[ADVANT] Error while validating GameEvent timestamp. Event name: {e.Name}, error message: {e.Message}");
+			Debug.LogWarning($"[ADVANT] Error while validating GameEvent timestamp. Event name: {e.Name}, error message: {ex.Message}");
 		}
 	}
 	
