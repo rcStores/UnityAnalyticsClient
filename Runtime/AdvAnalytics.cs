@@ -23,8 +23,6 @@ namespace Advant
         private static readonly UserRegistrator 		_userRegistrator;
 		private static readonly NetworkTimeHolder 		_timeHolder;
 		
-		private static readonly _initTime;
-		
 		private const string CUSTOM_PROPERTIES_TABLE	= "custom_properties";
 		private const string USERS_DATA_TABLE 			= "users";
         private const string APP_VERSION_PREF 			= "AppVersion";

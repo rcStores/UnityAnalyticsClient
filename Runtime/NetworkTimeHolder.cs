@@ -9,7 +9,7 @@ internal class NetworkTimeHolder
 	private DateTime _systemInitialTime = DateTime.UtcNow;
 	private DateTime _networkInitialTime;
 	
-	private readonly _backend;
+	private readonly Backend _backend;
 	
 	public NetworkTimeHolder(Backend backend)
 	{
