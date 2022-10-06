@@ -9,15 +9,18 @@ namespace Advant.Data.Models
 [Serializable]
 public struct GameEvent
 {
+	internal string Name { get => _name; }
 	internal DateTime Time { get => _timestamp; set => _timestamp = value; }
 	internal Value[] Params { get => _parameters; }
 	internal int ParamsCount { get => _currentCount; }
+	internal bool HasValidTimestamps { get => _hasValidTimestamps; set => _hasValidTimestamps = value; }
 	
 	private int _currentCount;
 
 	private string 		_name;
 	internal DateTime 	_timestamp;
 	internal Value[] 	_parameters;
+	private bool _hasValidTimestamps;
 
 	public void Add(string name, int value)
 	{

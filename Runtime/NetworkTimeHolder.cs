@@ -9,28 +9,48 @@ using Advant.Data.Models;
 
 internal class NetworkTimeHolder
 {
-	private DateTime _systemInitialTime = DateTime.UtcNow;
+	private DateTime _systemInitialTime;
 	private DateTime _networkInitialTime;
+	
+	private bool _isFirstInit;
 	
 	private readonly Backend _backend;
 	
 	public NetworkTimeHolder(Backend backend)
 	{
 		_backend = backend;
+		_systemInitialTime = DateTime.UtcNow;
+		_isFirstInit = true;
 	}
 	
 	//public DateTime CurrentTime { get => _networkInitialTime.AddSeconds((DateTime.UtcNow - _systemInitialTime).TotalSeconds); }
 	
 	public bool IsServerReached { get => _networkInitialTime != default; }
 	
-	public DateTime GetVerifiedTime(DateTime timestamp) => IsServerReached? 
-		_networkInitialTime.AddSeconds((timestamp - _systemInitialTime).TotalSeconds) :
-		timestamp;
+	public DateTime GetVerifiedTime(DateTime timestamp) => _networkInitialTime.AddSeconds((timestamp - _systemInitialTime).TotalSeconds);
+	
+	// {	if (IsServerReached)
+		// {
+			// TimeSpan delta;	
+			// if (timestamp > _systemInitialTime)
+				// delta = timestamp - _systemInitialTime;
+			// else
+				// delta = _systemInitialTime - timestamp;
+			// return _networkInitialTime.AddSeconds(delta.TotalSeconds);
+		// }
+		// else return timestamp;
+	// }
 		
 	
+	// нескольо запросов подряд?
 	public async UniTask<DateTime> GetInitialTimeAsync() 
 	{
+		var timeSincePrevInit = timestamp - _systemInitialTime;
+		if (_networkInitialTime != default && timeSincePrevInit.TotalSeconds > 0 && timeSincePrevInit.TotalSeconds <= 1) return _networkInitialTime;
+		
 		_networkInitialTime = default;
+		_systemInitialTime = _isFirstInit? _systemInitialTime : DateTime.UtcNow;
+		_isFirstInit = false;
 		while (true)
         {
 #if UNITY_EDITOR
@@ -99,16 +119,35 @@ internal class NetworkTimeHolder
 	
 	public void ValidateTimestamps(ref Session s)
 	{
-		// SessionStart must be already valid 
-		s.LastActivity = GetVerifiedTime(s.LastActivity);
+		if (s.HasValidTimestamps) return;
+		
+		try 
+		{
+			s.LastActivity = GetVerifiedTime(s.LastActivity);
+			s.HasValidTimestamps = true;
+		}
+		catch (Exception e)
+		{
+			Debug.LogWarning($"[ADVANT] Error while validating Session timestamp. Session number: {s.SessionCount}, error message: {e.Message}");
+		}
 	}
 	
 	public void ValidateTimestamps(ref GameEvent e)
 	{
-		e.Time = GetVerifiedTime(e.Time);
-		for (int i = 0; i < e.ParamsCount; ++i)
+		if (e.HasValidTimestamps) return;
+		
+		try 
 		{
-			ValidateTimestamps(ref e.Params[i]);
+			e.Time = GetVerifiedTime(e.Time);
+			for (int i = 0; i < e.ParamsCount; ++i)
+			{
+				ValidateTimestamps(ref e.Params[i]);
+			}
+			e.HasValidTimestamps = true;
+		}
+		catch (Exception e)
+		{
+			Debug.LogWarning($"[ADVANT] Error while validating GameEvent timestamp. Event name: {e.Name}, error message: {e.Message}");
 		}
 	}
 	
@@ -121,6 +160,18 @@ internal class NetworkTimeHolder
 			v.Set(v.Name, GetVerifiedTime(timestamp));
 		}
 	}
+	
+	private static DateTime MinDate(DateTime val1, DateTime val2)
+    {
+        return DateTime.FromBinary(
+            Math.Min(val1.ToBinary(), val2.ToBinary()));
+    }
+
+	private static DateTime MaxDate(DateTime val1, DateTime val2)
+    {
+		return DateTime.FromBinary(
+			Math.Max(val1.ToBinary(), val2.ToBinary()));
+    }
 }
 
 // not static
