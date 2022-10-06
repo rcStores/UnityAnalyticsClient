@@ -130,14 +130,6 @@ namespace Advant.Data
 			
 			return result;
 		}
-		
-		public override void ValidateTimestamps(NetworkTimeHolder timeHolder)
-		{
-			for (int i = 0; i < _currentCount; ++i)
-			{
-				timeHolder.ValidateTimestamps(ref _pool[_indices[i]]);
-			}
-		}
 	}
 	
 	[Serializable]
@@ -177,14 +169,6 @@ namespace Advant.Data
 			}
 			//Debug.LogWarning("[ADVANT] Events in JSON:\n " + result);
 			return result;
-		}
-		
-		public override void ValidateTimestamps(NetworkTimeHolder timeHolder)
-		{
-			for (int i = 0; i < _currentCount; ++i)
-			{
-				timeHolder.ValidateTimestamps(ref _pool[_indices[i]]);
-			}
 		}
 	}
 } // namespace Advant.Data

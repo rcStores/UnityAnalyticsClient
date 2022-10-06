@@ -3,6 +3,8 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 using Advant.Http;
+using Advant.Data;
+using Advant.Data.Models;
 
 internal class NetworkTimeHolder
 {
