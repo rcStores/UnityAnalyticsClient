@@ -34,7 +34,7 @@ internal class NetworkTimeHolder
         {
 #if UNITY_EDITOR
 			if (!Application.isPlaying)
-				return;
+				return default;
 #endif		
 			var currentNetworkTime = await _backend.GetNetworkTime();
 			
@@ -48,7 +48,8 @@ internal class NetworkTimeHolder
             }
             else
             {
-				_networkInitialTime.AddSeconds((currentNetworkTime - DateTime.UtcNow + _systemInitialTime).TotalSeconds);
+				_networkInitialTime.AddSeconds(
+					_systemInitialTime.AddSeconds((DateTime.UtcNow - currentNetworkTime).TotalSeconds).TotalSeconds);
 				Debug.LogWarning("[ADVANAL] network initial time: " + _networkInitialTime);
 				break;
             }
@@ -122,117 +123,117 @@ internal class NetworkTimeHolder
 }
 
 // not static
-internal static class RealDateTime
-{
-	// nullable?
-	public static DateTime UtcNow // remove or nullable 
-	{ 
-		get => _isSystemTimeDifferent && DateTime.UtcNow > _systemInitialTime ? 
-			_networkInitialTime.AddSeconds((DateTime.UtcNow - _systemInitialTime).TotalSeconds) :
-			DateTime.UtcNow; 
-	}
+// internal static class RealDateTime
+// {
+	// // nullable?
+	// public static DateTime UtcNow // remove or nullable 
+	// { 
+		// get => _isSystemTimeDifferent && DateTime.UtcNow > _systemInitialTime ? 
+			// _networkInitialTime.AddSeconds((DateTime.UtcNow - _systemInitialTime).TotalSeconds) :
+			// DateTime.UtcNow; 
+	// }
 		
-	private static Backend _backend;
+	// private static Backend _backend;
 	
-	private static DateTime _systemInitialTime	= DateTime.UtcNow;
-	private static DateTime _networkInitialTime	= DateTime.UtcNow;
+	// private static DateTime _systemInitialTime	= DateTime.UtcNow;
+	// private static DateTime _networkInitialTime	= DateTime.UtcNow;
 	
-	private static UniTask _networkTask;
+	// private static UniTask _networkTask;
 	
-	private static bool _isSystemTimeDifferent; // gtfo
+	// private static bool _isSystemTimeDifferent; // gtfo
 	
-	public static async UniTask<DateTime> InitAsync(Backend backend)
-	{
-		_backend = backend;
-		await SynchronizeTimeAsync(isCalledOnInit: true);
-		return UtcNow;
-	}
+	// public static async UniTask<DateTime> InitAsync(Backend backend)
+	// {
+		// _backend = backend;
+		// await SynchronizeTimeAsync(isCalledOnInit: true);
+		// return UtcNow;
+	// }
 	
-	// GetTimeAsync:
-	// 1 - fire and forget
-	// 2 - await 
-	// _isServerReached
-	// GetTimeAsync
-	// ForceGettingTime: cancel prev tasl, flag = false await GetTimeAsync
-	public static async UniTask<DateTime> SynchronizeTimeAsync(bool isCalledOnInit = false)
-	{
-		// minute is too much
-		// 60 const
-		if (DateTime.UtcNow.Subtract(_systemInitialTime) > TimeSpan.FromSeconds(60) && DateTime.UtcNow > _systemInitialTime || isCalledOnInit) // rewrite
-		{	
-			_networkInitialTime = _systemInitialTime = DateTime.UtcNow;
-			_networkTask = _backend.GetNetworkTime().Preserve();
-			while (await _networkTask is _networkInitialTime)
-            {
-#if UNITY_EDITOR
-				if (!Application.isPlaying)
-					return;
-#endif				
-                if (_networkInitialTime == default)
-                {
-                    _networkInitialTime = _systemInitialTime = DateTime.UtcNow;
-					await UniTask.Delay(
-						TimeSpan.FromMinutes(2), 
-						false, 
-						PlayerLoopTiming.PostLateUpdate);
-					Debug.LogWarning("[ADVANAL] Time synchronization failed. Retry...");
-                }
-                else
-                {
-                    //_systemInitialTime = DateTime.UtcNow;
-                    if (_systemInitialTime.Subtract(_networkInitialTime) > TimeSpan.FromSeconds(10))
-					{
-						Debug.LogWarning($"[ADVANT] System time was changed by the user");
-						_isSystemTimeDifferent = true;
-					}
-					Debug.LogWarning($"[ADVANT] _isSystemTimeDifferent = {_isSystemTimeDifferent}");
-					break;
-                }
-            }
-		}
-		return _networkInitialTime;
-	}
+	// // GetTimeAsync:
+	// // 1 - fire and forget
+	// // 2 - await 
+	// // _isServerReached
+	// // GetTimeAsync
+	// // ForceGettingTime: cancel prev tasl, flag = false await GetTimeAsync
+	// public static async UniTask<DateTime> SynchronizeTimeAsync(bool isCalledOnInit = false)
+	// {
+		// // minute is too much
+		// // 60 const
+		// if (DateTime.UtcNow.Subtract(_systemInitialTime) > TimeSpan.FromSeconds(60) && DateTime.UtcNow > _systemInitialTime || isCalledOnInit) // rewrite
+		// {	
+			// _networkInitialTime = _systemInitialTime = DateTime.UtcNow;
+			// _networkTask = _backend.GetNetworkTime().Preserve();
+			// while (await _networkTask is _networkInitialTime)
+            // {
+// #if UNITY_EDITOR
+				// if (!Application.isPlaying)
+					// return;
+// #endif				
+                // if (_networkInitialTime == default)
+                // {
+                    // _networkInitialTime = _systemInitialTime = DateTime.UtcNow;
+					// await UniTask.Delay(
+						// TimeSpan.FromMinutes(2), 
+						// false, 
+						// PlayerLoopTiming.PostLateUpdate);
+					// Debug.LogWarning("[ADVANAL] Time synchronization failed. Retry...");
+                // }
+                // else
+                // {
+                    // //_systemInitialTime = DateTime.UtcNow;
+                    // if (_systemInitialTime.Subtract(_networkInitialTime) > TimeSpan.FromSeconds(10))
+					// {
+						// Debug.LogWarning($"[ADVANT] System time was changed by the user");
+						// _isSystemTimeDifferent = true;
+					// }
+					// Debug.LogWarning($"[ADVANT] _isSystemTimeDifferent = {_isSystemTimeDifferent}");
+					// break;
+                // }
+            // }
+		// }
+		// return _networkInitialTime;
+	// }
 	
-	public static async UniTask<DateTime> ExposeAsync(DateTime timestamp) 
-	{
-		await _networkTask; // is similar to awaiting on SynchronizeTime itself in a synchronous code 
-		return _isSystemTimeDifferent && timestamp > _systemInitialTime ? 
-			_networkInitialTime.AddSeconds((timestamp - _systemInitialTime).TotalSeconds) :
-			timestamp;
-	}
+	// public static async UniTask<DateTime> ExposeAsync(DateTime timestamp) 
+	// {
+		// await _networkTask; // is similar to awaiting on SynchronizeTime itself in a synchronous code 
+		// return _isSystemTimeDifferent && timestamp > _systemInitialTime ? 
+			// _networkInitialTime.AddSeconds((timestamp - _systemInitialTime).TotalSeconds) :
+			// timestamp;
+	// }
 	
 
-	// public static async UniTask SynchronizeTimeAsync(bool isCalledOnInit = false)
-	// {
-		// if (DateTime.UtcNow.Subtract(_systemInitialTime) > TimeSpan.FromSeconds(60) && DateTime.UtcNow > _systemInitialTime || isCalledOnInit)
-		// {
-			// if (_backend is not null)
-			// {
-				// _networkTask = _backend.GetNetworkTime().Preserve();
-			// try
-			// {
-				// _networkInitialTime = _backend is null ? 
-					// DateTime.UtcNow :
-					// await _networkTask;
-					// // if error occurs, _isNetworkReached = false;
-			// }
-			// catch (Exception e)
-			// {
-				// Debug.LogError("Unexpected error while getting network time: " + e.Message);
-				// Debug.LogError(e.StackTrace);
-				// _networkInitialTime = DateTime.UtcNow;
-			// }
-			// _systemInitialTime = DateTime.UtcNow;
-			// Debug.LogWarning($"[ADVANT] System time = {_systemInitialTime}, network time = {_networkInitialTime}");
+	// // public static async UniTask SynchronizeTimeAsync(bool isCalledOnInit = false)
+	// // {
+		// // if (DateTime.UtcNow.Subtract(_systemInitialTime) > TimeSpan.FromSeconds(60) && DateTime.UtcNow > _systemInitialTime || isCalledOnInit)
+		// // {
+			// // if (_backend is not null)
+			// // {
+				// // _networkTask = _backend.GetNetworkTime().Preserve();
+			// // try
+			// // {
+				// // _networkInitialTime = _backend is null ? 
+					// // DateTime.UtcNow :
+					// // await _networkTask;
+					// // // if error occurs, _isNetworkReached = false;
+			// // }
+			// // catch (Exception e)
+			// // {
+				// // Debug.LogError("Unexpected error while getting network time: " + e.Message);
+				// // Debug.LogError(e.StackTrace);
+				// // _networkInitialTime = DateTime.UtcNow;
+			// // }
+			// // _systemInitialTime = DateTime.UtcNow;
+			// // Debug.LogWarning($"[ADVANT] System time = {_systemInitialTime}, network time = {_networkInitialTime}");
 			
-			// Debug.LogWarning($"[ADVANT] _systemInitialTime.Subtract(_networkInitialTime) = {_systemInitialTime.Subtract(_networkInitialTime)}");
-			// Debug.LogWarning($"[ADVANT] _networkInitialTime.Subtract(_systemInitialTime) = {_systemInitialTime.Subtract(_networkInitialTime)}");
-			// if (_systemInitialTime.Subtract(_networkInitialTime) > TimeSpan.FromSeconds(10))
-			// {
-				// Debug.LogWarning($"[ADVANT] System time was changed by the user");
-				// _isSystemTimeDifferent = true;
-			// }
-			// Debug.LogWarning($"[ADVANT] _isSystemTimeDifferent = {_isSystemTimeDifferent}");
-		// }
-	// }	
-}
+			// // Debug.LogWarning($"[ADVANT] _systemInitialTime.Subtract(_networkInitialTime) = {_systemInitialTime.Subtract(_networkInitialTime)}");
+			// // Debug.LogWarning($"[ADVANT] _networkInitialTime.Subtract(_systemInitialTime) = {_systemInitialTime.Subtract(_networkInitialTime)}");
+			// // if (_systemInitialTime.Subtract(_networkInitialTime) > TimeSpan.FromSeconds(10))
+			// // {
+				// // Debug.LogWarning($"[ADVANT] System time was changed by the user");
+				// // _isSystemTimeDifferent = true;
+			// // }
+			// // Debug.LogWarning($"[ADVANT] _isSystemTimeDifferent = {_isSystemTimeDifferent}");
+		// // }
+	// // }	
+// }
