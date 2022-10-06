@@ -49,6 +49,7 @@ internal class NetworkTimeHolder
             }
             else
             {
+				Debug.LogWarning($"[ADVANAL] _networkInitialTime.AddTicks((currentNetworkTime - (DateTime.UtcNow - _systemInitialTime)).Ticks) = {_networkInitialTime}.AddTicks(({currentNetworkTime} - ({DateTime.UtcNow} - {_systemInitialTime})).Ticks");
 				_networkInitialTime.AddTicks((currentNetworkTime - (DateTime.UtcNow - _systemInitialTime)).Ticks);
 				Debug.LogWarning("[ADVANAL] network initial time: " + _networkInitialTime);
 				break;
