@@ -146,10 +146,9 @@ namespace Advant.Data
 		
 		public ref Session CurrentSession() 
 		{
-			if (_currentCount == 0)
-				NewSession();
-			 
 			return ref _pool[_indices[_currentCount - 1]];
-		}	
+		}
+		
+		public bool HasCurrentSession() => _currentCount != 0;
 	}	
 } // namespace Advant.Data
