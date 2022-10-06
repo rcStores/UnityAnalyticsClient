@@ -144,7 +144,7 @@ namespace Advant.Data
 			ref GameEvent e = ref _events.NewElement();
 			
 			e.Free();
-			e.SetTimestamp(RealDateTime.UtcNow);
+			e.SetTimestamp(DateTime.UtcNow);
 			e.SetMaxParameterCount(GAME_EVENT_PARAMETER_COUNT);
 			e.SetName(eventName);
 			
