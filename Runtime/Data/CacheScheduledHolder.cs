@@ -103,7 +103,7 @@ namespace Advant.Data
 				_sessions.CurrentSession().Unregistered = false;
 				NewEvent("logged_in").Time = start;
 			}
-			else if ((_sessions.CurrentSession().LastActivity - start).TotalMinutes > SESSION_TIMEOUT)
+			else if ((start - _sessions.CurrentSession().LastActivity).TotalMinutes > SESSION_TIMEOUT)
 			{
 				if (await _backend.PutSessionCount(_userId, NewSession(start, dbSessionCount).SessionCount))
 				{
