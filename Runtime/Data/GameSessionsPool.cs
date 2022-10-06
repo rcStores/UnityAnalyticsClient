@@ -122,6 +122,7 @@ namespace Advant.Data
 			s.SessionStart	= _sessionStart = DateTime.UtcNow;
 			s.LastActivity	= DateTime.UtcNow;
 			s.Unregistered = true;
+			s.HasValidTimestamps = false;
 			Debug.LogWarning($"[ADVANT] Cached session count = {_currentSessionCount}");
 			
 			if (newSessionCount == 0)
