@@ -10,7 +10,7 @@ namespace Advant.Data.Models
 public struct GameEvent
 {
 	internal DateTime Time { get => _timestamp; set => _timestamp = value; }
-	internal ValueParams { get => _parameters; }
+	internal Value[] Params { get => _parameters; }
 	internal int ParamsCount { get => _currentCount; }
 	
 	private int _currentCount;
