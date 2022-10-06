@@ -43,7 +43,7 @@ namespace Advant.Data
 		
 #region Sending routines
 
-		public override async UniTask<string> ToJsonAsync(long userId, NetworkTimeHolder timeHolder)
+		public override async UniTask<string> ToJsonAsync(long userId, NetworkTimeHolder timeHolder = null)
 		{
 			string result = null;
 			
@@ -62,7 +62,7 @@ namespace Advant.Data
 					{
 						await UniTask.Delay(20, false, PlayerLoopTiming.PostLateUpdate);
 					}
-					timeHolder.ValidateTimestamps(ref _pool[_indices[i]]);
+					timeHolder?.ValidateTimestamps(ref _pool[_indices[i]]);
 					_pool[_indices[i]].ToJson(userId, _sb);	
 				}
 				result = _sb.Append(']').ToString();
