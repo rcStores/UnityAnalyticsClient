@@ -328,7 +328,7 @@ namespace Advant.Data
 					
 				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 				
-				_sessions.RegisterActivity(DateTime.UtcNow);
+				_sessions.RegisterActivity();
 				
 				if (!_timeHolder.IsServerReached) continue;
 				

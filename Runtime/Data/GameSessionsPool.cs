@@ -20,7 +20,7 @@ namespace Advant.Data
 			
 		public void SetSessionStart()
 		{
-			_sessionStart = RealDateTime.UtcNow;
+			_sessionStart = DateTime.UtcNow;
 			if (_currentCount != 0)
 				_pool[_indices[_currentCount - 1]].SessionStart = _sessionStart;
 		}
