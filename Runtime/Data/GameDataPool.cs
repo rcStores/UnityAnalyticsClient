@@ -167,7 +167,7 @@ namespace Advant.Data
 			}
 			catch (Exception e)
 			{
-				Debug.LogError("Game events JSON serialization failed.");
+				Debug.LogError("Game events JSON serialization failed: " + e.Message);
 			}
 			//Debug.LogWarning("[ADVANT] Events in JSON:\n " + result);
 			return result;
