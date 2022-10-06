@@ -49,7 +49,7 @@ internal class NetworkTimeHolder
             }
             else
             {
-				_networkInitialTime += _systemInitialTime.AddSeconds((DateTime.UtcNow - currentNetworkTime).TotalSeconds);
+				_networkInitialTime = _networkInitialTime + currentNetworkTime.AddSeconds(-(DateTime.UtcNow - _systemInitialTime).TotalSeconds);
 				Debug.LogWarning("[ADVANAL] network initial time: " + _networkInitialTime);
 				break;
             }
