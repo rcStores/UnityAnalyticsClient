@@ -106,7 +106,7 @@ namespace Advant.Data
 		
 		public override void ValidateTimestamps(NetworkTimeHolder timeHolder)
 		{
-			timeHolder?.ValidateTimestamps(CurrentSession());
+			timeHolder?.ValidateTimestamps(ref CurrentSession());
 		}
 
 #endregion
