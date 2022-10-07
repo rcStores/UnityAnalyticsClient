@@ -125,6 +125,7 @@ internal class NetworkTimeHolder
 		{
 			s.LastActivity = GetVerifiedTime(s.LastActivity);
 			s.HasValidTimestamps = true;
+			Debug.LogWarning($"[ADVANT] validated session timestamp = {s.LastActivity}");
 		}
 		catch (Exception ex)
 		{
@@ -144,6 +145,7 @@ internal class NetworkTimeHolder
 				ValidateTimestamps(ref e.Params[i]);
 			}
 			e.HasValidTimestamps = true;
+			Debug.LogWarning($"[ADVANT] validated session timestamp = {e.Time}");
 		}
 		catch (Exception ex)
 		{
