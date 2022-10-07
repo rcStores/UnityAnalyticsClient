@@ -148,7 +148,7 @@ namespace Advant.Data
 			return ref NewEventImpl(eventName);
 		}
 				
-		private ref GameEvent NewEventImpl(string eventName)
+		private ref GameEvent NewEventImpl(string eventName, bool hasValidTimestamps = false)
 		{
 			ref GameEvent e = ref _events.NewElement();
 			
