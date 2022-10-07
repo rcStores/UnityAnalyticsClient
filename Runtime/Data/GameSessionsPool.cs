@@ -142,6 +142,7 @@ namespace Advant.Data
 		
 		public void RegisterActivity() 
 		{
+			Debug.LogWarning($"[ADVANT] Session {SessionCount}'s last activity: {LastActivity}");
 			CurrentSession().LastActivity = DateTime.UtcNow;
 		}
 		
