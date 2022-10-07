@@ -114,7 +114,14 @@ namespace Advant.Data
 				Debug.LogWarning("[ADVANAL] logged_in was added to the events batch, event_time = " + start);
 			}
 			else
+			{
+				if (_sessions.CurrentSession().SessionCount < dbSessionCount)
+				{
+					await _backend.PutSessionCount(_userId, _sessions.CurrentSession().SessionCount);
+					Debug.LogWarning("[ADVANAL] Session that was registered on the app start is cancelled since the user continues the previous session");
+				}
 				_sessions.RegisterActivity();
+			}
 		}
 		
 		public void SetUserId(long id) => _userId = id;
