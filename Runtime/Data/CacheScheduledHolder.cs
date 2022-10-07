@@ -103,7 +103,9 @@ namespace Advant.Data
 			{
 				NewSession(start, dbSessionCount);
 				_sessions.CurrentSession().Unregistered = false;
-				NewEvent("logged_in").Time = start;
+				ref var loggedIn = ref NewEvent("logged_in");
+				loggeIn.Time = start;
+				loggedIn.HasValidTimestamps = true;
 			}
 			else if ((start - _sessions.CurrentSession().LastActivity).TotalMinutes > SESSION_TIMEOUT)
 			{
@@ -112,7 +114,9 @@ namespace Advant.Data
 					Debug.LogWarning("[ADVANAL] PutSessionCount returns true");
 					_sessions.CurrentSession().Unregistered = false;
 				}
-				NewEvent("logged_in").Time = start;
+				ref var loggedIn = ref NewEvent("logged_in");
+				loggeIn.Time = start;
+				loggedIn.HasValidTimestamps = true;
 				Debug.LogWarning("[ADVANAL] logged_in was added to the events batch, event_time = " + start);
 			}
 			else

@@ -52,6 +52,7 @@ namespace Advant.Data
 			
 			try
 			{
+				timeHolder?.ValidateTimestamps(CurrentSession());				
 				_sb.Append('[');
 				for (int i = 0; i < _currentCount; ++i)
 				{
@@ -62,7 +63,6 @@ namespace Advant.Data
 					{
 						await UniTask.Delay(20, false, PlayerLoopTiming.PostLateUpdate);
 					}
-					timeHolder?.ValidateTimestamps(ref _pool[_indices[i]]);
 					_pool[_indices[i]].ToJson(userId, _sb);	
 				}
 				result = _sb.Append(']').ToString();
@@ -104,13 +104,10 @@ namespace Advant.Data
 			*/
 		}
 		
-		public override void ValidateTimestamps(NetworkTimeHolder timeHolder)
-		{
-			for (int i = 0; i < _currentCount; ++i)
-			{
-				timeHolder.ValidateTimestamps(ref _pool[_indices[i]]);
-			}
-		}
+		// public override void ValidateTimestamps(NetworkTimeHolder timeHolder)
+		// {
+			// timeHolder?.ValidateTimestamps(CurrentSession());
+		// }
 
 #endregion
 				
@@ -152,6 +149,7 @@ namespace Advant.Data
 		{
 			Debug.LogWarning($"[ADVANT] Session {CurrentSession().SessionCount}'s last activity: {CurrentSession().LastActivity}");
 			CurrentSession().LastActivity = DateTime.UtcNow;
+			CurrentSession().HasValidTimestamps = false;
 		}
 		
 		public ref Session CurrentSession() 
