@@ -130,7 +130,7 @@ namespace Advant.Data
 
 #region Events
 
-		public ref GameEvent NewEvent(string eventName, bool hasValidTimestamps = false) => ref NewEventImpl(eventName);
+		public ref GameEvent NewEvent(string eventName, bool hasValidTimestamps = false) => ref NewEventImpl(eventName, hasValidTimestamps);
 		
 		public ref GameEvent NewEvent(string eventName, params string[] globalsLookupSource)
 		{
