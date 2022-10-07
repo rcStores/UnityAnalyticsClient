@@ -46,7 +46,7 @@ internal class NetworkTimeHolder
 	public async UniTask<DateTime> GetInitialTimeAsync() 
 	{
 		var timeSincePrevInit = DateTime.UtcNow - _systemInitialTime;
-		if (_networkInitialTime != default && timeSincePrevInit.TotalSeconds > 0 && timeSincePrevInit.TotalSeconds <= 1) return _networkInitialTime;
+		if (_networkInitialTime != default && Math.Abs(timeSincePrevInit.TotalSeconds) <= 1) return _networkInitialTime;
 		
 		_networkInitialTime = default;
 		_systemInitialTime = _isFirstInit? _systemInitialTime : DateTime.UtcNow;
@@ -146,7 +146,7 @@ internal class NetworkTimeHolder
 				ValidateTimestamps(ref e.Params[i]);
 			}
 			e.HasValidTimestamps = true;
-			Debug.LogWarning($"[ADVANT] validated session timestamp = {e.Time}");
+			Debug.LogWarning($"[ADVANT] validated event timestamp = {e.Time}");
 		}
 		catch (Exception ex)
 		{
