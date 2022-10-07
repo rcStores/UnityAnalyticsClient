@@ -52,7 +52,7 @@ namespace Advant.Data
 			
 			try
 			{
-				timeHolder?.ValidateTimestamps(CurrentSession());				
+				ValidateTimestamps(timeHolder);				
 				_sb.Append('[');
 				for (int i = 0; i < _currentCount; ++i)
 				{
@@ -104,10 +104,10 @@ namespace Advant.Data
 			*/
 		}
 		
-		// public override void ValidateTimestamps(NetworkTimeHolder timeHolder)
-		// {
-			// timeHolder?.ValidateTimestamps(CurrentSession());
-		// }
+		public override void ValidateTimestamps(NetworkTimeHolder timeHolder)
+		{
+			timeHolder?.ValidateTimestamps(CurrentSession());
+		}
 
 #endregion
 				
