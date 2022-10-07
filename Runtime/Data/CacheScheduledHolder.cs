@@ -147,6 +147,7 @@ namespace Advant.Data
 			e.SetTimestamp(DateTime.UtcNow);
 			e.SetMaxParameterCount(GAME_EVENT_PARAMETER_COUNT);
 			e.SetName(eventName);
+			e.HasValidTimestamps = false;
 			
 			for (int i = 0; i < _globalEventParams.Count; ++i)
 			{

@@ -99,7 +99,7 @@ internal class NetworkTimeHolder
 	public void ValidateTimestamps(GameEventsPool pool)
 	{
 		if (!IsServerReached) return;
-		
+		Debug.LogWarning($"[ADVANT] The app is losing focus - validating GameEventsPool");
 		for (int i = 0; i < pool.GetCurrentBusyCount(); ++i)
 		{
 			ValidateTimestamps(ref pool.Elements[i]);
@@ -108,6 +108,7 @@ internal class NetworkTimeHolder
 	
 	public void ValidateTimestamps(GameSessionsPool pool)
 	{
+		Debug.LogWarning($"[ADVANT] The app is losing focus - validating GameSessionsPool");
 		if (pool.HasCurrentSession() && IsServerReached)
 			ValidateTimestamps(ref pool.CurrentSession());
 	}
