@@ -103,9 +103,7 @@ namespace Advant.Data
 			{
 				NewSession(start, dbSessionCount);
 				_sessions.CurrentSession().Unregistered = false;
-				ref var loggedIn = ref NewEvent("logged_in");
-				loggedIn.Time = start;
-				loggedIn.HasValidTimestamps = true;
+				NewEvent("logged_in", hasValidTimestamps: true).Time = start;
 			}
 			else if ((start - _sessions.CurrentSession().LastActivity).TotalMinutes > SESSION_TIMEOUT)
 			{
@@ -114,9 +112,7 @@ namespace Advant.Data
 					Debug.LogWarning("[ADVANAL] PutSessionCount returns true");
 					_sessions.CurrentSession().Unregistered = false;
 				}
-				ref var loggedIn = ref NewEvent("logged_in");
-				loggedIn.Time = start;
-				loggedIn.HasValidTimestamps = true;
+				NewEvent("logged_in", hasValidTimestamps: true).Time = start;
 				Debug.LogWarning("[ADVANAL] logged_in was added to the events batch, event_time = " + start);
 			}
 			else
@@ -134,7 +130,7 @@ namespace Advant.Data
 
 #region Events
 
-		public ref GameEvent NewEvent(string eventName) => ref NewEventImpl(eventName);
+		public ref GameEvent NewEvent(string eventName, bool hasValidTimestamps = false) => ref NewEventImpl(eventName);
 		
 		public ref GameEvent NewEvent(string eventName, params string[] globalsLookupSource)
 		{
@@ -160,7 +156,7 @@ namespace Advant.Data
 			e.SetTimestamp(DateTime.UtcNow);
 			e.SetMaxParameterCount(GAME_EVENT_PARAMETER_COUNT);
 			e.SetName(eventName);
-			e.HasValidTimestamps = false;
+			e.HasValidTimestamps = hasValidTimestamps;
 			Debug.LogWarning($"[ADVANT] New event, name = {e.Name}, timestamp = {e.Time}");
 			
 			for (int i = 0; i < _globalEventParams.Count; ++i)
