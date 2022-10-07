@@ -97,25 +97,23 @@ namespace Advant.Data
 		
 		public async UniTask StartOrContinueSessionAsync(DateTime start, long dbSessionCount = 0)
 		{
+			if (_sessions.HasCurrentSession())
+				Debug.LogWarning("[ADVANAL] Prev session last activity = " + _sessions.CurrentSession().LastActivity);	
 			if (!_sessions.HasCurrentSession())
 			{
 				NewSession(start, dbSessionCount);
 				_sessions.CurrentSession().Unregistered = false;
 				NewEvent("logged_in").Time = start;
 			}
-			else if (true)
+			else if ((start - _sessions.CurrentSession().LastActivity).TotalMinutes > SESSION_TIMEOUT)
 			{
-				Debug.LogWarning("[ADVANAL] Prev session last activity = " + _sessions.CurrentSession().LastActivity);				
-				if ((start - _sessions.CurrentSession().LastActivity).TotalMinutes > SESSION_TIMEOUT)
+				if (await _backend.PutSessionCount(_userId, NewSession(start, dbSessionCount).SessionCount))
 				{
-					if (await _backend.PutSessionCount(_userId, NewSession(start, dbSessionCount).SessionCount))
-					{
-						Debug.LogWarning("[ADVANAL] PutSessionCount returns true");
-						_sessions.CurrentSession().Unregistered = false;
-					}
-					NewEvent("logged_in").Time = start;
-					Debug.LogWarning("[ADVANAL] logged_in was added to the events batch, event_time = " + start);
+					Debug.LogWarning("[ADVANAL] PutSessionCount returns true");
+					_sessions.CurrentSession().Unregistered = false;
 				}
+				NewEvent("logged_in").Time = start;
+				Debug.LogWarning("[ADVANAL] logged_in was added to the events batch, event_time = " + start);
 			}
 			else
 			{
@@ -159,6 +157,7 @@ namespace Advant.Data
 			e.SetMaxParameterCount(GAME_EVENT_PARAMETER_COUNT);
 			e.SetName(eventName);
 			e.HasValidTimestamps = false;
+			Debug.LogWarning($"[ADVANT] New event, name = {e.Name}, timestamp = {e.Time}");
 			
 			for (int i = 0; i < _globalEventParams.Count; ++i)
 			{
