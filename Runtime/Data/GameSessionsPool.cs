@@ -103,6 +103,14 @@ namespace Advant.Data
 			Debug.LogWarning($"session.SessionCount = {session.SessionCount}, session.SessionStart = {session.SessionStart}, session.LastActivity = {session.LastActivity}");
 			*/
 		}
+		
+		public override void ValidateTimestamps(NetworkTimeHolder timeHolder)
+		{
+			for (int i = 0; i < _currentCount; ++i)
+			{
+				timeHolder.ValidateTimestamps(ref _pool[_indices[i]]);
+			}
+		}
 
 #endregion
 				

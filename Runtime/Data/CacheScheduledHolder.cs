@@ -396,20 +396,20 @@ namespace Advant.Data
 		
 		private void SerializeEvents()
         {
-			_timeHolder.ValidateTimestamps(_events);
+			_events.ValidateTimestamps(_timeHolder);
             Serialize<GameEventsPool>(_eventsPath, _events);
         }
 
         private void SerializeProperties()
         {
-			_timeHolder.ValidateTimestamps(_properties);
+			_properties.ValidateTimestamps(_timeHolder);
             Serialize<GamePropertiesPool>(_propsPath, _properties);
         }
 		
 		private void SerializeSessions()
         {
 			_sessions.RegisterActivity();
-			_timeHolder.ValidateTimestamps(_sessions);
+			_sessions.ValidateTimestamps(_timeHolder);
             Serialize<GameSessionsPool>(_sessionsPath, _sessions);
         }
 		
