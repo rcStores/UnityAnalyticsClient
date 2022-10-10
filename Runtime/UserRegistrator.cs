@@ -68,8 +68,9 @@ namespace Advant
 			var (_isTester, _country) = await UniTask.WhenAll(
 				_backend.GetTester(_userId), 
 				GetCountryAsync(0));
-            Log.Info("Success. Start sending task");
 			Debug.LogWarning($"[ADVANAL] SessionCount = {result}, country = {_country}");
+            Log.Info("Success. Start sending task");
+			
             return result;
         }
 
