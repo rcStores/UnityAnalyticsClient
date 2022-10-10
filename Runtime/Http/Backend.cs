@@ -217,7 +217,7 @@ namespace Advant.Http
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
 			request.timeout = timeout;
-			request.certificateHandler = new CertificateWhore();
+			//request.certificateHandler = new CertificateWhore();
 
             return request;
         }
