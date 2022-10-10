@@ -199,6 +199,8 @@ namespace Advant.Http
 					Encoding.UTF8.GetString(request.uploadHandler.data));
 				throw e;
 			}
+			if (path == _getCountryEndpoint)
+				Debug.Log("GetCountry response:\nCode = {operation.responseCode}, result = {operation.result}");
             return operation.downloadHandler.text;
         }
 
