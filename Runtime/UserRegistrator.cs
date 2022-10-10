@@ -69,7 +69,7 @@ namespace Advant
 				_backend.GetTester(_userId), 
 				GetCountryAsync(0));
             Log.Info("Success. Start sending task");
-			Debug.LogWarning("[ADVANAL] SessionCount = " + result);
+			Debug.LogWarning($"[ADVANAL] SessionCount = {result}, country = {_country}");
             return result;
         }
 
