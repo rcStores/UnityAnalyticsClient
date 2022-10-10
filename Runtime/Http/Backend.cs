@@ -123,7 +123,7 @@ namespace Advant.Http
 			{
 				// var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, null, timeout));
 				// country = jsonNode["country"];
-				country = await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, null, timeout)
+				country = await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, null, timeout);
 			}
 			catch (Exception e)
 			{
