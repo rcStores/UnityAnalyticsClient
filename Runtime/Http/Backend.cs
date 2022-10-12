@@ -196,6 +196,8 @@ namespace Advant.Http
 			{
 				if (path == _getCountryEndpoint)
 					Debug.Log($"GetCountry response:\nCode = {request.responseCode}, result = {request.result}, error = {request.error}");
+				if (request.responseCode == 429)
+					Debug.Log($"{operation.downloadHandler.text}");
 				File.WriteAllText(
 					Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
 					Encoding.UTF8.GetString(request.uploadHandler.data));
