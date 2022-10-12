@@ -85,18 +85,18 @@ namespace Advant
 		
 		public async UniTask<string> GetCountryAsync(int timeout, int attemptsCount = -1) 
 		{
-			if (_country == null)
+			if (string.IsNullOrEmpty(_country))
 			{
 				while (attemptsCount != 0)
 				{
 					_country = await _backend.GetCountryAsync(timeout);
-					if (string.IsNullOrEmpty(_country))
+					attemptsCount--;
+					if (string.IsNullOrEmpty(_country) && attemptsCount != 0)
 					{
 						await UniTask.Delay(
 							GET_COUNTRY_RETRY_INTERVAL, 
 							false, 
-							PlayerLoopTiming.PostLateUpdate);
-						attemptsCount--;
+							PlayerLoopTiming.PostLateUpdate);		
 					}
 					else break;
 				}
