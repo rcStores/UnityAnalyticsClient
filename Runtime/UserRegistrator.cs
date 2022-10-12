@@ -68,7 +68,7 @@ namespace Advant
             }
 			var (_isTester, _country) = await UniTask.WhenAll(
 				_backend.GetTester(_userId), 
-				GetCountryAsync(0));
+				GetCountryAsync(0, 1));
 			Debug.LogWarning($"[ADVANAL] SessionCount = {result}, country = {_country}");
 			Debug.LogWarning($"[ADVANAL] UserId = {_userId}");
             Log.Info("Success. Start sending task");
@@ -90,7 +90,7 @@ namespace Advant
 				while (attemptsCount != 0)
 				{
 					_country = await _backend.GetCountryAsync(timeout);
-					if (_country is null)
+					if (string.IsNullOrEmpty(_country))
 					{
 						await UniTask.Delay(
 							GET_COUNTRY_RETRY_INTERVAL, 
@@ -98,6 +98,7 @@ namespace Advant
 							PlayerLoopTiming.PostLateUpdate);
 						attemptsCount--;
 					}
+					else break;
 				}
 			}
 			return _country;

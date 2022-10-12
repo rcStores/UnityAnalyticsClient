@@ -195,14 +195,14 @@ namespace Advant.Http
 			catch (Exception e)
 			{
 				if (path == _getCountryEndpoint)
-					Debug.Log("GetCountry response:\nCode = {request.responseCode}, result = {request.result}, error = {request.error}");
+					Debug.Log($"GetCountry response:\nCode = {request.responseCode}, result = {request.result}, error = {request.error}");
 				File.WriteAllText(
 					Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
 					Encoding.UTF8.GetString(request.uploadHandler.data));
 				throw e;
 			}
 			if (path == _getCountryEndpoint)
-				Debug.Log("GetCountry response:\nCode = {operation.responseCode}, result = {operation.result}");
+				Debug.Log($"GetCountry response:\nCode = {operation.responseCode}, result = {operation.result}");
             return operation.downloadHandler.text;
         }
 
