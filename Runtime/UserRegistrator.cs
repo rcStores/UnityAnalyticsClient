@@ -21,6 +21,7 @@ namespace Advant
 		private string 	_country;
 
 		private const int 	GET_ID_RETRY_INTERVAL 	= 15000;
+		private const int 	GET_COUNTRY_RETRY_INTERVAL 	= 300000; // 5 mins
         private const string USER_ID_PREF 			= "UserId";
         private const string APP_VERSION_PREF 		= "AppVersion";
 
@@ -69,6 +70,7 @@ namespace Advant
 				_backend.GetTester(_userId), 
 				GetCountryAsync(0));
 			Debug.LogWarning($"[ADVANAL] SessionCount = {result}, country = {_country}");
+			Debug.LogWarning($"[ADVANAL] UserId = {_userId}");
             Log.Info("Success. Start sending task");
 			
             return result;
@@ -81,10 +83,23 @@ namespace Advant
 		
 		public void SetCheater(bool isCheater) => _isCheater = isCheater;
 		
-		public async UniTask<string> GetCountryAsync(int timeout) 
+		public async UniTask<string> GetCountryAsync(int timeout, int attemptsCount = -1) 
 		{
 			if (_country == null)
-				_country = await _backend.GetCountryAsync(timeout);
+			{
+				while (attemptsCount != 0)
+				{
+					_country = await _backend.GetCountryAsync(timeout);
+					if (country is null)
+					{
+						await UniTask.Delay(
+							GET_COUNTRY_RETRY_INTERVAL, 
+							false, 
+							PlayerLoopTiming.PostLateUpdate);
+						attemptsCount--;
+					}
+				}
+			}
 			return _country;
 		}
 		
