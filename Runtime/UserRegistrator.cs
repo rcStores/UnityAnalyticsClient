@@ -90,7 +90,7 @@ namespace Advant
 				while (attemptsCount != 0)
 				{
 					_country = await _backend.GetCountryAsync(timeout);
-					if (country is null)
+					if (_country is null)
 					{
 						await UniTask.Delay(
 							GET_COUNTRY_RETRY_INTERVAL, 
