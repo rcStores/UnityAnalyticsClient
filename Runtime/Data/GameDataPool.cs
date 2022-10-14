@@ -210,7 +210,7 @@ namespace Advant.Data
 		{
 			int startIdx = -1;
 			int endIdx = -1;
-			bool isRecalculationNeeded;
+			bool isRecalculationNeeded = false;
 			bool firstInvalidTimestamp = true;
 			for (int i = 0; i < _currentCount; ++i)
 			{

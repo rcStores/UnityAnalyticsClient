@@ -5,13 +5,13 @@ using System.Globalization;
 [Serializable]
 internal struct Session
 {
-	public DateTime SessionStart 			{ get; set; }
-	public DateTime	LastActivity 			{ get; set; }
-	public DateTime	LastVerifiedTimestamp	{ get; set; }
-	public int 		Area 					{ get; set; }
-	public long 	SessionCount			{ get; set; }
-	public string 	AbMode 					{ get; set; }
-	public bool 	Unregistered 			{ get; set; }
+	public DateTime SessionStart 		{ get; set; }
+	public DateTime	LastActivity 		{ get; set; }
+	public DateTime	LastValidTimestamp	{ get; set; }
+	public int 		Area 				{ get; set; }
+	public long 	SessionCount		{ get; set; }
+	public string 	AbMode 				{ get; set; }
+	public bool 	Unregistered 		{ get; set; }
 	
 	internal bool HasValidTimestamps { get => _hasValidTimestamps; set => _hasValidTimestamps = value; }
 	

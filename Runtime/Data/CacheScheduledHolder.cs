@@ -133,7 +133,7 @@ namespace Advant.Data
 			Debug.LogWarning("[ADVANAL] Look for invalid events...");
 			var brokenBatchSize = _events.GetInvalidEventsCount(current, _timeHolder);
 			
-			if (brokenBatchsize == 0) return;
+			if (brokenBatchSize == 0) return;
 			
 			Debug.LogWarning($"[ADVANAL] There are {brokenBatchSize} invalid events. Recalculating timestamps...");
 			
