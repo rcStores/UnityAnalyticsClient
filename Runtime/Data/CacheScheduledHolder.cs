@@ -128,7 +128,7 @@ namespace Advant.Data
 			
 		}
 		
-		private DateTime EnsureTimestampsValid(DateTime current, long dbSessionCount = 0)
+		private void EnsureTimestampsValid(DateTime current, long dbSessionCount = 0)
 		{
 			Debug.LogWarning("[ADVANAL] Look for invalid events...");
 			var brokenBatchSize = _events.GetInvalidEventsCount(current, _timeHolder);
@@ -153,11 +153,14 @@ namespace Advant.Data
 					newSession.LastActivity = newSession.LastValidTimestamp = sessionEnd;
 					newSession.HasValidTimestamps = true;
 				}
-				else if (session.LastValidTimestamp.AddMinutes(10) is sessionStart && sessionEnd - sessionStart < sessionDuration)
+				else
+					 sessionStart = session.LastValidTimestamp.AddMinutes(10);
+				
+				if (sessionEnd - sessionStart < sessionDuration)
 				{
 					Debug.LogWarning("[ADVANAL] The time interval between two known sessions is too small - fit the batch here");
 					sessionStart = session.LastValidTimestamp;
-					sessionEnd = current.AddSeconds;
+					sessionEnd = current;
 					Debug.LogWarning($"[ADVANAL] session.LastActivity = = {sessionEnd}");
 					session.LastValidTimestamp = session.LastActivity = sessionEnd;
 					session.HasValidTimestamps = true;
@@ -174,9 +177,11 @@ namespace Advant.Data
 			else
 			{
 				Debug.LogWarning("[ADVANAL] There was no session yet - create one");
-				sessionStart = sessionEnd - TimeSpan.FromSeconds(sessionDuration);
+				sessionStart = sessionEnd - sessionDuration;
 				Debug.LogWarning($"[ADVANAL] SessionStart = {sessionStart}, SessionEnd = {sessionEnd}");
-				NewSession(sessionStart, dbSessionCount).LastActivity = sessionEnd;
+				ref var newSession =  ref NewSession(sessionStart, dbSessionCount);
+				newSession.LastActivity = newSession.LastValidTimestamp = sessionEnd;
+				newSession.HasValidTimestamps = true;
 			}
 			_events.ValidateBrokenBatch(sessionStart.AddSeconds(5), sessionEnd.AddSeconds(-5));	
 		}
