@@ -209,7 +209,7 @@ namespace Advant.Data
 		public void ValidateBrokenBatch(DateTime firstEventTime, DateTime lastEventTime)
 		{
 			int startIdx = -1;
-			int endIdx = -1;
+			int endIdx = 0;
 			bool isRecalculationNeeded = false;
 			bool firstInvalidTimestamp = true;
 			for (int i = 0; i < _currentCount; ++i)
@@ -224,15 +224,21 @@ namespace Advant.Data
 				}
 			}
 			
-			if (!isRecalculationNeeded) return;
+			// if (!isRecalculationNeeded) return;
 			
-			_pool[_indices[startIdx]].Time = firstEventTime;
+			if (isRecalculationNeeded)
+			{
+				_pool[_indices[startIdx]].Time = firstEventTime;
+			}
 			_pool[_indices[startIdx]].HasValidTimestamps = true;
 
 			var step = 5;
 			for (int i = startIdx + 1; i < endIdx; ++i)
 			{
-				_pool[_indices[i]].Time = _pool[_indices[i - 1]].Time.AddSeconds(step);
+				if (isRecalculationNeeded)
+				{
+					_pool[_indices[i]].Time = _pool[_indices[i - 1]].Time.AddSeconds(step);
+				}
 				_pool[_indices[i]].HasValidTimestamps = true;
 				
 				if (_pool[_indices[i]].Time == lastEventTime)

@@ -71,7 +71,7 @@ namespace Advant.Http
                 //throw new ArgumentException("The cache is empty");
 			try
 			{
-				await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(T)], RequestType.POST, data);
+				await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(T)], RequestType.POST, data, timeout: 0, certificateHandler: new CertificateWhore());
 			}
 			catch (Exception e)
 			{
@@ -88,7 +88,7 @@ namespace Advant.Http
 			string response = null;
 			try
 			{
-				response = await ExecuteWebRequestAsync(_getNetworkTimeEndpoint, RequestType.GET, null, timeout);
+				response = await ExecuteWebRequestAsync(_getNetworkTimeEndpoint, RequestType.GET, null, timeout: 0, certificateHandler: new CertificateWhore());
 			}
 			catch (Exception e)
 			{
@@ -104,7 +104,7 @@ namespace Advant.Http
 			string response = null;
 			try
 			{
-				response = await ExecuteWebRequestAsync(_getTesterEndpoint + $"/{userId}", RequestType.GET);
+				response = await ExecuteWebRequestAsync(_getTesterEndpoint + $"/{userId}", RequestType.GET, jsonData: null, timeout: 0, certificateHandler: new CertificateWhore());
 			}
 			catch (Exception e)
 			{
@@ -123,7 +123,7 @@ namespace Advant.Http
 			{
 				// var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, null, timeout));
 				// country = jsonNode["country"];
-				country = await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, null, timeout);
+				country = await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, jsonData: null, timeout);
 			}
 			catch (Exception e)
 			{
@@ -171,7 +171,7 @@ namespace Advant.Http
             try
             {
                 result = Convert.ToBoolean(
-					await ExecuteWebRequestAsync(_putSessionCountEndpoint, RequestType.PUT, $"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}"));
+					await ExecuteWebRequestAsync(_putSessionCountEndpoint, RequestType.PUT, $"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}", timeout: 0, certificateHandler: new CertificateWhore()));
             }
             catch (Exception e)
             {
@@ -184,9 +184,9 @@ namespace Advant.Http
 
 #region Implementation
         
-		private async UniTask<string> ExecuteWebRequestAsync(string path, RequestType type, string jsonData = null, int timeout = 0)
+		private async UniTask<string> ExecuteWebRequestAsync(string path, RequestType type, string jsonData = null, int timeout = 0, CertificateHandler certificateHandler = null)
         {
-			using var request = CreateRequest(path, type, jsonData, timeout);
+			using var request = CreateRequest(path, type, jsonData, timeout, certificateHandler);
 			UnityWebRequest operation = null;
 			try
 			{
@@ -211,7 +211,7 @@ namespace Advant.Http
             return operation.downloadHandler.text;
         }
 
-        private UnityWebRequest CreateRequest(string path, RequestType type = RequestType.GET, string jsonData = null, int timeout = 0)
+        private UnityWebRequest CreateRequest(string path, RequestType type = RequestType.GET, string jsonData, int timeout, CertificateHandler certificateHandler)
         {
             var request = new UnityWebRequest(path, type.ToString());
 
@@ -224,7 +224,7 @@ namespace Advant.Http
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
 			request.timeout = timeout;
-			//request.certificateHandler = new CertificateWhore();
+			request.certificateHandler = certificateHandler;
 
             return request;
         }
