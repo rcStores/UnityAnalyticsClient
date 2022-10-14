@@ -128,7 +128,7 @@ namespace Advant.Data
 			
 		}
 		
-		private DateTime EnsureTimestampsValid(DateTime current, long dbSessionCount = 0))
+		private DateTime EnsureTimestampsValid(DateTime current, long dbSessionCount = 0)
 		{
 			Debug.LogWarning("[ADVANAL] Look for invalid events...");
 			var brokenBatchSize = _events.GetInvalidEventsCount(current, _timeHolder);
