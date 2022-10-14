@@ -188,7 +188,56 @@ namespace Advant.Data
 			{
 				timeHolder.ValidateTimestamps(ref _pool[_indices[i]]);
 			}
-		}	
+		}
+		
+		public int GetInvalidEventsCount(DateTime currentInitialTime, NetworkTimeHolder timeHolder)
+		{
+			if (_currentCount == 0) return 0;
+			
+			int result = 0;
+			for (int i = 0; i < _currentCount; ++i)
+			{
+				var eventTime = timeHolder.GetVerifiedTime(_pool[_indices[i].Time);
+				if (!_pool[_indices[i]].HasValidTimestamps &&  !(eventTime > currentInitialTime && eventTime < timeHolder.GetVerifiedTime(DateTime.UtcNow)))
+				{
+					result++;
+				}
+			}
+			return result;
+		}
+		
+		public void ValidateBrokenBatch(DateTime firstEventTime, DateTime lastEventTime)
+		{
+			int startIdx = -1;
+			int endIdx = -1;
+			bool isRecalculationNeeded;
+			bool firstInvalidTimestamp = true;
+			for (int i = 0; i < _currentCount; ++i)
+			{
+				if (!_pool[_indices[i]].HasValidTimestamps)
+				{
+					if (startIdx == -1)
+						startIdx = i;	
+					endIdx = i + 1;
+					if (_pool[_indices[i]].Time > lastEventTime || _pool[_indices[i]].Time < firstEventTime)
+						isRecalculationNeeded = true;
+				}
+			}
+			
+			if (!isRecalculationNeeded) return;
+			
+			_pool[_indices[startIdx]].Time = firstEventTime;
+			_pool[_indices[startIdx]].HasValidTimestamps = true;
+
+			var step = 5;
+			for (int i = startIdx + 1; i < endIdx; ++i)
+			{
+				_pool[_indices[i]].Time = _pool[_indices[i - 1]].Time.AddSeconds(step);
+				_pool[_indices[i]].HasValidTimestamps = true;
+				
+				if (_pool[_indices[i]].Time == lastEventTime)
+					Debug.LogWarning("[ADVANT] Last timestamp is reached")
+			}
 	}
 } // namespace Advant.Data
 	

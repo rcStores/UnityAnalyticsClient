@@ -120,11 +120,11 @@ internal class NetworkTimeHolder
 	
 	public void ValidateTimestamps(ref Session s)
 	{
-		if (s.HasValidTimestamps) return;
+		if (s.HasValidTimestamps || !IsServerReached) return;
 		
 		try 
 		{
-			s.LastActivity = GetVerifiedTime(s.LastActivity);
+			s.LastVerifiedTimestamp = s.LastActivity = GetVerifiedTime(s.LastActivity);
 			s.HasValidTimestamps = true;
 			Debug.LogWarning($"[ADVANT] validated session {s.SessionCount} timestamp = {s.LastActivity}, HasValidTimestamps = {s.HasValidTimestamps}");
 		}
@@ -136,7 +136,7 @@ internal class NetworkTimeHolder
 	
 	public void ValidateTimestamps(ref GameEvent e)
 	{
-		if (e.HasValidTimestamps) return;
+		if (e.HasValidTimestamps || !IsServerReached) return;
 		
 		try 
 		{

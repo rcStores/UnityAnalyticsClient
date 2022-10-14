@@ -106,7 +106,8 @@ namespace Advant.Data
 		
 		public override void ValidateTimestamps(NetworkTimeHolder timeHolder)
 		{
-			timeHolder?.ValidateTimestamps(ref CurrentSession());
+			if (HasCurrentSession())
+				timeHolder?.ValidateTimestamps(ref CurrentSession());
 		}
 
 #endregion
@@ -132,7 +133,7 @@ namespace Advant.Data
 			
 			if (newSessionCount == 0)
 				s.SessionCount = ++_currentSessionCount;
-			else if (_currentSessionCount + 1 < newSessionCount)
+			else if (_currentSessionCount + 1 <= newSessionCount || newSessionCount == 1)
 				s.SessionCount = _currentSessionCount = newSessionCount;
 			else
 			{

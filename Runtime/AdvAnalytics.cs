@@ -106,7 +106,7 @@ namespace Advant
             _cacheHolder.StartSendingDataAsync();
         }
 		
-		private static void SendUserDetails(long sessionCount, string abMode, DateTime initialTime)
+		private static async UniTaskVoid SendUserDetails(long sessionCount, string abMode, DateTime initialTime)
         {
             if (sessionCount == 1)
             {
@@ -143,7 +143,8 @@ namespace Advant
                 PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
             }
 			_cacheHolder.NewProperty("os", Application.platform == RuntimePlatform.Android ? "android" : "ios", USERS_DATA_TABLE);
-			_cacheHolder.NewProperty("country", _userRegistrator.GetCountry(), USERS_DATA_TABLE);
+			//_cacheHolder.NewProperty("language", Application.platform == RuntimePlatform.Android ? "android" : "ios", USERS_DATA_TABLE);
+			_cacheHolder.NewProperty("country", await _userRegistrator.GetCountryAsync(timeout: 0), USERS_DATA_TABLE);
         }
 
 #endregion		
@@ -172,6 +173,7 @@ namespace Advant
 		}
 		
 		public static void SetTrafficSource(string source)	=> _cacheHolder.NewProperty("traffic", source, USERS_DATA_TABLE);
+		public static void SetGameLang(string lang)			=> _cacheHolder.NewProperty("language", lang, USERS_DATA_TABLE);
 		
 		public static void SetCurrentArea(int area) 		=> _cacheHolder.SetCurrentArea(area);
 		public static void SetCurrentAbMode(string mode) 	=> _cacheHolder.SetCurrentAbMode(mode, CUSTOM_PROPERTIES_TABLE);
@@ -190,6 +192,7 @@ namespace Advant
 		public static async UniTask<string> 	GetCountryAsync(int timeout = 0)		=> await _userRegistrator.GetCountryAsync(timeout);
 		public static async UniTask<DateTime>	GetNetworkTimeAsync(int timeout = 0)	=> await _backend.GetNetworkTime(timeout);		
         public static 		bool 				GetTester() 							=> _userRegistrator.IsTester();
+		public static 		long				GetSessionCount()						=> _cacheHolder.GetSessionCount();
 
 #endregion
 	}
