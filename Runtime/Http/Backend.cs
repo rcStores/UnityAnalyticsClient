@@ -184,7 +184,7 @@ namespace Advant.Http
 
 #region Implementation
         
-		private async UniTask<string> ExecuteWebRequestAsync(string path, RequestType type, string jsonData = null, int timeout = 0, CertificateHandler certificateHandler = null)
+		private async UniTask<string> ExecuteWebRequestAsync(string path, RequestType type = RequestType.GET, string jsonData = null, int timeout = 0, CertificateHandler certificateHandler = null)
         {
 			using var request = CreateRequest(path, type, jsonData, timeout, certificateHandler);
 			UnityWebRequest operation = null;
@@ -211,7 +211,7 @@ namespace Advant.Http
             return operation.downloadHandler.text;
         }
 
-        private UnityWebRequest CreateRequest(string path, RequestType type = RequestType.GET, string jsonData, int timeout, CertificateHandler certificateHandler)
+        private UnityWebRequest CreateRequest(string path, RequestType type, string jsonData, int timeout, CertificateHandler certificateHandler)
         {
             var request = new UnityWebRequest(path, type.ToString());
 
