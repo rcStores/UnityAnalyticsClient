@@ -47,7 +47,7 @@ internal class NetworkTimeHolder
 	// нескольо запросов подряд?
 	public async UniTask<DateTime> GetInitialTimeAsync() 
 	{
-		await UniTask.WaitUntil(() => _isLoopRunning);
+		await UniTask.WaitUntil(() => _isLoopRunning == false);
 		
 		var timeSincePrevInit = DateTime.UtcNow - _systemInitialTime;
 		if (_networkInitialTime != default && Math.Abs(timeSincePrevInit.TotalSeconds) <= 1) return _networkInitialTime;
