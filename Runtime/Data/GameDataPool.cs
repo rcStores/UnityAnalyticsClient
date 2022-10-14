@@ -197,7 +197,7 @@ namespace Advant.Data
 			int result = 0;
 			for (int i = 0; i < _currentCount; ++i)
 			{
-				var eventTime = timeHolder.GetVerifiedTime(_pool[_indices[i].Time);
+				var eventTime = timeHolder.GetVerifiedTime(_pool[_indices[i]].Time);
 				if (!_pool[_indices[i]].HasValidTimestamps &&  !(eventTime > currentInitialTime && eventTime < timeHolder.GetVerifiedTime(DateTime.UtcNow)))
 				{
 					result++;
@@ -236,8 +236,9 @@ namespace Advant.Data
 				_pool[_indices[i]].HasValidTimestamps = true;
 				
 				if (_pool[_indices[i]].Time == lastEventTime)
-					Debug.LogWarning("[ADVANT] Last timestamp is reached")
+					Debug.LogWarning("[ADVANT] Last timestamp is reached");
 			}
+		}
 	}
 } // namespace Advant.Data
 	
