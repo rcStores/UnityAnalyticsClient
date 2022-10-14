@@ -12,6 +12,8 @@ internal class NetworkTimeHolder
 	private DateTime _systemInitialTime;
 	private DateTime _networkInitialTime;
 	
+	private bool _isLoopRunning = false;
+	
 	private bool _isFirstInit;
 	
 	private readonly Backend _backend;
@@ -45,6 +47,8 @@ internal class NetworkTimeHolder
 	// нескольо запросов подряд?
 	public async UniTask<DateTime> GetInitialTimeAsync() 
 	{
+		await UniTask.WaitUntil(() => _isLoopRunning);
+		
 		var timeSincePrevInit = DateTime.UtcNow - _systemInitialTime;
 		if (_networkInitialTime != default && Math.Abs(timeSincePrevInit.TotalSeconds) <= 1) return _networkInitialTime;
 		
@@ -57,6 +61,7 @@ internal class NetworkTimeHolder
 			if (!Application.isPlaying)
 				return default;
 #endif		
+			_isLoopRunning = true;
 			var currentNetworkTime = await _backend.GetNetworkTime();
 			
             if (currentNetworkTime == default)
@@ -74,6 +79,7 @@ internal class NetworkTimeHolder
 				Debug.LogWarning("[ADVANAL] network initial time: " + _networkInitialTime);
 				break;
             }
+			_isLoopRunning = false;
         }
 		return _networkInitialTime;
 	}

@@ -229,6 +229,7 @@ namespace Advant.Data
 			if (isRecalculationNeeded)
 			{
 				_pool[_indices[startIdx]].Time = firstEventTime;
+				Debug.LogWarning($"[ADVANT] {_pool[_indices[startIdx]].Name}'s new timestamp = {_pool[_indices[startIdx]].Time}");
 			}
 			_pool[_indices[startIdx]].HasValidTimestamps = true;
 
@@ -238,6 +239,7 @@ namespace Advant.Data
 				if (isRecalculationNeeded)
 				{
 					_pool[_indices[i]].Time = _pool[_indices[i - 1]].Time.AddSeconds(step);
+					Debug.LogWarning($"[ADVANT] {_pool[_indices[i]].Name}'s new timestamp = {_pool[_indices[i]].Time}");
 				}
 				_pool[_indices[i]].HasValidTimestamps = true;
 				
