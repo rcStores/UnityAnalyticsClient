@@ -202,7 +202,7 @@ namespace Advant.Data
 				if (!_pool[_indices[i]].HasValidTimestamps &&  !(eventTime > currentInitialTime && eventTime < timeHolder.GetVerifiedTime(DateTime.UtcNow)))
 				{
 					batchSize++;
-					if (firstIdx != -1)
+					if (firstIdx == -1)
 						firstIdx = i;
 				}
 			}
