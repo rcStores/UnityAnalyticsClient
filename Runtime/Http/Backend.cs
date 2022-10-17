@@ -225,11 +225,14 @@ namespace Advant.Http
         {
 			using var request = CreateRequest(path, type, jsonData, timeout, certificateHandler);
 			string result = null;
+			UnityWebRequest operation = null;
 			try
 			{
-				var (isCancelled, operation) = await request.SendWebRequest()
+				var (isCancelled, resultReq) = await request.SendWebRequest()
 					.WithCancellation(token)
 					.SuppressCancellationThrow();
+					
+				operation = resultReq;
 				
 				if (isCancelled) 
 					result = CANCELLED_REQUEST;

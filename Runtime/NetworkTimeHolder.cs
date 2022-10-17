@@ -48,9 +48,12 @@ internal class NetworkTimeHolder
 	// нескольо запросов подряд?
 	public async UniTask<(bool, DateTime)> GetInitialTimeAsync(CancellationToken token) 
 	{
-		var (isCancelled, _) = await UniTask.WaitUntil(() => {
-			Debug.LogWarning($"[ADVANAL] Wait until _isLoopRunning = false. _isLoopRunning = {_isLoopRunning}");
-			return _isLoopRunning == false; }, token)
+		var (isCancelled, _) = await UniTask.WaitUntil(
+			() => {
+				Debug.LogWarning($"[ADVANAL] Wait until _isLoopRunning = false. _isLoopRunning = {_isLoopRunning}");
+				return _isLoopRunning == false; }, 
+			PlayerLoopTiming.PostLateUpdate,
+			token)
 				.SuppressCancellationThrow();
 				
 		if (isWaitingCancelled) return (isWaitingCancelled, default(DateTime));
