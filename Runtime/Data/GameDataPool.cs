@@ -233,7 +233,7 @@ namespace Advant.Data
 			}
 			_pool[_indices[startIdx]].HasValidTimestamps = true;
 
-			var step = 5;
+			var step = (lastEventTime - firstEventTime) / (endIdx - startIdx);
 			for (int i = startIdx + 1; i < endIdx; ++i)
 			{
 				if (isRecalculationNeeded)

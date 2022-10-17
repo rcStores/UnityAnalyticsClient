@@ -105,7 +105,7 @@ namespace Advant.Data
 				_sessions.CurrentSession().Unregistered = false;
 				NewEvent("logged_in", hasValidTimestamps: true).Time = start;
 			}
-			else if ((start - _sessions.CurrentSession().LastActivity).TotalMinutes > SESSION_TIMEOUT)
+			else if ((start - _sessions.CurrentSession().LastActivity).TotalMinutes >= SESSION_TIMEOUT)
 			{
 				if (await _backend.PutSessionCount(_userId, NewSession(start, dbSessionCount).SessionCount))
 				{
@@ -138,7 +138,7 @@ namespace Advant.Data
 			Debug.LogWarning($"[ADVANAL] There are {brokenBatchSize} invalid events. Recalculating timestamps...");
 			
 			DateTime sessionStart, sessionEnd = current.AddMinutes(-10);
-			var sessionDuration = TimeSpan.FromSeconds((brokenBatchSize + 2) * 5);
+			var sessionDuration = TimeSpan.FromSeconds(brokenBatchSize * 5);
 			if (_sessions.HasCurrentSession())
 			{
 				Debug.LogWarning("[ADVANAL] There was prev session");
@@ -147,7 +147,7 @@ namespace Advant.Data
 				if (session.LastValidTimestamp == default)
 				{
 					Debug.LogWarning("[ADVANAL] ... with no valid timestamps. Create a session for the batch");
-					sessionStart = sessionEnd - sessionDuration;
+					sessionStart = (sessionEnd - sessionDuration).AddSeconds(-5);
 					Debug.LogWarning($"[ADVANAL] SessionStart = {sessionStart}, SessionEnd = {sessionEnd}");
 					ref var newSession =  ref NewSession(sessionStart, dbSessionCount);
 					newSession.LastActivity = newSession.LastValidTimestamp = sessionEnd;
@@ -159,8 +159,16 @@ namespace Advant.Data
 				if (sessionEnd - sessionStart < sessionDuration)
 				{
 					Debug.LogWarning("[ADVANAL] The time interval between two known sessions is too small - fit the batch here");
-					sessionStart = session.LastValidTimestamp;
-					sessionEnd = current;
+					sessionStart = session.LastValidTimestamp.AddSeconds(5);
+					sessionEnd = sessionStart.AddSeconds(sessionDuration.TotalSeconds);
+					if (sessionEnd >= current)
+					{
+						sessionEnd = current.AddSeconds(-5);
+						Debug.LogWarning($"[ADVANAL] Distribute events up to current time. SessionEnd = {sessionEnd}");
+					}
+					else
+						Debug.LogWarning($"[ADVANAL] Distribute events up to calculated duration. SessionEnd = {sessionEnd}");
+						
 					Debug.LogWarning($"[ADVANAL] session.LastActivity = = {sessionEnd}");
 					session.LastValidTimestamp = session.LastActivity = sessionEnd;
 					session.HasValidTimestamps = true;
@@ -183,7 +191,7 @@ namespace Advant.Data
 				newSession.LastActivity = newSession.LastValidTimestamp = sessionEnd;
 				newSession.HasValidTimestamps = true;
 			}
-			_events.ValidateBrokenBatch(sessionStart.AddSeconds(5), sessionEnd.AddSeconds(-5));	
+			_events.ValidateBrokenBatch(sessionStart, sessionEnd);	
 		}
 		
 		public void SetUserId(long id) => _userId = id;
