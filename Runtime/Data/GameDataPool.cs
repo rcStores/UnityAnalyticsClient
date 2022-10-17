@@ -222,7 +222,7 @@ namespace Advant.Data
 			if (isRecalculationNeeded)
 			{
 				_pool[_indices[firstIdx]].Time = firstEventTime;
-				Debug.LogWarning($"[ADVANT] {_pool[_indices[startIdx]].Name}'s new timestamp = {_pool[_indices[firstIdx]].Time}");
+				Debug.LogWarning($"[ADVANT] {_pool[_indices[firstIdx]].Name}'s new timestamp = {_pool[_indices[firstIdx]].Time}");
 			}
 			_pool[_indices[firstIdx]].HasValidTimestamps = true;
 
