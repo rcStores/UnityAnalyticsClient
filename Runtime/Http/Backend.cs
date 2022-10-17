@@ -73,7 +73,12 @@ namespace Advant.Http
                 //throw new ArgumentException("The cache is empty");
 			try
 			{
-				await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(T)], RequestType.POST, data, timeout: 0, certificateHandler: new CertificateWhore());
+				await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(T)], 
+											 RequestType.POST, 
+											 CancellationToken.None, 
+											 jsonData: data, 
+											 timeout: 0, 
+											 certificateHandler: new CertificateWhore());
 			}
 			catch (Exception e)
 			{
@@ -91,11 +96,11 @@ namespace Advant.Http
 			try
 			{
 				response = await ExecuteWebRequestAsync(_getNetworkTimeEndpoint, 
-														RequestType.GET, 
+														RequestType.GET,
+														token,
 														jsonData: null, 
 														timeout: 0, 
-														certificateHandler: new CertificateWhore(), 
-														token);
+														certificateHandler: new CertificateWhore());
 			}
 			catch (Exception e)
 			{
@@ -114,7 +119,12 @@ namespace Advant.Http
 			string response = null;
 			try
 			{
-				response = await ExecuteWebRequestAsync(_getTesterEndpoint + $"/{userId}", RequestType.GET, jsonData: null, timeout: 0, certificateHandler: new CertificateWhore());
+				response = await ExecuteWebRequestAsync(_getTesterEndpoint + $"/{userId}", 
+														RequestType.GET, 
+														CancellationToken.None, 
+														jsonData: null, 
+														timeout: 0, 
+														certificateHandler: new CertificateWhore());
 			}
 			catch (Exception e)
 			{
@@ -133,7 +143,11 @@ namespace Advant.Http
 			{
 				// var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, null, timeout));
 				// country = jsonNode["country"];
-				country = await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, jsonData: null, timeout);
+				country = await ExecuteWebRequestAsync(_getCountryEndpoint, 
+													   RequestType.GET, 
+													   CancellationToken.None, 
+													   jsonData: null, 
+													   timeout);
 			}
 			catch (Exception e)
 			{
@@ -162,7 +176,10 @@ namespace Advant.Http
 			var result = new UserIdResponse();
             try
             {
-                var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_putUserIdEndpoint, RequestType.PUT, dto.ToJson()));
+                var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_putUserIdEndpoint, 
+																		   RequestType.PUT, 
+																		   CancellationToken.None, 
+																		   dto.ToJson()));
                 result.UserId = jsonNode["userId"];
                 result.SessionCount = jsonNode["sessionCount"];
 				//Debug.LogWarning($"[ADVANAL] GetOrCreateUserIdAsync. UserId = {result.UserId}, SessionCount = {result.SessionCount}");
@@ -183,6 +200,7 @@ namespace Advant.Http
                 result = Convert.ToBoolean(
 					await ExecuteWebRequestAsync(_putSessionCountEndpoint, 
 												 RequestType.PUT, 
+												 CancellationToken.None,
 												 $"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}", 
 												 timeout: 0, 
 												 certificateHandler: new CertificateWhore()));
@@ -199,11 +217,11 @@ namespace Advant.Http
 #region Implementation
         
 		private async UniTask<string> ExecuteWebRequestAsync(string path, 
-															 RequestType type = RequestType.GET, 
+															 RequestType type = RequestType.GET,
+															 CancellationToken token,
 															 string jsonData = null, 
 															 int timeout = 0, 
-															 CertificateHandler certificateHandler = null, 
-															 CancellationToken token = CancellationToken.None)
+															 CertificateHandler certificateHandler = null)
         {
 			using var request = CreateRequest(path, type, jsonData, timeout, certificateHandler);
 			UnityWebRequest operation = null;
