@@ -131,7 +131,7 @@ namespace Advant.Data
 		private void EnsureTimestampsValid(DateTime current, long dbSessionCount = 0)
 		{
 			Debug.LogWarning("[ADVANAL] Look for invalid events...");
-			var brokenBatchSize = _events.GetInvalidEventsCount(current, _timeHolder);
+			var (brokenBatchSize, firstIdx) = _events.GetInvalidEventsCount(current, _timeHolder);
 			
 			if (brokenBatchSize == 0) return;
 			
@@ -195,7 +195,7 @@ namespace Advant.Data
 				newSession.HasValidTimestamps = true;
 				NewEvent("logged_in", hasValidTimestamps: true).Time = sessionStart;
 			}
-			_events.ValidateBrokenBatch(sessionStart, sessionEnd);	
+			_events.ValidateBrokenBatch(sessionStart, sessionEnd, brokenBatchSize, firstIdx);	
 		}
 		
 		public void SetUserId(long id) => _userId = id;

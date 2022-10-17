@@ -55,7 +55,7 @@ namespace Advant
 						false, 
 						PlayerLoopTiming.PostLateUpdate);
                     Log.Info("retry");
-					Debug.LogWarning("[ADVANAL] User registration failed. Retry...");
+					//Debug.LogWarning("[ADVANAL] User registration failed. Retry...");
                 }
                 else
                 {
@@ -68,8 +68,8 @@ namespace Advant
 			var (_isTester, _country) = await UniTask.WhenAll(
 				_backend.GetTester(_userId), 
 				GetCountryAsync(0, 1));
-			Debug.LogWarning($"[ADVANAL] SessionCount = {result}, country = {_country}");
-			Debug.LogWarning($"[ADVANAL] UserId = {_userId}");
+			//Debug.LogWarning($"[ADVANAL] SessionCount = {result}, country = {_country}");
+			//Debug.LogWarning($"[ADVANAL] UserId = {_userId}");
             Log.Info("Success. Start sending task");
 			
             return result;

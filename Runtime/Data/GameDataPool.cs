@@ -190,51 +190,44 @@ namespace Advant.Data
 			}
 		}
 		
-		public int GetInvalidEventsCount(DateTime currentInitialTime, NetworkTimeHolder timeHolder)
+		public (int, int) GetInvalidEventsCount(DateTime currentInitialTime, NetworkTimeHolder timeHolder)
 		{
 			if (_currentCount == 0) return 0;
 			
-			int result = 0;
+			int batchSize = 0;
+			int firstIdx = -1;
 			for (int i = 0; i < _currentCount; ++i)
 			{
 				var eventTime = timeHolder.GetVerifiedTime(_pool[_indices[i]].Time);
 				if (!_pool[_indices[i]].HasValidTimestamps &&  !(eventTime > currentInitialTime && eventTime < timeHolder.GetVerifiedTime(DateTime.UtcNow)))
 				{
-					result++;
+					batchSize++;
+					if (firstIdx != -1)
+						firstIdx = i;
 				}
 			}
-			return result;
+			return (batchSize, firstIdx);
 		}
 		
-		public void ValidateBrokenBatch(DateTime firstEventTime, DateTime lastEventTime)
+		public void ValidateBrokenBatch(DateTime firstEventTime, DateTime lastEventTime, int batchSize, int firstIdx)
 		{
-			int startIdx = -1;
-			int endIdx = 0;
 			bool isRecalculationNeeded = false;
 			bool firstInvalidTimestamp = true;
-			for (int i = 0; i < _currentCount; ++i)
+			for (int i = firstIdx; i < batchSize; ++i)
 			{
-				if (!_pool[_indices[i]].HasValidTimestamps)
-				{
-					if (startIdx == -1)
-						startIdx = i;	
-					endIdx = i + 1;
-					if (_pool[_indices[i]].Time > lastEventTime || _pool[_indices[i]].Time < firstEventTime)
-						isRecalculationNeeded = true;
-				}
+				if (!_pool[_indices[i]].HasValidTimestamps && (_pool[_indices[i]].Time > lastEventTime || _pool[_indices[i]].Time < firstEventTime))
+					isRecalculationNeeded = true;
 			}
-			
-			// if (!isRecalculationNeeded) return;
 			
 			if (isRecalculationNeeded)
 			{
 				_pool[_indices[startIdx]].Time = firstEventTime;
 				Debug.LogWarning($"[ADVANT] {_pool[_indices[startIdx]].Name}'s new timestamp = {_pool[_indices[startIdx]].Time}");
 			}
-			_pool[_indices[startIdx]].HasValidTimestamps = true;
+			_pool[_indices[firstIdx]].HasValidTimestamps = true;
 
-			var step = (lastEventTime - firstEventTime) / (endIdx - startIdx);
-			for (int i = startIdx + 1; i < endIdx; ++i)
+			var step = (lastEventTime - firstEventTime) / batchSize;
+			for (int i = firstIdx + 1; i < batchSize; ++i)
 			{
 				if (isRecalculationNeeded)
 				{

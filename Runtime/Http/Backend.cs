@@ -53,7 +53,7 @@ namespace Advant.Http
         {
 			_getTesterEndpoint 								= registration + "/Registration/GetTester";
 			_getNetworkTimeEndpoint							= registration + "/Registration/GetNetworkTime";
-			_getCountryEndpoint 							= "https://ipapi.co/country/";
+			_getCountryEndpoint 							= "http://ip-api.com/json/"; //"https://ipapi.co/country/";
 			_putUserIdEndpoint 								= registration + "/Registration/GetOrCreateUserId";
 			_putSessionCountEndpoint 						= registration + "/Sessions/PutSessionCount";
 			_gameDataEndpointsByType[typeof(GameProperty)]	= analytics + "/AnalyticsData/SendProperties";
@@ -141,13 +141,14 @@ namespace Advant.Http
 			string country = null;	
 			try
 			{
-				// var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, null, timeout));
-				// country = jsonNode["country"];
-				country = await ExecuteWebRequestAsync(_getCountryEndpoint, 
-													   RequestType.GET, 
-													   CancellationToken.None, 
-													   jsonData: null, 
-													   timeout);
+				var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, CancellationToken.None, jsonData: null, timeout));
+				country = jsonNode["country"];
+				
+				// country = await ExecuteWebRequestAsync(_getCountryEndpoint, 
+													   // RequestType.GET, 
+													   // CancellationToken.None, 
+													   // jsonData: null, 
+													   // timeout);
 			}
 			catch (Exception e)
 			{
