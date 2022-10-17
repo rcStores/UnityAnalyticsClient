@@ -47,10 +47,17 @@ internal class NetworkTimeHolder
 	// нескольо запросов подряд?
 	public async UniTask<DateTime> GetInitialTimeAsync() 
 	{
-		await UniTask.WaitUntil(() => _isLoopRunning == false);
+		await UniTask.WaitUntil(() => {
+			Debug.LogWarning($"[ADVANAL] Wait until _isLoopRunning = false. _isLoopRunning = {_isLoopRunning}");
+			return _isLoopRunning == false });
 		
 		var timeSincePrevInit = DateTime.UtcNow - _systemInitialTime;
-		if (_networkInitialTime != default && Math.Abs(timeSincePrevInit.TotalSeconds) <= 1) return _networkInitialTime;
+		Debug.LogWarning($"[ADVANAL] timeSincePrevInit = {timeSincePrevInit}");
+		if (_networkInitialTime != default && Math.Abs(timeSincePrevInit.TotalSeconds) <= 1) 
+		{
+			Debug.LogWarning("[ADVANAL] There is too little time since prev init, ignore GetInitialTimeAsync's web request");
+			return _networkInitialTime;
+		}
 		
 		_networkInitialTime = default;
 		_systemInitialTime = _isFirstInit? _systemInitialTime : DateTime.UtcNow;
@@ -62,15 +69,17 @@ internal class NetworkTimeHolder
 				return default;
 #endif		
 			_isLoopRunning = true;
+			Debug.LogWarning("[ADVANAL] tAttempt to get network time...");
 			var currentNetworkTime = await _backend.GetNetworkTime();
 			
+			Debug.LogWarning($"[ADVANAL] currentNetworkTime = {currentNetworkTime}");
             if (currentNetworkTime == default)
             {
+				Debug.LogWarning("[ADVANAL] Time synchronization failed. Waiting for the next attempt...");
 				await UniTask.Delay(
 					TimeSpan.FromMinutes(2), 
 					false, 
 					PlayerLoopTiming.PostLateUpdate);
-				Debug.LogWarning("[ADVANAL] Time synchronization failed. Retry...");
             }
             else
             {
