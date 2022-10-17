@@ -63,6 +63,7 @@ namespace Advant
 			// the game is being minimized, so the current attempt of getting network time (if it is not finished yet)
 			// will cause inadequate consequences when the app gets focus again
 			_networkTimeCTS.Cancel();
+			_networkTimeCTS = new CancellationTokenSource();
 			_cacheHolder.SaveCacheLocally();
 		} 
 
