@@ -79,8 +79,8 @@ internal class NetworkTimeHolder
 				Debug.LogWarning("[ADVANAL] network initial time: " + _networkInitialTime);
 				break;
             }
-			_isLoopRunning = false;
         }
+		_isLoopRunning = false;
 		return _networkInitialTime;
 	}
 	
