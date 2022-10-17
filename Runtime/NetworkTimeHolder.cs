@@ -45,11 +45,15 @@ internal class NetworkTimeHolder
 		
 	
 	// нескольо запросов подряд?
-	public async UniTask<DateTime> GetInitialTimeAsync() 
+	public async UniTask<DateTime> GetInitialTimeAsync(CancellationToken token) 
 	{
-		await UniTask.WaitUntil(() => {
+		var (isCancelled, _) = await UniTask.WaitUntil(() => {
 			Debug.LogWarning($"[ADVANAL] Wait until _isLoopRunning = false. _isLoopRunning = {_isLoopRunning}");
-			return _isLoopRunning == false; });
+			return _isLoopRunning == false; })
+				.WithCancellation(token)
+				.SuppressCancellationThrow();
+				
+		if (isCancelled) return (isCancelled, default(DateTime));
 		
 		var timeSincePrevInit = DateTime.UtcNow - _systemInitialTime;
 		Debug.LogWarning($"[ADVANAL] timeSincePrevInit = {timeSincePrevInit}");
@@ -70,16 +74,22 @@ internal class NetworkTimeHolder
 #endif		
 			_isLoopRunning = true;
 			Debug.LogWarning("[ADVANAL] tAttempt to get network time...");
-			var currentNetworkTime = await _backend.GetNetworkTime();
+			var (isCancelled, currentNetworkTime) = await _backend.GetNetworkTime(token)
+				.SuppressCancellationThrow();
+			
+			if (isCancelled) return (isCancelled, default(DateTime));
 			
 			Debug.LogWarning($"[ADVANAL] currentNetworkTime = {currentNetworkTime}");
             if (currentNetworkTime == default)
             {
 				Debug.LogWarning("[ADVANAL] Time synchronization failed. Waiting for the next attempt...");
-				await UniTask.Delay(
-					TimeSpan.FromMinutes(2), 
-					false, 
-					PlayerLoopTiming.PostLateUpdate);
+				var (isCancelled, _) = await UniTask.Delay(TimeSpan.FromMinutes(2), 
+														   false, 
+														   PlayerLoopTiming.PostLateUpdate,
+														   token)
+					.SuppressCancellationThrow();
+					
+				if (isCancelled) return (isCancelled, default(DateTime));
             }
             else
             {
@@ -90,7 +100,7 @@ internal class NetworkTimeHolder
             }
         }
 		_isLoopRunning = false;
-		return _networkInitialTime;
+		return (false, _networkInitialTime);
 	}
 	
 	// public async UniTask<DateTime?> GetTimeAsync()

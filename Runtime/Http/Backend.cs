@@ -26,6 +26,8 @@ namespace Advant.Http
         private string _putUserIdEndpoint;
 		private string _putSessionCountEndpoint;
 		
+		private const string CANCELLED_REQUEST = "CANCELLED";
+		
 #region Helper data types definition
 
 		public enum RequestType
@@ -83,20 +85,28 @@ namespace Advant.Http
 			return true;
         }
 		
-		public async UniTask<DateTime> GetNetworkTime(int timeout = 0)
+		public async UniTask<(bool, DateTime)> GetNetworkTime(CancellationToken token, int timeout = 0)
 		{
 			string response = null;
 			try
 			{
-				response = await ExecuteWebRequestAsync(_getNetworkTimeEndpoint, RequestType.GET, null, timeout: 0, certificateHandler: new CertificateWhore());
+				response = await ExecuteWebRequestAsync(_getNetworkTimeEndpoint, 
+														RequestType.GET, 
+														jsonData: null, 
+														timeout: 0, 
+														certificateHandler: new CertificateWhore(), 
+														token);
 			}
 			catch (Exception e)
 			{
 				Debug.Log("Error while getting network time: " + e.Message);
 			}
+			
+			if (response == CANCELLED_REQUEST)
+				return (true, default);
 				
 			Debug.LogWarning("GetNetworkTime response: " + response);
-            return response is null ? default : DateTime.ParseExact(response, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture);
+            return response is null ? (false, default) : (false, DateTime.ParseExact(response, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture));
 		}
 
         public async UniTask<bool> GetTester(long userId)
@@ -171,7 +181,11 @@ namespace Advant.Http
             try
             {
                 result = Convert.ToBoolean(
-					await ExecuteWebRequestAsync(_putSessionCountEndpoint, RequestType.PUT, $"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}", timeout: 0, certificateHandler: new CertificateWhore()));
+					await ExecuteWebRequestAsync(_putSessionCountEndpoint, 
+												 RequestType.PUT, 
+												 $"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}", 
+												 timeout: 0, 
+												 certificateHandler: new CertificateWhore()));
             }
             catch (Exception e)
             {
@@ -184,13 +198,22 @@ namespace Advant.Http
 
 #region Implementation
         
-		private async UniTask<string> ExecuteWebRequestAsync(string path, RequestType type = RequestType.GET, string jsonData = null, int timeout = 0, CertificateHandler certificateHandler = null)
+		private async UniTask<string> ExecuteWebRequestAsync(string path, 
+															 RequestType type = RequestType.GET, 
+															 string jsonData = null, 
+															 int timeout = 0, 
+															 CertificateHandler certificateHandler = null, 
+															 CancellationToken token = CancellationToken.None)
         {
 			using var request = CreateRequest(path, type, jsonData, timeout, certificateHandler);
 			UnityWebRequest operation = null;
 			try
 			{
-				operation = await request.SendWebRequest();
+				var (isCancelled, operation) = await request.SendWebRequest()
+					.WithCancellation(token)
+					.SuppressCancellationThrow();
+				
+				if (isCancelled) return CANCELLED_REQUEST;
 			}
 			catch (Exception e)
 			{

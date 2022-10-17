@@ -23,6 +23,8 @@ namespace Advant
         private static readonly UserRegistrator 		_userRegistrator;
 		private static readonly NetworkTimeHolder 		_timeHolder;
 		
+		private static CancellationTokenSourse _networkTimeCTS;
+		
 		private const string CUSTOM_PROPERTIES_TABLE	= "custom_properties";
 		private const string USERS_DATA_TABLE 			= "users";
         private const string APP_VERSION_PREF 			= "AppVersion";
@@ -34,6 +36,7 @@ namespace Advant
 			_timeHolder			= new NetworkTimeHolder(_backend);
             _cacheHolder 		= new CacheScheduledHolder(USERS_DATA_TABLE, _backend, _timeHolder);
             _userRegistrator 	= new UserRegistrator(USERS_DATA_TABLE, _backend);
+			_networkTimeCTS 	= new CancellationTokenSourse();
         }
 		
 		// public void StartOrContinueSession()
@@ -56,6 +59,9 @@ namespace Advant
 		public static void SaveCacheLocally() 
 		{	
 			Debug.LogWarning($"[ADVANT] AdvAnalytics.SaveCacheLocally");
+			// the game is being minimized, so the current attempt of getting network time (if it is not finished yet)
+			// will cause inadequate consequences when the app gets focus again
+			_networkTimeCTS.Cancel();
 			_cacheHolder.SaveCacheLocally();
 		} 
 
@@ -90,17 +96,26 @@ namespace Advant
 		
 		public static async UniTaskVoid Refresh()
 		{
-			_cacheHolder.StartOrContinueSessionAsync(await _timeHolder.GetInitialTimeAsync());
+			var (isCancelled, initialTime) = await _timeHolder.GetInitialTimeAsync(_networkTimeCTS.Token);
+			if (!isCancelled)
+				_cacheHolder.StartOrContinueSessionAsync(initialTime);
 		}
 				
 		private static async UniTaskVoid InitAsync(Identifier id, string abMode)
         {
-			var (initialTime, dbSessionCount) = await UniTask.WhenAll(
-				_timeHolder.GetInitialTimeAsync(),
+			var ((isGettingTimeCancelled, initialTime), dbSessionCount) = await UniTask.WhenAll(
+				_timeHolder.GetInitialTimeAsync(_networkTimeCTS.Token),
 				_userRegistrator.RegistrateAsync(id));
+				
+			if (isGettingTimeCancelled)
+			{
+				await UniTask.WaitIntil(() => _timeHolder.IsServerReached);
+				initialTime = _timeHolder.GetVerifiedTime(DateTime.UtcNow);
+			}
 
 			_cacheHolder.SetUserId(_userRegistrator.GetUserId());
-			_cacheHolder.StartOrContinueSessionAsync(initialTime, dbSessionCount);
+			if (!isGettingTimeCancelled)
+				_cacheHolder.StartOrContinueSessionAsync(initialTime, dbSessionCount);
 			
             SendUserDetails(dbSessionCount, abMode, initialTime);
             _cacheHolder.StartSendingDataAsync();
