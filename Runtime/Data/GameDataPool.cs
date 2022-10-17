@@ -238,7 +238,7 @@ namespace Advant.Data
 			{
 				if (isRecalculationNeeded)
 				{
-					_pool[_indices[i]].Time = _pool[_indices[i - 1]].Time.AddSeconds(step);
+					_pool[_indices[i]].Time = _pool[_indices[i - 1]].Time.AddSeconds(step.TotalSeconds);
 					Debug.LogWarning($"[ADVANT] {_pool[_indices[i]].Name}'s new timestamp = {_pool[_indices[i]].Time}");
 				}
 				_pool[_indices[i]].HasValidTimestamps = true;
