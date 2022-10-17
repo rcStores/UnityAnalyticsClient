@@ -152,6 +152,7 @@ namespace Advant.Data
 					ref var newSession =  ref NewSession(sessionStart, dbSessionCount);
 					newSession.LastActivity = newSession.LastValidTimestamp = sessionEnd;
 					newSession.HasValidTimestamps = true;
+					NewEvent("logged_in", hasValidTimestamps: true).Time = sessionStart;
 				}
 				else
 					 sessionStart = session.LastValidTimestamp.AddMinutes(10);
@@ -181,6 +182,7 @@ namespace Advant.Data
 					Debug.LogWarning($"[ADVANAL] SessionStart = {sessionStart}, SessionEnd = {sessionEnd}");
 					newSession.LastActivity = sessionEnd;
 					newSession.HasValidTimestamps = true;
+					NewEvent("logged_in", hasValidTimestamps: true).Time = sessionStart;
 				}
 			}
 			else
@@ -191,6 +193,7 @@ namespace Advant.Data
 				ref var newSession =  ref NewSession(sessionStart, dbSessionCount);
 				newSession.LastActivity = newSession.LastValidTimestamp = sessionEnd;
 				newSession.HasValidTimestamps = true;
+				NewEvent("logged_in", hasValidTimestamps: true).Time = sessionStart;
 			}
 			_events.ValidateBrokenBatch(sessionStart, sessionEnd);	
 		}
