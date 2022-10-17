@@ -49,7 +49,7 @@ internal class NetworkTimeHolder
 	{
 		await UniTask.WaitUntil(() => {
 			Debug.LogWarning($"[ADVANAL] Wait until _isLoopRunning = false. _isLoopRunning = {_isLoopRunning}");
-			return _isLoopRunning == false });
+			return _isLoopRunning == false; });
 		
 		var timeSincePrevInit = DateTime.UtcNow - _systemInitialTime;
 		Debug.LogWarning($"[ADVANAL] timeSincePrevInit = {timeSincePrevInit}");
