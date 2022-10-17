@@ -205,10 +205,15 @@ namespace Advant
 #region Getters
 
 		// In seconds. Note: The set timeout may apply to each URL redirect on Android which can result in a longer response
-		public static async UniTask<string> 	GetCountryAsync(int timeout = 0)								=> await _userRegistrator.GetCountryAsync(timeout);
-		public static async UniTask<DateTime>	GetNetworkTimeAsync(CancellationToken token, int timeout = 0)	=> await _backend.GetNetworkTime(token, timeout);		
-        public static 		bool 				GetTester() 													=> _userRegistrator.IsTester();
-		public static 		long				GetSessionCount()												=> _cacheHolder.GetSessionCount();
+		public static async UniTask<string> 	GetCountryAsync(int timeout = 0)	=> await _userRegistrator.GetCountryAsync(timeout);
+        public static 		bool 				GetTester()							=> _userRegistrator.IsTester();
+		public static 		long				GetSessionCount()					=> _cacheHolder.GetSessionCount();
+		
+		public static async UniTask<DateTime>	GetNetworkTimeAsync(CancellationToken token, int timeout = 0)
+		{
+			var (isCancelled, result) = await _backend.GetNetworkTime(token, timeout);
+			return result;
+		}
 
 #endregion
 	}
