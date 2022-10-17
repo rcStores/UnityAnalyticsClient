@@ -82,7 +82,7 @@ internal class NetworkTimeHolder
 			
 			if (result.Item1) return (result.Item1, default(DateTime));
 			
-			var currentNetworkTime = result.Item2;
+			DateTime currentNetworkTime = result.Item2;
 			Debug.LogWarning($"[ADVANAL] currentNetworkTime = {currentNetworkTime}");
             if (currentNetworkTime == default)
             {
