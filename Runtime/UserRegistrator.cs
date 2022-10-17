@@ -20,10 +20,10 @@ namespace Advant
 		private bool 	_isCheater;
 		private string 	_country;
 
-		private const int 	GET_ID_RETRY_INTERVAL 	= 15000;
-		private const int 	GET_COUNTRY_RETRY_INTERVAL 	= 300000; // 5 mins
-        private const string USER_ID_PREF 			= "UserId";
-        private const string APP_VERSION_PREF 		= "AppVersion";
+		private const int 	GET_ID_RETRY_INTERVAL 		= 15000;
+		private const int 	GET_COUNTRY_RETRY_INTERVAL 	= 150000; // 2.5 min
+        private const string USER_ID_PREF 				= "UserId";
+        private const string APP_VERSION_PREF 			= "AppVersion";
 
         public UserRegistrator(string userPropertiesTableName, Backend backend)
         {
@@ -38,7 +38,7 @@ namespace Advant
 			_userId = Convert.ToInt64(PlayerPrefs.GetInt(USER_ID_PREF, -1));
         }
 
-        public async UniTask<long> RegistrateAsync(Identifier identifier) //OnStartAsync, add OnAwakeningAsync: session count only
+        public async UniTask<long> RegistrateAsync(Identifier identifier) 
         {
 			long result;
             identifier.UserId = _userId;
@@ -50,7 +50,6 @@ namespace Advant
 #endif				
                 if (response.UserId == -1)
                 {
-                    //await Task.Delay(GET_ID_RETRY_INTERVAL);
 					await UniTask.Delay(
 						GET_ID_RETRY_INTERVAL, 
 						false, 
