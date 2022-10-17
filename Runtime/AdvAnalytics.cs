@@ -8,6 +8,7 @@ using AndroidUtils;
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine; 
 #if UNITY_IOS
@@ -23,7 +24,7 @@ namespace Advant
         private static readonly UserRegistrator 		_userRegistrator;
 		private static readonly NetworkTimeHolder 		_timeHolder;
 		
-		private static CancellationTokenSourse _networkTimeCTS;
+		private static CancellationTokenSource _networkTimeCTS;
 		
 		private const string CUSTOM_PROPERTIES_TABLE	= "custom_properties";
 		private const string USERS_DATA_TABLE 			= "users";
@@ -36,7 +37,7 @@ namespace Advant
 			_timeHolder			= new NetworkTimeHolder(_backend);
             _cacheHolder 		= new CacheScheduledHolder(USERS_DATA_TABLE, _backend, _timeHolder);
             _userRegistrator 	= new UserRegistrator(USERS_DATA_TABLE, _backend);
-			_networkTimeCTS 	= new CancellationTokenSourse();
+			_networkTimeCTS 	= new CancellationTokenSource();
         }
 		
 		// public void StartOrContinueSession()
