@@ -48,7 +48,7 @@ internal class NetworkTimeHolder
 	// нескольо запросов подряд?
 	public async UniTask<(bool, DateTime)> GetInitialTimeAsync(CancellationToken token) 
 	{
-		var (isWaitingCancelled) = await UniTask.WaitUntil(
+		bool isWaitingCancelled = await UniTask.WaitUntil(
 			() => {
 				Debug.LogWarning($"[ADVANAL] Wait until _isLoopRunning = false. _isLoopRunning = {_isLoopRunning}");
 				return _isLoopRunning == false; }, 
@@ -86,7 +86,7 @@ internal class NetworkTimeHolder
             if (currentNetworkTime == default)
             {
 				Debug.LogWarning("[ADVANAL] Time synchronization failed. Waiting for the next attempt...");
-				var (isDelayingCancelled) = await UniTask.Delay(TimeSpan.FromMinutes(2), 
+				bool isDelayingCancelled = await UniTask.Delay(TimeSpan.FromMinutes(2), 
 														   false, 
 														   PlayerLoopTiming.PostLateUpdate,
 														   token)
