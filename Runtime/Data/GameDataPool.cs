@@ -213,7 +213,7 @@ namespace Advant.Data
 		{
 			bool isRecalculationNeeded = false;
 			bool firstInvalidTimestamp = true;
-			for (int i = firstIdx; i < batchSize; ++i)
+			for (int i = firstIdx; i < firstIdx + batchSize; ++i)
 			{
 				if (!_pool[_indices[i]].HasValidTimestamps && (_pool[_indices[i]].Time > lastEventTime || _pool[_indices[i]].Time < firstEventTime))
 					isRecalculationNeeded = true;
@@ -227,7 +227,7 @@ namespace Advant.Data
 			_pool[_indices[firstIdx]].HasValidTimestamps = true;
 
 			var step = (lastEventTime - firstEventTime) / batchSize;
-			for (int i = firstIdx + 1; i < batchSize; ++i)
+			for (int i = firstIdx + 1; i < firstIdx + batchSize; ++i)
 			{
 				if (isRecalculationNeeded)
 				{
