@@ -50,18 +50,17 @@ internal class NetworkTimeHolder
 	{
 		var (isCancelled, _) = await UniTask.WaitUntil(() => {
 			Debug.LogWarning($"[ADVANAL] Wait until _isLoopRunning = false. _isLoopRunning = {_isLoopRunning}");
-			return _isLoopRunning == false; })
-				.WithCancellation(token)
+			return _isLoopRunning == false; }, token)
 				.SuppressCancellationThrow();
 				
-		if (isCancelled) return (isCancelled, default(DateTime));
+		if (isWaitingCancelled) return (isWaitingCancelled, default(DateTime));
 		
 		var timeSincePrevInit = DateTime.UtcNow - _systemInitialTime;
 		Debug.LogWarning($"[ADVANAL] timeSincePrevInit = {timeSincePrevInit}");
 		if (_networkInitialTime != default && Math.Abs(timeSincePrevInit.TotalSeconds) <= 1) 
 		{
 			Debug.LogWarning("[ADVANAL] There is too little time since prev init, ignore GetInitialTimeAsync's web request");
-			return _networkInitialTime;
+			return (false, _networkInitialTime);
 		}
 		
 		_networkInitialTime = default;
@@ -75,22 +74,22 @@ internal class NetworkTimeHolder
 #endif		
 			_isLoopRunning = true;
 			Debug.LogWarning("[ADVANAL] tAttempt to get network time...");
-			var (isCancelled, currentNetworkTime) = await _backend.GetNetworkTime(token)
+			var (isGettingTimeCancelled, currentNetworkTime) = await _backend.GetNetworkTime(token)
 				.SuppressCancellationThrow();
 			
-			if (isCancelled) return (isCancelled, default(DateTime));
+			if (isGettingTimeCancelled) return (isGettingTimeCancelled, default(DateTime));
 			
 			Debug.LogWarning($"[ADVANAL] currentNetworkTime = {currentNetworkTime}");
             if (currentNetworkTime == default)
             {
 				Debug.LogWarning("[ADVANAL] Time synchronization failed. Waiting for the next attempt...");
-				var (isCancelled, _) = await UniTask.Delay(TimeSpan.FromMinutes(2), 
+				var (isDelayingCancelled, _) = await UniTask.Delay(TimeSpan.FromMinutes(2), 
 														   false, 
 														   PlayerLoopTiming.PostLateUpdate,
 														   token)
 					.SuppressCancellationThrow();
 					
-				if (isCancelled) return (isCancelled, default(DateTime));
+				if (isDelayingCancelled) return (isDelayingCancelled, default(DateTime));
             }
             else
             {

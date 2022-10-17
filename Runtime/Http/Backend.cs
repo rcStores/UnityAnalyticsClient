@@ -224,14 +224,17 @@ namespace Advant.Http
 															 CertificateHandler certificateHandler = null)
         {
 			using var request = CreateRequest(path, type, jsonData, timeout, certificateHandler);
-			UnityWebRequest operation = null;
+			string result = null;
 			try
 			{
 				var (isCancelled, operation) = await request.SendWebRequest()
 					.WithCancellation(token)
 					.SuppressCancellationThrow();
 				
-				if (isCancelled) return CANCELLED_REQUEST;
+				if (isCancelled) 
+					result = CANCELLED_REQUEST;
+				else 
+					result = operation.downloadHandler.text;
 			}
 			catch (Exception e)
 			{
@@ -249,7 +252,7 @@ namespace Advant.Http
 			}
 			if (path == _getCountryEndpoint)
 				Debug.Log($"GetCountry response:\nCode = {operation.responseCode}, result = {operation.result}");
-            return operation.downloadHandler.text;
+            return result;
         }
 
         private UnityWebRequest CreateRequest(string path, RequestType type, string jsonData, int timeout, CertificateHandler certificateHandler)
