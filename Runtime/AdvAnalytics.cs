@@ -110,7 +110,7 @@ namespace Advant
 				
 			if (isGettingTimeCancelled)
 			{
-				await UniTask.WaitIntil(() => _timeHolder.IsServerReached);
+				await UniTask.WaitUntil(() => _timeHolder.IsServerReached);
 				initialTime = _timeHolder.GetVerifiedTime(DateTime.UtcNow);
 			}
 
