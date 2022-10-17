@@ -113,14 +113,14 @@ namespace Advant.Data
 					_sessions.CurrentSession().Unregistered = false;
 				}
 				NewEvent("logged_in", hasValidTimestamps: true).Time = start;
-				Debug.LogWarning("[ADVANAL] logged_in was added to the events batch, event_time = " + start);
+				//Debug.LogWarning("[ADVANAL] logged_in was added to the events batch, event_time = " + start);
 			}
 			else
 			{
 				if (_sessions.CurrentSession().SessionCount < dbSessionCount)
 				{
 					await _backend.PutSessionCount(_userId, _sessions.CurrentSession().SessionCount);
-					Debug.LogWarning("[ADVANAL] Session that was registered on the app start is cancelled since the user continues the previous session");
+					//Debug.LogWarning("[ADVANAL] Session that was registered on the app start is cancelled since the user continues the previous session");
 				}
 				_sessions.RegisterActivity();
 			}
@@ -135,20 +135,20 @@ namespace Advant.Data
 			
 			if (brokenBatchSize == 0) return;
 			
-			Debug.LogWarning($"[ADVANAL] There are {brokenBatchSize} invalid events. Recalculating timestamps...");
+			//Debug.LogWarning($"[ADVANAL] There are {brokenBatchSize} invalid events. Recalculating timestamps...");
 			
 			DateTime sessionStart, sessionEnd = current.AddMinutes(-10);
 			var sessionDuration = TimeSpan.FromSeconds(brokenBatchSize * 5);
 			if (_sessions.HasCurrentSession())
 			{
-				Debug.LogWarning("[ADVANAL] There was prev session");
+				//Debug.LogWarning("[ADVANAL] There was prev session");
 				ref var session = ref _sessions.CurrentSession();
 				
 				if (session.LastValidTimestamp == default)
 				{
-					Debug.LogWarning("[ADVANAL] ... with no valid timestamps. Create a session for the batch");
+					//Debug.LogWarning("[ADVANAL] ... with no valid timestamps. Create a session for the batch");
 					sessionStart = (sessionEnd - sessionDuration).AddSeconds(-5);
-					Debug.LogWarning($"[ADVANAL] SessionStart = {sessionStart}, SessionEnd = {sessionEnd}");
+					//Debug.LogWarning($"[ADVANAL] SessionStart = {sessionStart}, SessionEnd = {sessionEnd}");
 					ref var newSession =  ref NewSession(sessionStart, dbSessionCount);
 					newSession.LastActivity = newSession.LastValidTimestamp = sessionEnd;
 					newSession.HasValidTimestamps = true;
@@ -159,27 +159,27 @@ namespace Advant.Data
 				
 				if (sessionEnd - sessionStart < sessionDuration)
 				{
-					Debug.LogWarning("[ADVANAL] The time interval between two known sessions is too small - fit the batch here");
+					//Debug.LogWarning("[ADVANAL] The time interval between two known sessions is too small - fit the batch here");
 					sessionStart = session.LastValidTimestamp.AddSeconds(5);
 					sessionEnd = sessionStart.AddSeconds(sessionDuration.TotalSeconds);
 					if (sessionEnd >= current)
 					{
 						sessionEnd = current.AddSeconds(-5);
-						Debug.LogWarning($"[ADVANAL] Distribute events up to current time. SessionEnd = {sessionEnd}");
+						//Debug.LogWarning($"[ADVANAL] Distribute events up to current time. SessionEnd = {sessionEnd}");
 					}
-					else
-						Debug.LogWarning($"[ADVANAL] Distribute events up to calculated duration. SessionEnd = {sessionEnd}");
+					// else
+						// Debug.LogWarning($"[ADVANAL] Distribute events up to calculated duration. SessionEnd = {sessionEnd}");
 						
-					Debug.LogWarning($"[ADVANAL] session.LastActivity = = {sessionEnd}");
+					//Debug.LogWarning($"[ADVANAL] session.LastActivity = = {sessionEnd}");
 					session.LastValidTimestamp = session.LastActivity = sessionEnd;
 					session.HasValidTimestamps = true;
 				}
 				else
 				{
-					Debug.LogWarning("[ADVANAL] The time interval between two known sessions is big enough to place one session, so create it");
+					//Debug.LogWarning("[ADVANAL] The time interval between two known sessions is big enough to place one session, so create it");
 					ref var newSession =  ref NewSession(sessionStart, dbSessionCount);
 					sessionEnd = sessionStart.AddSeconds(sessionDuration.TotalSeconds);
-					Debug.LogWarning($"[ADVANAL] SessionStart = {sessionStart}, SessionEnd = {sessionEnd}");
+					//Debug.LogWarning($"[ADVANAL] SessionStart = {sessionStart}, SessionEnd = {sessionEnd}");
 					newSession.LastActivity = sessionEnd;
 					newSession.HasValidTimestamps = true;
 					NewEvent("logged_in", hasValidTimestamps: true).Time = sessionStart;
@@ -187,9 +187,9 @@ namespace Advant.Data
 			}
 			else
 			{
-				Debug.LogWarning("[ADVANAL] There was no session yet - create one");
+				//Debug.LogWarning("[ADVANAL] There was no session yet - create one");
 				sessionStart = sessionEnd - sessionDuration;
-				Debug.LogWarning($"[ADVANAL] SessionStart = {sessionStart}, SessionEnd = {sessionEnd}");
+				//Debug.LogWarning($"[ADVANAL] SessionStart = {sessionStart}, SessionEnd = {sessionEnd}");
 				ref var newSession =  ref NewSession(sessionStart, dbSessionCount);
 				newSession.LastActivity = newSession.LastValidTimestamp = sessionEnd;
 				newSession.HasValidTimestamps = true;
@@ -411,7 +411,7 @@ namespace Advant.Data
 						
 				_sendingCancellationSource = null;
 					
-				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
+				//Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 				
 				_sessions.RegisterActivity();
 				
@@ -432,17 +432,17 @@ namespace Advant.Data
 				
 				if (hasEventsSendingSucceeded) 
 				{
-					Debug.LogWarning("[ADVANAL] Clear events");
+					//Debug.LogWarning("[ADVANAL] Clear events");
 					_events.FreeFromBeginning(eventsBatchSize);
 				}
 				if (hasPropertiesSendingSucceeded)
 				{
-					Debug.LogWarning("[ADVANAL] Clear properties");
+					//Debug.LogWarning("[ADVANAL] Clear properties");
 					_properties.FreeFromBeginning(propertiesBatchSize);
 				}
 				if (hasSessionSendingSucceeded)
 				{
-					Debug.LogWarning("[ADVANAL] Clear sessions, batch size = " + sessionsBatchSize);
+					//Debug.LogWarning("[ADVANAL] Clear sessions, batch size = " + sessionsBatchSize);
 					_sessions.FreeFromBeginning(sessionsBatchSize);
 				}
 			}
@@ -456,11 +456,11 @@ namespace Advant.Data
         {
 			try
 			{
-				Debug.LogWarning("[ADVANAL] Saving cache locally");
+				//Debug.LogWarning("[ADVANAL] Saving cache locally");
 				SerializeSessions(); 
 				SerializeEvents();
 				SerializeProperties();
-				Debug.LogWarning("[ADVANAL] Serialization is done");
+				//Debug.LogWarning("[ADVANAL] Serialization is done");
 			}
 			catch (Exception e)
 			{

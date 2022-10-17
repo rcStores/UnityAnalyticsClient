@@ -242,20 +242,20 @@ namespace Advant.Http
 			}
 			catch (Exception e)
 			{
-				if (path == _getCountryEndpoint)
-				{
-					Debug.Log($"GetCountry response:\nCode = {request.responseCode}, result = {request.result}, error = {request.error}");
-					if (request.responseCode == 429)
-						Debug.Log($"DownloadHandler: {operation.downloadHandler.text}");
-				}
+				// if (path == _getCountryEndpoint)
+				// {
+					// Debug.Log($"GetCountry response:\nCode = {request.responseCode}, result = {request.result}, error = {request.error}");
+					// if (request.responseCode == 429)
+						// Debug.Log($"DownloadHandler: {operation.downloadHandler.text}");
+				// }
 				
-				File.WriteAllText(
-					Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
-					Encoding.UTF8.GetString(request.uploadHandler.data));
+				// File.WriteAllText(
+					// Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
+					// Encoding.UTF8.GetString(request.uploadHandler.data));
 				throw e;
 			}
-			if (path == _getCountryEndpoint)
-				Debug.Log($"GetCountry response:\nCode = {operation.responseCode}, result = {operation.result}");
+			// if (path == _getCountryEndpoint)
+				// Debug.Log($"GetCountry response:\nCode = {operation.responseCode}, result = {operation.result}");
             return result;
         }
 

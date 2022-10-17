@@ -152,7 +152,7 @@ namespace Advant.Data
 			
 			if (_currentCount == 0)
 			{
-				Debug.LogWarning("[ADVANT] empty events pool");
+				//Debug.LogWarning("[ADVANT] empty events pool");
 				return result;
 			}
 			
@@ -222,7 +222,7 @@ namespace Advant.Data
 			if (isRecalculationNeeded)
 			{
 				_pool[_indices[firstIdx]].Time = firstEventTime;
-				Debug.LogWarning($"[ADVANT] {_pool[_indices[firstIdx]].Name}'s new timestamp = {_pool[_indices[firstIdx]].Time}");
+				//Debug.LogWarning($"[ADVANT] {_pool[_indices[firstIdx]].Name}'s new timestamp = {_pool[_indices[firstIdx]].Time}");
 			}
 			_pool[_indices[firstIdx]].HasValidTimestamps = true;
 
@@ -232,12 +232,12 @@ namespace Advant.Data
 				if (isRecalculationNeeded)
 				{
 					_pool[_indices[i]].Time = _pool[_indices[i - 1]].Time.AddSeconds(step.TotalSeconds);
-					Debug.LogWarning($"[ADVANT] {_pool[_indices[i]].Name}'s new timestamp = {_pool[_indices[i]].Time}");
+					//Debug.LogWarning($"[ADVANT] {_pool[_indices[i]].Name}'s new timestamp = {_pool[_indices[i]].Time}");
 				}
 				_pool[_indices[i]].HasValidTimestamps = true;
 				
-				if (_pool[_indices[i]].Time == lastEventTime)
-					Debug.LogWarning("[ADVANT] Last timestamp is reached");
+				// if (_pool[_indices[i]].Time == lastEventTime)
+					// Debug.LogWarning("[ADVANT] Last timestamp is reached");
 			}
 		}
 	}

@@ -129,7 +129,7 @@ namespace Advant.Data
 			s.LastActivity	= DateTime.UtcNow;
 			s.Unregistered = true;
 			s.HasValidTimestamps = false;
-			Debug.LogWarning($"[ADVANT] Cached session count = {_currentSessionCount}");
+			//Debug.LogWarning($"[ADVANT] Cached session count = {_currentSessionCount}");
 			
 			if (newSessionCount == 0)
 				s.SessionCount = ++_currentSessionCount;
@@ -141,14 +141,14 @@ namespace Advant.Data
 				s.Unregistered = true;
 			}
 			
-			Debug.LogWarning($"[ADVANT] NEW SESSION:\nab_mode = {s.AbMode}\narea = {s.Area}\nstart = {s.SessionStart}\nend = {s.LastActivity}\ncount = {s.SessionCount}");
+			//Debug.LogWarning($"[ADVANT] NEW SESSION:\nab_mode = {s.AbMode}\narea = {s.Area}\nstart = {s.SessionStart}\nend = {s.LastActivity}\ncount = {s.SessionCount}");
 				
 			return ref s;
 		}
 		
 		public void RegisterActivity() 
 		{
-			Debug.LogWarning($"[ADVANT] Session {CurrentSession().SessionCount}'s last activity: {CurrentSession().LastActivity}");
+			//Debug.LogWarning($"[ADVANT] Session {CurrentSession().SessionCount}'s last activity: {CurrentSession().LastActivity}");
 			CurrentSession().LastActivity = DateTime.UtcNow;
 			CurrentSession().HasValidTimestamps = false;
 		}

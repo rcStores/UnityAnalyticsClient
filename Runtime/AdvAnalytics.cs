@@ -40,26 +40,9 @@ namespace Advant
 			_networkTimeCTS 	= new CancellationTokenSource();
         }
 		
-		// public void StartOrContinueSession()
-		// {
-			// var sessionValidation = (NetworkTimeHolder timeHolder, ref Session session) =>
-			// {
-				// session.SessionStart = timeHolder.GetValidTimestamp(session.SessionStart, networkTime);
-			// }
-			
-			// if (_sessions.CurrentSession() is var session && session is null)
-			// {
-				// _sessions.NewSession(DateTime.UtcNow);
-			// }
-			// else //
-			
-			// _timeValidator.AddCallback(() => { sessionValidation(_networkTimeHolder, session); });
-		// }
-				
-		
 		public static void SaveCacheLocally() 
 		{	
-			Debug.LogWarning($"[ADVANT] AdvAnalytics.SaveCacheLocally");
+			//Debug.LogWarning($"[ADVANT] AdvAnalytics.SaveCacheLocally");
 			// the game is being minimized, so the current attempt of getting network time (if it is not finished yet)
 			// will cause inadequate consequences when the app gets focus again
 			_networkTimeCTS.Cancel();
@@ -160,7 +143,6 @@ namespace Advant
                 PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
             }
 			_cacheHolder.NewProperty("os", Application.platform == RuntimePlatform.Android ? "android" : "ios", USERS_DATA_TABLE);
-			//_cacheHolder.NewProperty("language", Application.platform == RuntimePlatform.Android ? "android" : "ios", USERS_DATA_TABLE);
 			_cacheHolder.NewProperty("country", await _userRegistrator.GetCountryAsync(timeout: 0), USERS_DATA_TABLE);
         }
 
@@ -176,7 +158,6 @@ namespace Advant
 		public static void SendProperty(string name, int value)			=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
 		public static void SendProperty(string name, double value)		=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
 		public static void SendProperty(string name, bool value)		=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);	
-		//public static void SendProperty(string name, DateTime value)	=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);		
 		public static void SendProperty(string name, string value)		=> _cacheHolder.NewProperty(name, value, CUSTOM_PROPERTIES_TABLE);
 		
 #endregion
