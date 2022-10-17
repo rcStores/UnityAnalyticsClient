@@ -177,6 +177,7 @@ namespace Advant.Data
 				{
 					Debug.LogWarning("[ADVANAL] The time interval between two known sessions is big enough to place one session, so create it");
 					ref var newSession =  ref NewSession(sessionStart, dbSessionCount);
+					sessionEnd = sessionStart.AddSeconds(sessionDuration.TotalSeconds);
 					Debug.LogWarning($"[ADVANAL] SessionStart = {sessionStart}, SessionEnd = {sessionEnd}");
 					newSession.LastActivity = sessionEnd;
 					newSession.HasValidTimestamps = true;
