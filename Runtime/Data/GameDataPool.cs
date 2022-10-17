@@ -192,7 +192,7 @@ namespace Advant.Data
 		
 		public (int, int) GetInvalidEventsCount(DateTime currentInitialTime, NetworkTimeHolder timeHolder)
 		{
-			if (_currentCount == 0) return 0;
+			if (_currentCount == 0) return (0, -1);
 			
 			int batchSize = 0;
 			int firstIdx = -1;
@@ -221,8 +221,8 @@ namespace Advant.Data
 			
 			if (isRecalculationNeeded)
 			{
-				_pool[_indices[startIdx]].Time = firstEventTime;
-				Debug.LogWarning($"[ADVANT] {_pool[_indices[startIdx]].Name}'s new timestamp = {_pool[_indices[startIdx]].Time}");
+				_pool[_indices[firstIdx]].Time = firstEventTime;
+				Debug.LogWarning($"[ADVANT] {_pool[_indices[startIdx]].Name}'s new timestamp = {_pool[_indices[firstIdx]].Time}");
 			}
 			_pool[_indices[firstIdx]].HasValidTimestamps = true;
 
