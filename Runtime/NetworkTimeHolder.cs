@@ -77,11 +77,12 @@ internal class NetworkTimeHolder
 #endif		
 			_isLoopRunning = true;
 			Debug.LogWarning("[ADVANAL] tAttempt to get network time...");
-			var (isGettingTimeCancelled, currentNetworkTime) = await _backend.GetNetworkTime(token)
+			var (isGettingTimeCancelled, result) = await _backend.GetNetworkTime(token)
 				.SuppressCancellationThrow();
 			
 			if (isGettingTimeCancelled) return (isGettingTimeCancelled, default(DateTime));
 			
+			var currentNetworkTime = result;
 			Debug.LogWarning($"[ADVANAL] currentNetworkTime = {currentNetworkTime}");
             if (currentNetworkTime == default)
             {
