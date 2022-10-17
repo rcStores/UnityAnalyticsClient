@@ -217,7 +217,7 @@ namespace Advant.Http
 #region Implementation
         
 		private async UniTask<string> ExecuteWebRequestAsync(string path, 
-															 RequestType type = RequestType.GET,
+															 RequestType type,
 															 CancellationToken token,
 															 string jsonData = null, 
 															 int timeout = 0, 
