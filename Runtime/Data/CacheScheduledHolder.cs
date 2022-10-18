@@ -229,7 +229,7 @@ namespace Advant.Data
 			e.SetMaxParameterCount(GAME_EVENT_PARAMETER_COUNT);
 			e.SetName(eventName);
 			e.HasValidTimestamps = hasValidTimestamps;
-			Debug.LogWarning($"[ADVANT] New event, name = {e.Name}, timestamp = {e.Time}");
+			//Debug.LogWarning($"[ADVANT] New event, name = {e.Name}, timestamp = {e.Time}");
 			
 			for (int i = 0; i < _globalEventParams.Count; ++i)
 			{

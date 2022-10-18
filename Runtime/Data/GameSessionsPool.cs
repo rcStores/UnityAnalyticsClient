@@ -127,20 +127,19 @@ namespace Advant.Data
 			s.Area = _gameArea;
 			s.SessionStart	= _sessionStart = DateTime.UtcNow;
 			s.LastActivity	= DateTime.UtcNow;
-			s.Unregistered = true;
 			s.HasValidTimestamps = false;
 			//Debug.LogWarning($"[ADVANT] Cached session count = {_currentSessionCount}");
 			
-			if (newSessionCount == 0)
-				s.SessionCount = ++_currentSessionCount;
-			else if (_currentSessionCount + 1 <= newSessionCount || newSessionCount == 1)
+			if (_currentSessionCount + 1 == newSessionCount || newSessionCount == 1)
+			{
 				s.SessionCount = _currentSessionCount = newSessionCount;
+				s.Unregistered = false;
+			}
 			else
 			{
 				s.SessionCount = ++_currentSessionCount;
 				s.Unregistered = true;
 			}
-			
 			//Debug.LogWarning($"[ADVANT] NEW SESSION:\nab_mode = {s.AbMode}\narea = {s.Area}\nstart = {s.SessionStart}\nend = {s.LastActivity}\ncount = {s.SessionCount}");
 				
 			return ref s;
