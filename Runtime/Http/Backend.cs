@@ -54,7 +54,7 @@ namespace Advant.Http
 			_getTesterEndpoint 								= registration + "/Registration/GetTester";
 			_getNetworkTimeEndpoint							= registration + "/Registration/GetNetworkTime";
 			_getCountryEndpoint 							= "http://ip-api.com/json/"; //"https://ipapi.co/country/";
-			_putUserIdEndpoint 								= registration + "/Registration/GetOrCreateUserId1";
+			_putUserIdEndpoint 								= registration + "/Registration/GetOrCreateUserId";
 			_putSessionCountEndpoint 						= registration + "/Sessions/PutSessionCount";
 			_gameDataEndpointsByType[typeof(GameProperty)]	= analytics + "/AnalyticsData/SendProperties";
 			_gameDataEndpointsByType[typeof(GameEvent)] 	= analytics + "/AnalyticsData/SendEvents";
@@ -110,7 +110,7 @@ namespace Advant.Http
 			if (response == CANCELLED_REQUEST)
 				return (true, default);
 				
-			Debug.LogWarning("GetNetworkTime response: " + response);
+			//Debug.LogWarning("GetNetworkTime response: " + response);
             return response is null ? (false, default) : (false, DateTime.ParseExact(response, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture));
 		}
 
@@ -132,7 +132,7 @@ namespace Advant.Http
 				response = "false";
 			}
 				
-			Debug.LogWarning("GetTester response: " + response);
+			//Debug.LogWarning("GetTester response: " + response);
             return Convert.ToBoolean(response);
         }
 		

@@ -130,7 +130,7 @@ namespace Advant.Data
 		
 		private void EnsureTimestampsValid(DateTime current, long dbSessionCount = 0)
 		{
-			Debug.LogWarning("[ADVANAL] Look for invalid events...");
+			//Debug.LogWarning("[ADVANAL] Look for invalid events...");
 			var (brokenBatchSize, firstIdx) = _events.GetInvalidEventsCount(current, _timeHolder);
 			
 			if (brokenBatchSize == 0) return;
