@@ -99,7 +99,7 @@ namespace Advant.Data
 		{
 			EnsureTimestampsValid(start);
 			
-			Debug.LogWarning($"[ADVANAL] Restoring or creating a session. Current session count according to database: {dbSessionCount}");
+			//Debug.LogWarning($"[ADVANAL] Restoring or creating a session. Current session count according to database: {dbSessionCount}");
 			if (!_sessions.HasCurrentSession())
 			{
 				NewSession(start, dbSessionCount);
@@ -108,10 +108,10 @@ namespace Advant.Data
 			}
 			else if ((start - _sessions.CurrentSession().LastActivity).TotalMinutes >= SESSION_TIMEOUT)
 			{
-				Debug.LogWarning("[ADVANAL] prev session's last activity was more than 10 minutes ago - starting a new one.");
+				//Debug.LogWarning("[ADVANAL] prev session's last activity was more than 10 minutes ago - starting a new one.");
 				if (await _backend.PutSessionCount(_userId, NewSession(start, dbSessionCount).SessionCount))
 				{
-					Debug.LogWarning("[ADVANAL] PutSessionCount returns true");
+					//Debug.LogWarning("[ADVANAL] PutSessionCount returns true");
 					_sessions.CurrentSession().Unregistered = false;
 				}
 				NewEvent("logged_in", hasValidTimestamps: true).Time = start;
@@ -122,11 +122,11 @@ namespace Advant.Data
 				if (_sessions.CurrentSession().SessionCount + 1 == dbSessionCount)
 				{
 					await _backend.PutSessionCount(_userId, _sessions.CurrentSession().SessionCount);
-					Debug.LogWarning($"[ADVANAL] Session that was registered on the app start is cancelled since the user continues the previous session with number {_sessions.CurrentSession().SessionCount}");
+					//Debug.LogWarning($"[ADVANAL] Session that was registered on the app start is cancelled since the user continues the previous session with number {_sessions.CurrentSession().SessionCount}");
 				}
 				else if (dbSessionCount == 1)
 				{
-					Debug.LogWarning($"[ADVANAL] Sessions was dropped - create new {dbSessionCount}st session");
+					//Debug.LogWarning($"[ADVANAL] Sessions was dropped - create new {dbSessionCount}st session");
 					NewSession(start, dbSessionCount);
 					_sessions.CurrentSession().Unregistered = false;
 					NewEvent("logged_in", hasValidTimestamps: true).Time = start;

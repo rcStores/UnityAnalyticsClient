@@ -112,7 +112,7 @@ namespace Advant.Data
 
 #endregion
 				
-		public ref Session NewSession(long newSessionCount = 0) // timestamp
+		public ref Session NewSession(long newSessionCount = 0) 
 		{
 			if (_currentCount > 0)
 			{
@@ -128,17 +128,17 @@ namespace Advant.Data
 			s.SessionStart	= _sessionStart = DateTime.UtcNow;
 			s.LastActivity	= DateTime.UtcNow;
 			s.HasValidTimestamps = false;
-			Debug.LogWarning($"[ADVANT] Prev session count = {_currentSessionCount}. Сomparing it with the new value...");
+			//Debug.LogWarning($"[ADVANT] Prev session count = {_currentSessionCount}. Сomparing it with the new value...");
 			
 			if (_currentSessionCount + 1 == newSessionCount || newSessionCount == 1)
 			{
-				Debug.LogWarning($"[ADVANT] The new value is valid (prev + 1 or 1) - assign it to the new session count, the new session is registered");
+				//Debug.LogWarning($"[ADVANT] The new value is valid (prev + 1 or 1) - assign it to the new session count, the new session is registered");
 				s.SessionCount = _currentSessionCount = newSessionCount;
 				s.Unregistered = false;
 			}
 			else
 			{
-				Debug.LogWarning($"[ADVANT] The new value is invalid (prev + 1 or 1) - restore session count from the prev session, make it unregistered");
+				//Debug.LogWarning($"[ADVANT] The new value is invalid - restore session count from the prev session, make it unregistered");
 				s.SessionCount = ++_currentSessionCount;
 				s.Unregistered = true;
 			}

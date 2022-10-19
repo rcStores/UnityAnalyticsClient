@@ -54,7 +54,7 @@ namespace Advant.Http
 			_getTesterEndpoint 								= registration + "/Registration/GetTester";
 			_getNetworkTimeEndpoint							= registration + "/Registration/GetNetworkTime";
 			_getCountryEndpoint 							= "http://ip-api.com/json/"; //"https://ipapi.co/country/";
-			_putUserIdEndpoint 								= registration + "/Registration/GetOrCreateUserId1";
+			_putUserIdEndpoint 								= registration + "/Registration/GetOrCreateUserId";
 			_putSessionCountEndpoint 						= registration + "/Sessions/PutSessionCount";
 			_gameDataEndpointsByType[typeof(GameProperty)]	= analytics + "/AnalyticsData/SendProperties";
 			_gameDataEndpointsByType[typeof(GameEvent)] 	= analytics + "/AnalyticsData/SendEvents";
