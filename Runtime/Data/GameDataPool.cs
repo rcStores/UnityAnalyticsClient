@@ -198,8 +198,7 @@ namespace Advant.Data
 			int firstIdx = -1;
 			for (int i = 0; i < _currentCount; ++i)
 			{
-				var eventTime = timeHolder.GetVerifiedTime(_pool[_indices[i]].Time);
-				if (!_pool[_indices[i]].HasValidTimestamps &&  !(eventTime > currentInitialTime && eventTime < timeHolder.GetVerifiedTime(DateTime.UtcNow)))
+				if (!_pool[_indices[i]].HasValidTimestamps &&  !(_pool[_indices[i]].Time > currentInitialTime && _pool[_indices[i]].Time < timeHolder.GetVerifiedTime(DateTime.UtcNow)))
 				{
 					batchSize++;
 					if (firstIdx == -1)

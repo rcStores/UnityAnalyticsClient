@@ -28,7 +28,19 @@ internal class NetworkTimeHolder
 	
 	public bool IsServerReached { get => _networkInitialTime != default; }
 	
-	public DateTime GetVerifiedTime(DateTime timestamp) => _networkInitialTime.AddSeconds((timestamp - _systemInitialTime).TotalSeconds);		
+	// This method is built only for validating timestamps acuired after a moment when:
+	// 1) _systemInitialTime is initialized:
+	// 2) there is a valid value for _networkInitialTime.
+	// This happens when GetInitialTimeAsync was invoked and returned a valid result.
+	// Validating events from previous sessions won't bring any result.
+	public DateTime GetVerifiedTime(DateTime timestamp) 
+	{
+		var timePassedSinceInit = timestamp - _systemInitialTime;
+		if (timePassedSinceInit < 0 || _networkInitialTime == default)
+			return timestamp;
+		else
+			return _networkInitialTime.AddSeconds((timestamp - _systemInitialTime).TotalSeconds);
+	}		
 	
 	public async UniTask<(bool, DateTime)> GetInitialTimeAsync(CancellationToken token) 
 	{

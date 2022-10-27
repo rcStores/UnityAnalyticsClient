@@ -88,7 +88,7 @@ namespace Advant
         }
 		
 		/// <summary>
-		/// Wakes the tool after the app got the focus again. Must be called <see cref=OnApplicationFocus(bool)/> with true value.
+		/// Wakes the tool after the app got the focus again. Must be called in<see cref=OnApplicationFocus(bool)/> with true value.
 		/// </summary>
 		public static async UniTaskVoid Refresh()
 		{
