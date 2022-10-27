@@ -36,7 +36,7 @@ internal class NetworkTimeHolder
 	public DateTime GetVerifiedTime(DateTime timestamp) 
 	{
 		var timePassedSinceInit = timestamp - _systemInitialTime;
-		if (timePassedSinceInit < 0 || _networkInitialTime == default)
+		if (timePassedSinceInit.TotalSeconds < 0 || _networkInitialTime == default)
 			return timestamp;
 		else
 			return _networkInitialTime.AddSeconds((timestamp - _systemInitialTime).TotalSeconds);
