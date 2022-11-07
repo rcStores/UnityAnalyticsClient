@@ -28,8 +28,7 @@ namespace Advant
 		
 		private const string CUSTOM_PROPERTIES_TABLE	= "custom_properties";
 		private const string USERS_DATA_TABLE 			= "users";
-        private const string APP_VERSION_PREF 			= "AppVersion";
-        private const string USER_ID_PREF 				= "UserId";
+        private const string ENTRY_PREF 				= "HasPreviousEntry";
 
         static AdvAnalytics()
         {
@@ -52,7 +51,10 @@ namespace Advant
 			_networkTimeCTS.Cancel();
 			_networkTimeCTS = new CancellationTokenSource();
 			_cacheHolder.SaveCacheLocally();
-		} 
+		}
+		
+		private bool HasEntryPref() 	=> PlayerPrefs.GetInt(ENTRY_PREF, 0) != 0;
+		private bool SaveEntryPref()	=> PlayerPrefs.SetInt(ENTRY_PREF, 1);
 
 #region Initialization
 		/// <summary>
@@ -68,7 +70,12 @@ namespace Advant
 			
 // ---------------------------------------------------------------------------------------------
 #if UNITY_EDITOR && DEBUG_ANAL
-            InitAsync(new Identifier(platform: "IOS", "DEBUG", "DEBUG"), abMode).Forget();
+            InitAsync(new RegistrationToken(platform: "IOS", 
+											idfv: "DEBUG", 
+											idfa: "DEBUG", 
+											abMode, 
+											Application.version,
+											initializedBefore: HasEntryPref())).Forget();
 // ---------------------------------------------------------------------------------------------			
 #elif UNITY_EDITOR
 			return;
@@ -79,11 +86,21 @@ namespace Advant
 			    {
 				    Log.Info("GAID couldn't be received");
 			    }
-                InitAsync(new Identifier(platform: "Android", idfv, gaid), abMode).Forget();
+                InitAsync(new RegistrationToken(platform: "Android", 
+												ifdv: idfv, 
+												idfa: gaid, 
+												abMode, 
+												Application.version,
+												initializedBefore: HasEntryPref())).Forget();
             });
 // ---------------------------------------------------------------------------------------------
 #elif UNITY_IOS
-            InitAsync(new Identifier(platform: "IOS", idfv, Device.advertisingIdentifier), abMode).Forget();
+            InitAsync(new RegistrationToken(platform: "IOS", 
+											idfv: idfv, 
+											idfa: Device.advertisingIdentifier, 
+											abMode, 
+											Application.version,
+											initializedBefore: HasEntryPref())).Forget();
 #endif
         }
 		
@@ -97,64 +114,28 @@ namespace Advant
 				_cacheHolder.StartOrContinueSessionAsync(initialTime);
 		}
 				
-		private static async UniTaskVoid InitAsync(Identifier id, string abMode)
+		private static async UniTaskVoid InitAsync(RegistrationToken token)
         {
 			var ((isGettingTimeCancelled, initialTime), dbSessionCount) = await UniTask.WhenAll(
 				_timeHolder.GetInitialTimeAsync(_networkTimeCTS.Token),
-				_userRegistrator.RegistrateAsync(id));
-				
-			if (isGettingTimeCancelled)
-			{
-				await UniTask.WaitUntil(() => _timeHolder.IsServerReached);
-				initialTime = _timeHolder.GetVerifiedTime(DateTime.UtcNow);
-			}
-
-			_cacheHolder.SetUserId(_userRegistrator.GetUserId());
+				_userRegistrator.RegistrateAsync(token));
+			
 			if (!isGettingTimeCancelled)
 				_cacheHolder.StartOrContinueSessionAsync(initialTime, dbSessionCount);
 			
-            SendUserDetails(dbSessionCount, abMode, initialTime);
+            PrepareClientForSendingAsync(); // now preparations doesn't have to be completed before starting the loop, so don't use await. this might change later
             _cacheHolder.StartSendingDataAsync();
         }
 		
-		private static async UniTaskVoid SendUserDetails(long sessionCount, string abMode, DateTime initialTime)
+		// put in this method all actions that must be performed before running the sending loop
+		private static async UniTaskVoid PrepareClientForSendingAsync()
         {
-            if (sessionCount == 1)
-            {
-                Log.Info("Create properties for a new user");
-				
-				if (!_userRegistrator.IsCheater())
-					_cacheHolder.NewProperty("cheater", false, USERS_DATA_TABLE);
-				
-				_cacheHolder.NewProperty("tester", 					GetTester(), 			USERS_DATA_TABLE);
-				_cacheHolder.NewProperty("first_install_date", 		initialTime, 			USERS_DATA_TABLE);
-				_cacheHolder.NewProperty("last_install_date", 		initialTime,			USERS_DATA_TABLE);
-				_cacheHolder.NewProperty("first_game_version", 		Application.version,	USERS_DATA_TABLE);
-				_cacheHolder.NewProperty("current_game_version", 	Application.version, 	USERS_DATA_TABLE);
-				_cacheHolder.NewProperty("first_ab_mode", 			abMode, 				CUSTOM_PROPERTIES_TABLE);
-
-                PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
-            }
-            else
-            {
-                Log.Info("Create properties for registered user");
-				
-                string appVersion = PlayerPrefs.GetString(APP_VERSION_PREF);
-                if (appVersion != "" && appVersion != Application.version)
-                {
-					_cacheHolder.NewProperty("last_update_date", initialTime, USERS_DATA_TABLE);
-                }
-                else if (appVersion == "")
-                {
-					_cacheHolder.NewProperty("last_install_date", initialTime, USERS_DATA_TABLE);
-                }
-				
-				_cacheHolder.NewProperty("current_game_version", Application.version, USERS_DATA_TABLE);
-				
-                PlayerPrefs.SetString(APP_VERSION_PREF, Application.version);
-            }
-			_cacheHolder.NewProperty("os", Application.platform == RuntimePlatform.Android ? "android" : "ios", USERS_DATA_TABLE);
+			SaveEntryPref();
+			_cacheHolder.SetUserId(_userRegistrator.GetUserId());
+			
 			_cacheHolder.NewProperty("country", await _userRegistrator.GetCountryAsync(timeout: 0), USERS_DATA_TABLE);
+			if (!_userRegistrator.IsCheater())
+				_cacheHolder.NewProperty("cheater", false, USERS_DATA_TABLE);
         }
 
 #endregion		

@@ -38,11 +38,10 @@ namespace Advant
 			_userId = Convert.ToInt64(PlayerPrefs.GetInt(USER_ID_PREF, -1));
         }
 
-        public async UniTask<long> RegistrateAsync(Identifier identifier) 
+        public async UniTask<long> RegistrateAsync(RegistrationToken token) 
         {
 			long result;
-            identifier.UserId = _userId;
-            while (await _backend.GetOrCreateUserIdAsync(identifier) is var response)
+            while (await _backend.GetOrCreateUserIdAsync(token) is var response)
             {
 #if UNITY_EDITOR
 				if (!Application.isPlaying)
@@ -65,9 +64,8 @@ namespace Advant
 					break;
                 }
             }
-			var (_isTester, _country) = await UniTask.WhenAll(
-				_backend.GetTester(_userId), 
-				GetCountryAsync(0, 1));
+			
+			_country = await GetCountryAsync(0, 1);
 			//Debug.LogWarning($"[ADVANAL] SessionCount = {result}, country = {_country}");
 			//Debug.LogWarning($"[ADVANAL] UserId = {_userId}");
             Log.Info("Success. Start sending task");
