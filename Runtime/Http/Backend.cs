@@ -187,6 +187,7 @@ namespace Advant.Http
             }
             catch (Exception e)
             {
+				Debug.LogWarning("Error while sending registration request: " + e.Message);
                 Log.Info(e.Message);
                 result.UserId = -1;
             }
