@@ -21,7 +21,7 @@
         {
             return $"{{\"Platform\": \"{Platform}\", \"DeviceId\":\"{DeviceId}\", " + 
 				$"\"IdForAdvertising\":\"{IdForAdvertising}\", \"AbMode\":\"{AbMode}\", " + 
-				$"\"GameVersion\":\"{GameVersion}\"}, \"InitializedBefore\":{InitializedBefore}}}";
+				$"\"GameVersion\":\"{GameVersion}\", \"InitializedBefore\":{InitializedBefore}}}";
         }
 
         public string 	Platform { get; set; }
