@@ -172,7 +172,7 @@ namespace Advant.Http
 		// }
 			
 
-        public async UniTask<UserIdResponse> GetOrCreateUserIdAsync(Identifier dto)
+        public async UniTask<UserIdResponse> GetOrCreateUserIdAsync(RegistrationToken dto)
         {
 			var result = new UserIdResponse();
             try

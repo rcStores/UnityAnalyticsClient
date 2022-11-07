@@ -54,7 +54,7 @@ namespace Advant
 		}
 		
 		private static bool HasEntryPref() 	=> PlayerPrefs.GetInt(ENTRY_PREF, 0) != 0;
-		private static bool SaveEntryPref()	=> PlayerPrefs.SetInt(ENTRY_PREF, 1);
+		private static void SaveEntryPref()	=> PlayerPrefs.SetInt(ENTRY_PREF, 1);
 
 #region Initialization
 		/// <summary>
