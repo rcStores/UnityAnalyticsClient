@@ -87,7 +87,7 @@ namespace Advant
 				    Log.Info("GAID couldn't be received");
 			    }
                 InitAsync(new RegistrationToken(platform: "Android", 
-												ifdv: idfv, 
+												idfv: idfv, 
 												idfa: gaid, 
 												abMode, 
 												Application.version,
