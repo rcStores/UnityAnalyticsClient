@@ -53,8 +53,8 @@ namespace Advant
 			_cacheHolder.SaveCacheLocally();
 		}
 		
-		private bool HasEntryPref() 	=> PlayerPrefs.GetInt(ENTRY_PREF, 0) != 0;
-		private bool SaveEntryPref()	=> PlayerPrefs.SetInt(ENTRY_PREF, 1);
+		private static bool HasEntryPref() 	=> PlayerPrefs.GetInt(ENTRY_PREF, 0) != 0;
+		private static bool SaveEntryPref()	=> PlayerPrefs.SetInt(ENTRY_PREF, 1);
 
 #region Initialization
 		/// <summary>

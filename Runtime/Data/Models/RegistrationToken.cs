@@ -1,8 +1,8 @@
 ﻿namespace Advant.Data.Models
 {
-    internal struct Identifier
+    internal struct RegistrationToken
     {
-        public Identifier(string platform, 
+        public RegistrationToken(string platform, 
 						  string idfv, 
 						  string idfa,
 						  string abMode,
