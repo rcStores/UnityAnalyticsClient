@@ -149,14 +149,18 @@ namespace Advant.Data
 		
 		public void RegisterActivity() 
 		{
-			//Debug.LogWarning($"[ADVANT] Session {CurrentSession().SessionCount}'s last activity: {CurrentSession().LastActivity}");
-			CurrentSession().LastActivity = DateTime.UtcNow;
-			CurrentSession().HasValidTimestamps = false;
+			if (HasCurrentSession())
+			{
+				//Debug.LogWarning($"[ADVANT] Session {CurrentSession().SessionCount}'s last activity: {CurrentSession().LastActivity}");
+				CurrentSession().LastActivity = DateTime.UtcNow;
+				CurrentSession().HasValidTimestamps = false;
+			}
 		}
 		
 		public ref Session CurrentSession() 
 		{
-			return ref _pool[_indices[_currentCount - 1]];
+			var idx = _currentCount > 0 ? _currentCount - 1 : 0;
+			return ref _pool[_indices[idx]];
 		}
 		
 		public bool HasCurrentSession() => _currentCount != 0;
