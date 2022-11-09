@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2022-11-09
+
+### Changed
+- Bugfix: remove an attempt to access non-existing game session.
+
+
 ## [2.0.0] - 2022-11-07
 
 ### Added
@@ -15,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Registration expanded with sending additional user info.
 - Sending of most user properties moved to the server side (install dates, game versions, tester flag).
+
 
 ## [1.0.1] - 2022-10-20
 
