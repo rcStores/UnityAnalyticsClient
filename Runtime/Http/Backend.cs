@@ -128,7 +128,7 @@ namespace Advant.Http
 								   "yyyy-MM-ddTHH:mm:ss.fff", 
 								   CultureInfo.InvariantCulture, 
 								   DateTimeStyles.None, 
-								   out result)
+								   out result);
 			return (false, result);
 		}
 
@@ -165,7 +165,7 @@ namespace Advant.Http
 			string country = null;	
 			try
 			{
-				var requestResult = await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, CancellationToken.None, jsonData: null, timeout)
+				var requestResult = await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, CancellationToken.None, jsonData: null, timeout);
 				AnalEventer.LogAdvantDebugWebRequest("get_country", 
 													requestResult.IsSuccess, 
 													requestResult.StatusCode, 

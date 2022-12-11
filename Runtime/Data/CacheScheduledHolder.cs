@@ -555,7 +555,7 @@ namespace Advant.Data
 				}
 				catch (Exception)
 				{
-					AnalEventer.LogAdvantDebugFailure("deserialize_failure", e, , typeof(TPool));
+					AnalEventer.LogAdvantDebugFailure("deserialize_failure", e, typeof(TPool));
 					result = new TPool();
 				}
 				finally
