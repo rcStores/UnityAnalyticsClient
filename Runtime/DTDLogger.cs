@@ -29,7 +29,7 @@ internal class DTDLogger
 							  Action<string, bool, int, string, string> webRequestLogger,
 							  Action<string, int, bool, int, string, string> dataSendingLogger)
 	{
-			_logMessagee = new MessageDelegate(messageLogger);
+			_logMessage = new MessageDelegate(messageLogger);
 			_logFailure = new FailureDelegate(failureLogger);
 			_logWebRequest = new WebRequestDelegate(webRequestLogger);
 			_logDataSending = new DataSendingDelegate(dataSendingLogger);
