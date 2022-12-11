@@ -24,6 +24,14 @@ namespace Advant
         private static readonly UserRegistrator 		_userRegistrator;
 		private static readonly NetworkTimeHolder 		_timeHolder;
 		
+		private static delegate void LogFailureToDTD(string failure, Exception exception, Type advInnerType = null);
+		private static delegate void LogMessageToDTD(string message);
+		private static delegate void LogWebRequestToDTD(string requestName, 
+														bool isSuccess,
+														int statusCode,
+														string requestError,
+														string exception);
+		
 		private static CancellationTokenSource _networkTimeCTS;
 		
 		private const string CUSTOM_PROPERTIES_TABLE	= "custom_properties";
@@ -61,8 +69,17 @@ namespace Advant
 		/// This method initializes all helper classes of the tool and starts running a sending loop.
 		/// Although there will be no data sending without calling this method, it doesn't affect collecting of data.
 		/// </summary>
-        public static void StartInit(string analyticsPathBase, string registrationPathbase, string abMode)
+        public static void StartInit(string analyticsPathBase, 
+									 string registrationPathbase, 
+									 string abMode, 
+									 Action<string> messageLogger, 
+									 Action<string, Exception, Type> failureLogger, 
+									 Action<string, bool, int, string, string> webRequestLogger)
         {
+			LogMessageToDTD = messageLogger;
+			LogFailureToDTD = failureLogger;
+			LogWebRequestToDTD = webRequestLogger;
+			
             _backend.SetPathBases(analyticsPathBase, registrationPathbase);
 
             string idfv = SystemInfo.deviceUniqueIdentifier;

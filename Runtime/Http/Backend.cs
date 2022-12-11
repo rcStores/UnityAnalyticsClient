@@ -85,7 +85,7 @@ namespace Advant.Http
 				Debug.LogWarning("[ADVANAL] Error while sending data: " + e.Message);
 				Debug.LogWarning("Stack trace: " + e.StackTrace);
 				Debug.LogWarning("Source: " + e.Source);
-				AnalEventer.LogAdvantDebugFailure("send_to_server_failure", e, typeof(T));
+				AdvAnalytics.LogFailureToDTD("send_to_server_failure", e, typeof(T));
 				return new DataSendingResult() { ExceptionMessage = e.Message };
 			}
 			//return true;
@@ -103,7 +103,7 @@ namespace Advant.Http
 																jsonData: null, 
 																timeout: 0, 
 																certificateHandler: new CertificateWhore());
-				AnalEventer.LogAdvantDebugWebRequest("get_network_time", 
+				AdvAnalytics.LogWebRequestToDTD("get_network_time", 
 													requestResult.IsSuccess, 
 													requestResult.StatusCode, 
 													requestResult.RequestError, 
@@ -113,7 +113,7 @@ namespace Advant.Http
 			}
 			catch (Exception e)
 			{
-				AnalEventer.LogAdvantDebugFailure("get_time_failure", e);
+				AdvAnalytics.LogFailureToDTD("get_time_failure", e);
 				Debug.Log("Error while getting network time: " + e.Message);
 				return (false, default);
 			}
@@ -151,7 +151,7 @@ namespace Advant.Http
 			}
 			catch (Exception e)
 			{
-				AnalEventer.LogAdvantDebugFailure("get_tester", e);
+				AdvAnalytics.LogFailureToDTD("get_tester", e);
 				Debug.Log("Error while getting tester info: " + e.Message);
 				response = "false";
 			}
@@ -166,7 +166,7 @@ namespace Advant.Http
 			try
 			{
 				var requestResult = await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, CancellationToken.None, jsonData: null, timeout);
-				AnalEventer.LogAdvantDebugWebRequest("get_country", 
+				AdvAnalytics.LogWebRequestToDTD("get_country", 
 													requestResult.IsSuccess, 
 													requestResult.StatusCode, 
 													requestResult.RequestError, 
@@ -185,7 +185,7 @@ namespace Advant.Http
 			}
 			catch (Exception e)
 			{
-				AnalEventer.LogAdvantDebugFailure("get_country", e);
+				AdvAnalytics.LogFailureToDTD("get_country", e);
 				Debug.Log("Error while getting country info: " + e.Message);
 			}
             return country;		
@@ -215,7 +215,7 @@ namespace Advant.Http
 																RequestType.PUT, 
 																CancellationToken.None, 
 																dto.ToJson());
-				AnalEventer.LogAdvantDebugWebRequest("get_user_id", 
+				AdvAnalytics.LogWebRequestToDTD("get_user_id", 
 													requestResult.IsSuccess, 
 													requestResult.StatusCode, 
 													requestResult.RequestError, 
@@ -236,7 +236,7 @@ namespace Advant.Http
             }
             catch (Exception e)
             {
-				AnalEventer.LogAdvantDebugFailure("get_user_id", e);
+				AdvAnalytics.LogFailureToDTD("get_user_id", e);
 				Debug.LogWarning("Error while sending registration request: " + e.Message);
                 Log.Info(e.Message);
                 result.UserId = -1;
@@ -255,7 +255,7 @@ namespace Advant.Http
 																$"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}", 
 																timeout: 0, 
 																certificateHandler: new CertificateWhore());
-				AnalEventer.LogAdvantDebugWebRequest("put_session_count", 
+				AdvAnalytics.LogWebRequestToDTD("put_session_count", 
 													requestResult.IsSuccess, 
 													requestResult.StatusCode, 
 													requestResult.RequestError, 
@@ -264,7 +264,7 @@ namespace Advant.Http
             }
             catch (Exception e)
             {
-				AnalEventer.LogAdvantDebugFailure("put_session_count", e);
+				AdvAnalytics.LogFailureToDTD("put_session_count", e);
                 Log.Info(e.Message);
             }
             return result;         

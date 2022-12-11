@@ -1,3 +1,4 @@
+using Advant;
 using Advant.Http;
 using Advant.Data.Models;
 using Advant.Logging;
@@ -392,7 +393,7 @@ namespace Advant.Data
 			s.SessionStart = start;
 			s.GameVersion = Application.version;
 			if (_userId == 1)
-				AnalEventer.LogAdvantDebugMessage("cache_holder_user_id_not_set");
+				AdvAnalytics.LogMessageToDTD("cache_holder_user_id_not_set");
 			SetGlobalEventParam("session_id", $"{_userId}_{s.SessionCount}");
 			return ref s;
 		}
@@ -496,7 +497,7 @@ namespace Advant.Data
 			}
 			catch (Exception e)
 			{
-				AnalEventer.LogAdvantDebugFailure("cache_saving_failure", e);
+				AdvAnalytics.LogFailureToDTD("cache_saving_failure", e);
 				Debug.LogWarning("Saving cache failure: " + e.Message);
 			}
         }
@@ -531,7 +532,7 @@ namespace Advant.Data
             }
             catch (Exception e)
             {
-				AnalEventer.LogAdvantDebugFailure("serialize_failure", e, typeof(T));
+				AdvAnalytics.LogFailureToDTD("serialize_failure", e, typeof(T));
                 Log.Info("Failed to serialize. Reason: " + e.Message);
             }
         }
@@ -555,7 +556,7 @@ namespace Advant.Data
 				}
 				catch (Exception)
 				{
-					AnalEventer.LogAdvantDebugFailure("deserialize_failure", e, typeof(TPool));
+					AdvAnalytics.LogFailureToDTD("deserialize_failure", e, typeof(TPool));
 					result = new TPool();
 				}
 				finally
