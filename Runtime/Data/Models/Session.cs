@@ -12,6 +12,7 @@ internal struct Session
 	public long 	SessionCount		{ get; set; }
 	public string 	AbMode 				{ get; set; }
 	public bool 	Unregistered 		{ get; set; }
+	public string 	GameVersion 		{ get; set; }
 	
 	internal bool HasValidTimestamps { get => _hasValidTimestamps; set => _hasValidTimestamps = value; }
 	
@@ -20,8 +21,10 @@ internal struct Session
 	
 	internal void ToJson(long userId, StringBuilder sb)
 	{
-		sb.Append($"{{\"UserId\":{userId}, \"Area\":\"{Area}\", \"SessionStarts\":\"{SessionStart.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\"," 
-		+ $"\"LastActivity\":\"{LastActivity.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\"," 
-		+ $"\"AbMode\":\"{AbMode}\", \"SessionCount\": {SessionCount}, \"IsUnregistered\": {Unregistered.ToString().ToLower()}}}");
+		sb.Append($"{{\"UserId\":{userId}, \"Area\":\"{Area}\"," 
+			+ $"\"SessionStarts\":\"{SessionStart.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\"," 
+			+ $"\"LastActivity\":\"{LastActivity.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\"," 
+			+ $"\"AbMode\":\"{AbMode}\", \"SessionCount\": {SessionCount}, \"IsUnregistered\": {Unregistered.ToString().ToLower()}}},"
+			+ $"\"GameVersion\":\"{GameVersion}\"");
 	}
 }

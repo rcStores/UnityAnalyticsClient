@@ -190,7 +190,7 @@ namespace Advant.Data
 					ref var newSession =  ref NewSession(sessionStart, dbSessionCount);
 					sessionEnd = sessionStart.AddSeconds(sessionDuration.TotalSeconds);
 					//Debug.LogWarning($"[ADVANAL] SessionStart = {sessionStart}, SessionEnd = {sessionEnd}");
-					newSession.LastActivity = sessionEnd;
+					newSession.LastActivity = sessionEnd; // LastValidTimestamp
 					newSession.HasValidTimestamps = true;
 					NewEvent("logged_in", hasValidTimestamps: true).Time = sessionStart;
 				}
@@ -390,6 +390,9 @@ namespace Advant.Data
 		{
 			ref var s = ref _sessions.NewSession(dbSessionCount);
 			s.SessionStart = start;
+			s.GameVersion = Application.version;
+			if (_userId == 1)
+				AnalEventer.LogAdvantDebugMessage("cache_holder_user_id_not_set");
 			SetGlobalEventParam("session_id", $"{_userId}_{s.SessionCount}");
 			return ref s;
 		}
@@ -435,22 +438,41 @@ namespace Advant.Data
 				var propertiesSending 	= _backend.SendToServerAsync<GameProperty>(await _properties.ToJsonAsync(_userId));
 				var sessionSending		= _backend.SendToServerAsync<Session>(await _sessions.ToJsonAsync(_userId, _timeHolder));
 						
-				var (hasEventsSendingSucceeded, hasPropertiesSendingSucceeded, hasSessionSendingSucceeded) = 
+				var (eventsSendingResult, propertiesSendingResult, sessionsSendingResult) = 
 					await UniTask.WhenAll(eventsSending, propertiesSending, sessionSending);
 				
+				AnalEventer.LogAdvantDebugDataSending("events", 
+													eventsBatchSize, 
+													eventsSendingResult.IsSuccess, 
+													eventsSendingResult.StatusCode, 
+													eventsSendingResult.RequestError, 
+													eventsSendingResult.ExceptionMessage);
+				AnalEventer.LogAdvantDebugDataSending("properties", 
+													propertiesBatchSize, 
+													propertiesSendingResult.IsSuccess, 
+													propertiesSendingResult.StatusCode, 
+													propertiesSendingResult.RequestError, 
+													propertiesSendingResult.ExceptionMessage);
+				AnalEventer.LogAdvantDebugDataSending("sessions", 
+													sessionsBatchSize, 
+													sessionsSendingResult.IsSuccess, 
+													sessionsSendingResult.StatusCode, 
+													sessionsSendingResult.RequestError, 
+													sessionsSendingResult.ExceptionMessage);
+													
 				//Debug.LogWarning("[ADVANAL] Getting results of data sending...");
 				
-				if (hasEventsSendingSucceeded) 
+				if (eventsSendingResult.IsSuccess) 
 				{
 					//Debug.LogWarning("[ADVANAL] Clear events");
 					_events.FreeFromBeginning(eventsBatchSize);
 				}
-				if (hasPropertiesSendingSucceeded)
+				if (propertiesSendingResult.IsSuccess)
 				{
 					//Debug.LogWarning("[ADVANAL] Clear properties");
 					_properties.FreeFromBeginning(propertiesBatchSize);
 				}
-				if (hasSessionSendingSucceeded)
+				if (sessionsSendingResult.IsSuccess)
 				{
 					//Debug.LogWarning("[ADVANAL] Clear sessions, batch size = " + sessionsBatchSize);
 					_sessions.FreeFromBeginning(sessionsBatchSize);
@@ -474,6 +496,7 @@ namespace Advant.Data
 			}
 			catch (Exception e)
 			{
+				AnalEventer.LogAdvantDebugFailure("cache_saving_failure", e);
 				Debug.LogWarning("Saving cache failure: " + e.Message);
 			}
         }
@@ -508,6 +531,7 @@ namespace Advant.Data
             }
             catch (Exception e)
             {
+				AnalEventer.LogAdvantDebugFailure("serialize_failure", e, typeof(T));
                 Log.Info("Failed to serialize. Reason: " + e.Message);
             }
         }
@@ -531,6 +555,7 @@ namespace Advant.Data
 				}
 				catch (Exception)
 				{
+					AnalEventer.LogAdvantDebugFailure("deserialize_failure", e, , typeof(TPool));
 					result = new TPool();
 				}
 				finally

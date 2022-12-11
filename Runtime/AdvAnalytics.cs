@@ -120,6 +120,7 @@ namespace Advant
 				_timeHolder.GetInitialTimeAsync(_networkTimeCTS.Token),
 				_userRegistrator.RegistrateAsync(token));
 			
+			_cacheHolder.SetUserId(_userRegistrator.GetUserId());
 			if (!isGettingTimeCancelled)
 				_cacheHolder.StartOrContinueSessionAsync(initialTime, dbSessionCount);
 			
@@ -131,7 +132,6 @@ namespace Advant
 		private static async UniTaskVoid PrepareClientForSendingAsync()
         {
 			SaveEntryPref();
-			_cacheHolder.SetUserId(_userRegistrator.GetUserId());
 			
 			_cacheHolder.NewProperty("country", await _userRegistrator.GetCountryAsync(timeout: 0), USERS_DATA_TABLE);
 			if (!_userRegistrator.IsCheater())

@@ -65,7 +65,7 @@ namespace Advant.Http
 
 #region Public request executors
 
-        public async UniTask<bool> SendToServerAsync<T>(string data)
+        public async UniTask<DataSendingResult> SendToServerAsync<T>(string data)
         {
             Log.Info("Task runs in thread #" + Thread.CurrentThread);
             if (String.IsNullOrEmpty(data))
@@ -73,7 +73,7 @@ namespace Advant.Http
                 //throw new ArgumentException("The cache is empty");
 			try
 			{
-				await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(T)], 
+				return await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(T)], 
 											 RequestType.POST, 
 											 CancellationToken.None, 
 											 jsonData: data, 
@@ -85,49 +85,73 @@ namespace Advant.Http
 				Debug.LogWarning("[ADVANAL] Error while sending data: " + e.Message);
 				Debug.LogWarning("Stack trace: " + e.StackTrace);
 				Debug.LogWarning("Source: " + e.Source);
-				return false;
+				AnalEventer.LogAdvantDebugFailure("send_to_server_failure", e, typeof(T));
+				return new DataSendingResult() { ExceptionMessage = e.Message };
 			}
-			return true;
+			//return true;
         }
 		
 		public async UniTask<(bool, DateTime)> GetNetworkTime(CancellationToken token, int timeout = 0)
 		{
 			string response = null;
+			DataSendingResult requestResult = null;
 			try
 			{
-				response = await ExecuteWebRequestAsync(_getNetworkTimeEndpoint, 
-														RequestType.GET,
-														token,
-														jsonData: null, 
-														timeout: 0, 
-														certificateHandler: new CertificateWhore());
+				requestResult = await ExecuteWebRequestAsync(_getNetworkTimeEndpoint, 
+																RequestType.GET,
+																token,
+																jsonData: null, 
+																timeout: 0, 
+																certificateHandler: new CertificateWhore());
+				AnalEventer.LogAdvantDebugWebRequest("get_network_time", 
+													requestResult.IsSuccess, 
+													requestResult.StatusCode, 
+													requestResult.RequestError, 
+													requestResult.ExceptionMessage);
+				if (requestResult != null && requestResult.IsSuccess)
+					response = requestResult.DownloadHandler;
 			}
 			catch (Exception e)
 			{
+				AnalEventer.LogAdvantDebugFailure("get_time_failure", e);
 				Debug.Log("Error while getting network time: " + e.Message);
+				return (false, default);
 			}
 			
-			if (response == CANCELLED_REQUEST)
+			if (requestResult.DownloadHandler == CANCELLED_REQUEST)
 				return (true, default);
 				
 			//Debug.LogWarning("GetNetworkTime response: " + response);
-            return response is null ? (false, default) : (false, DateTime.ParseExact(response, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture));
+
+			DateTime result;
+			DateTime.TryParseExact(response, 
+								   "yyyy-MM-ddTHH:mm:ss.fff", 
+								   CultureInfo.InvariantCulture, 
+								   DateTimeStyles.None, 
+								   out result)
+			return (false, result);
 		}
 
         public async UniTask<bool> GetTester(long userId)
         {
 			string response = null;
+			DataSendingResult requestResult = null;
 			try
 			{
-				response = await ExecuteWebRequestAsync(_getTesterEndpoint + $"/{userId}", 
+				requestResult = await ExecuteWebRequestAsync(_getTesterEndpoint + $"/{userId}", 
 														RequestType.GET, 
 														CancellationToken.None, 
 														jsonData: null, 
 														timeout: 0, 
 														certificateHandler: new CertificateWhore());
+				if (requestResult.IsSuccess)
+					response = requestResult.DownloadHandler;
+				else
+					response = "false";
 			}
 			catch (Exception e)
 			{
+				AnalEventer.LogAdvantDebugFailure("get_tester", e);
 				Debug.Log("Error while getting tester info: " + e.Message);
 				response = "false";
 			}
@@ -141,9 +165,18 @@ namespace Advant.Http
 			string country = null;	
 			try
 			{
-				var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, CancellationToken.None, jsonData: null, timeout));
-				country = jsonNode["country"];
+				var requestResult = await ExecuteWebRequestAsync(_getCountryEndpoint, RequestType.GET, CancellationToken.None, jsonData: null, timeout)
+				AnalEventer.LogAdvantDebugWebRequest("get_country", 
+													requestResult.IsSuccess, 
+													requestResult.StatusCode, 
+													requestResult.RequestError, 
+													requestResult.ExceptionMessage);
 				
+				if (requestResult.IsSuccess)
+				{
+					var jsonNode = JSONNode.Parse(requestResult.DownloadHandler);
+					country = jsonNode["country"];	
+				}				
 				// country = await ExecuteWebRequestAsync(_getCountryEndpoint, 
 													   // RequestType.GET, 
 													   // CancellationToken.None, 
@@ -152,6 +185,7 @@ namespace Advant.Http
 			}
 			catch (Exception e)
 			{
+				AnalEventer.LogAdvantDebugFailure("get_country", e);
 				Debug.Log("Error while getting country info: " + e.Message);
 			}
             return country;		
@@ -177,16 +211,32 @@ namespace Advant.Http
 			var result = new UserIdResponse();
             try
             {
-                var jsonNode = JSONNode.Parse(await ExecuteWebRequestAsync(_putUserIdEndpoint, 
-																		   RequestType.PUT, 
-																		   CancellationToken.None, 
-																		   dto.ToJson()));
-                result.UserId = jsonNode["userId"];
-                result.SessionCount = jsonNode["sessionCount"];
+				var requestResult = await ExecuteWebRequestAsync(_putUserIdEndpoint, 
+																RequestType.PUT, 
+																CancellationToken.None, 
+																dto.ToJson());
+				AnalEventer.LogAdvantDebugWebRequest("get_user_id", 
+													requestResult.IsSuccess, 
+													requestResult.StatusCode, 
+													requestResult.RequestError, 
+													requestResult.ExceptionMessage);
+				
+				if (requestResult.IsSuccess)
+				{
+					var jsonNode = JSONNode.Parse(requestResult.DownloadHandler);
+					result.UserId = jsonNode["userId"];
+					result.SessionCount = jsonNode["sessionCount"];
+				}
+				else 
+				{
+					result.UserId = -1;
+				}
+                
 				//Debug.LogWarning($"[ADVANAL] GetOrCreateUserIdAsync. UserId = {result.UserId}, SessionCount = {result.SessionCount}");
             }
             catch (Exception e)
             {
+				AnalEventer.LogAdvantDebugFailure("get_user_id", e);
 				Debug.LogWarning("Error while sending registration request: " + e.Message);
                 Log.Info(e.Message);
                 result.UserId = -1;
@@ -199,16 +249,22 @@ namespace Advant.Http
 			var result = false;
             try
             {
-                result = Convert.ToBoolean(
-					await ExecuteWebRequestAsync(_putSessionCountEndpoint, 
-												 RequestType.PUT, 
-												 CancellationToken.None,
-												 $"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}", 
-												 timeout: 0, 
-												 certificateHandler: new CertificateWhore()));
+				var requestResult = await ExecuteWebRequestAsync(_putSessionCountEndpoint, 
+																RequestType.PUT, 
+																CancellationToken.None,
+																$"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}", 
+																timeout: 0, 
+																certificateHandler: new CertificateWhore());
+				AnalEventer.LogAdvantDebugWebRequest("put_session_count", 
+													requestResult.IsSuccess, 
+													requestResult.StatusCode, 
+													requestResult.RequestError, 
+													requestResult.ExceptionMessage);
+                result = Convert.ToBoolean(requestResult.DownloadHandler);
             }
             catch (Exception e)
             {
+				AnalEventer.LogAdvantDebugFailure("put_session_count", e);
                 Log.Info(e.Message);
             }
             return result;         
@@ -218,7 +274,7 @@ namespace Advant.Http
 
 #region Implementation
         
-		private async UniTask<string> ExecuteWebRequestAsync(string path, 
+		private async UniTask<DataSendingResult> ExecuteWebRequestAsync(string path, 
 															 RequestType type,
 															 CancellationToken token,
 															 string jsonData = null, 
@@ -226,7 +282,7 @@ namespace Advant.Http
 															 CertificateHandler certificateHandler = null)
         {
 			using var request = CreateRequest(path, type, jsonData, timeout, certificateHandler);
-			string result = null;
+			var result = new DataSendingResult();
 			UnityWebRequest operation = null;
 			try
 			{
@@ -237,12 +293,20 @@ namespace Advant.Http
 				operation = resultReq;
 				
 				if (isCancelled) 
-					result = CANCELLED_REQUEST;
+					result.DownloadHandler = CANCELLED_REQUEST;
 				else 
-					result = operation.downloadHandler.text;
+					result.DownloadHandler = operation.downloadHandler.text;
+				
+				result.IsSuccess = operation.responseCode == 200 || operation.responseCode == 201;
+				result.StatusCode = operation.responseCode;
+				result.RequestError = operation.error;
 			}
 			catch (Exception e)
 			{
+				result.IsSuccess = false;
+				result.StatusCode = request.responseCode;
+				result.RequestError = operation.error;
+				result.ExceptionMessage = e.Message;
 				// if (path == _getCountryEndpoint)
 				// {
 					// Debug.Log($"GetCountry response:\nCode = {request.responseCode}, result = {request.result}, error = {request.error}");
@@ -253,7 +317,8 @@ namespace Advant.Http
 				// File.WriteAllText(
 					// Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
 					// Encoding.UTF8.GetString(request.uploadHandler.data));
-				throw e;
+					
+				//throw e;
 			}
 			// if (path == _getCountryEndpoint)
 				// Debug.Log($"GetCountry response:\nCode = {operation.responseCode}, result = {operation.result}");
