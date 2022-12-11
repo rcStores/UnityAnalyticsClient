@@ -65,7 +65,7 @@ namespace Advant
 			_dtdLogger.LogFailure(failure, exception, advInnerType);
 		}
 
-		public static void LogAdvantDebugMessage(string message)
+		public static void LogMessageToDTD(string message)
 		{
 			_dtdLogger.LogMessage(message);
 		}
