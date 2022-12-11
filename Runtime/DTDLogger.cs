@@ -9,13 +9,13 @@ internal class DTDLogger
 	private delegate void MessageDelegate(string message);
 	private delegate void WebRequestDelegate(string requestName, 
 											  bool isSuccess,
-											  int statusCode,
+											  long statusCode,
 											  string requestError,
 											  string exception);
 	private delegate void DataSendingDelegate(string dataType,
 											   int batchSize,
 											   bool isSuccess,
-											   int statusCode,
+											   long statusCode,
 											   string requestError,
 											   string exception);
 											   
@@ -26,8 +26,8 @@ internal class DTDLogger
 
 	public void InitDelegates(Action<string> messageLogger, 
 							  Action<string, Exception, Type> failureLogger, 
-							  Action<string, bool, int, string, string> webRequestLogger,
-							  Action<string, int, bool, int, string, string> dataSendingLogger)
+							  Action<string, bool, long, string, string> webRequestLogger,
+							  Action<string, int, bool, long, string, string> dataSendingLogger)
 	{
 			_logMessage = new MessageDelegate(messageLogger);
 			_logFailure = new FailureDelegate(failureLogger);
@@ -49,7 +49,7 @@ internal class DTDLogger
 	
 	public void LogWebRequest(string requestName, 
 							  bool isSuccess,
-							  int statusCode,
+							  long statusCode,
 							  string requestError,
 							  string exception)
 	{
@@ -60,7 +60,7 @@ internal class DTDLogger
 	public void LogDataSending(string dataType,
 							   int batchSize,
 							   bool isSuccess,
-							   int statusCode,
+							   long statusCode,
 							   string requestError,
 							   string exception)
 	{
