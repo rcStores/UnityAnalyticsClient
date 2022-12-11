@@ -18,28 +18,33 @@ internal class DTDLogger
 											   int statusCode,
 											   string requestError,
 											   string exception);
+											   
+	private FailureDelegate _logFailure;
+	private MessageDelegate _logMessage;
+	private WebRequestDelegate _logWebRequest;
+	private DataSendingDelegate _logDataSending;
 
 	public void InitDelegates(Action<string> messageLogger, 
 							  Action<string, Exception, Type> failureLogger, 
 							  Action<string, bool, int, string, string> webRequestLogger,
 							  Action<string, int, bool, int, string, string> dataSendingLogger)
 	{
-			MessageDelegate = new MessageDelegate(messageLogger);
-			FailureDelegate = new FailureDelegate(failureLogger);
-			WebRequestDelegate = new WebRequestDelegate(webRequestLogger);
-			DataSendingDelegate = new DataSendingDelegate(dataSendingLogger);
+			_messageDelegate = new MessageDelegate(messageLogger);
+			_failureDelegate = new FailureDelegate(failureLogger);
+			_webRequestDelegate = new WebRequestDelegate(webRequestLogger);
+			_dataSendingDelegate = new DataSendingDelegate(dataSendingLogger);
 	}
 														
 	public void LogMessage(string message)
 	{
-		if (MessageDelegate != null)
-			MessageDelegate(message);
+		if (_logMessage != null)
+			_logMessage(message);
 	}
 	
 	public void LogFailure(string failure, Exception exception, Type advInnerType = null)
 	{
-		if (FailureDelegate != null)
-			FailureDelegate(failure, exception, advInnerType);
+		if (_logFailure != null)
+			_logFailure(failure, exception, advInnerType);
 	}
 	
 	public void LogWebRequest(string requestName, 
@@ -48,8 +53,8 @@ internal class DTDLogger
 							  string requestError,
 							  string exception)
 	{
-		if (WebRequestDelegate != null)
-			WebRequestDelegate(requestName, isSuccess, statusCode, requestError, exception);
+		if (_logWebRequest != null)
+			_logWebRequest(requestName, isSuccess, statusCode, requestError, exception);
 	}
 	
 	public void LogDataSending(string dataType,
@@ -59,8 +64,8 @@ internal class DTDLogger
 							   string requestError,
 							   string exception)
 	{
-		if (DataSendingDelegate != null)
-			DataSendingDelegate(dataType, batchSize, isSuccess, statusCode, requestError, exception);
+		if (_logDataSending != null)
+			_logDataSending(dataType, batchSize, isSuccess, statusCode, requestError, exception);
 	}
 							
 }
