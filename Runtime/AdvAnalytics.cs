@@ -72,7 +72,7 @@ namespace Advant
 
 		public static void LogWebRequestToDTD(string requestName, 
 												    bool isSuccess,
-												    int statusCode,
+												    long statusCode,
 												    string requestError,
 												    string exception)
 		{
@@ -82,7 +82,7 @@ namespace Advant
 		public static void LogDataSendingToDTD(string dataType,
 													 int batchSize,
 													 bool isSuccess,
-													 int statusCode,
+													 long statusCode,
 													 string requestError,
 													 string exception)
 		{
@@ -101,8 +101,8 @@ namespace Advant
 									 string abMode, 
 									 Action<string> messageLogger, 
 									 Action<string, Exception, Type> failureLogger, 
-									 Action<string, bool, int, string, string> webRequestLogger,
-									 Action<string, int, bool, int, string, string> dataSendingLogger)
+									 Action<string, bool, long, string, string> webRequestLogger,
+									 Action<string, int, bool, long, string, string> dataSendingLogger)
         {
 			_dtdLogger.InitDelegates(messageLogger, failureLogger, webRequestLogger, dataSendingLogger);
 			
