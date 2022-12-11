@@ -69,7 +69,7 @@ namespace Advant.Http
         {
             Log.Info("Task runs in thread #" + Thread.CurrentThread);
             if (String.IsNullOrEmpty(data))
-				return false;
+				return new DataSendingResult() { IsSuccess = false, ExceptionMessage = "Serialized game data string is null or empty" };
                 //throw new ArgumentException("The cache is empty");
 			try
 			{
