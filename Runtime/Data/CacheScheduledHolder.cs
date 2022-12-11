@@ -554,7 +554,7 @@ namespace Advant.Data
 				
 					result = (TPool)formatter.Deserialize(fs);
 				}
-				catch (Exception)
+				catch (Exception e)
 				{
 					AdvAnalytics.LogFailureToDTD("deserialize_failure", e, typeof(TPool));
 					result = new TPool();
