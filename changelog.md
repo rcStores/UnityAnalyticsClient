@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.2] - 2022-12-12
+
+### Added
+- DevToDev logger receiving delegates for sending analytic data within the SDK.
+- Static wrapper method for logging without deep injection of the logger class.
+- Wrapper methods' invocations.
+
 ## [2.0.1] - 2022-11-09
 
 ### Changed
