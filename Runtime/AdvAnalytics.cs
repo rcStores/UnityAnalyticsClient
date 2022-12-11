@@ -23,14 +23,7 @@ namespace Advant
         private static readonly CacheScheduledHolder 	_cacheHolder;
         private static readonly UserRegistrator 		_userRegistrator;
 		private static readonly NetworkTimeHolder 		_timeHolder;
-		
-		private static delegate void LogFailureToDTD(string failure, Exception exception, Type advInnerType = null);
-		private static delegate void LogMessageToDTD(string message);
-		private static delegate void LogWebRequestToDTD(string requestName, 
-														bool isSuccess,
-														int statusCode,
-														string requestError,
-														string exception);
+		private static readonly DTDLogger 				_dtdLogger;
 		
 		private static CancellationTokenSource _networkTimeCTS;
 		
@@ -45,6 +38,7 @@ namespace Advant
             _cacheHolder 		= new CacheScheduledHolder(USERS_DATA_TABLE, _backend, _timeHolder);
             _userRegistrator 	= new UserRegistrator(USERS_DATA_TABLE, _backend);
 			_networkTimeCTS 	= new CancellationTokenSource();
+			_dtdLogger 			= new DTDLogger();
         }
 		
 		/// <summary>
@@ -63,6 +57,39 @@ namespace Advant
 		
 		private static bool HasEntryPref() 	=> PlayerPrefs.GetInt(ENTRY_PREF, 0) != 0;
 		private static void SaveEntryPref()	=> PlayerPrefs.SetInt(ENTRY_PREF, 1);
+		
+#region DTD Logging
+		
+		public static void LogFailureToDTD(string failure, Exception exception, Type advInnerType = null)
+		{
+			_dtdLogger.LogFailure(failure, exception, advInnerType);
+		}
+
+		public static void LogAdvantDebugMessage(string message)
+		{
+			_dtdLogger.LogMessage(message);
+		}
+
+		public static void LogWebRequestToDTD(string requestName, 
+												    bool isSuccess,
+												    int statusCode,
+												    string requestError,
+												    string exception)
+		{
+			_dtdLogger.LogWebRequest(requestName, isSuccess, statusCode, requestError, exception);
+		}
+
+		public static void LogDataSendingToDTD(string dataType,
+													 int batchSize,
+													 bool isSuccess,
+													 int statusCode,
+													 string requestError,
+													 string exception)
+		{
+			_dtdLogger.LogDataSending(dataType, batchSize, isSuccess, statusCode, requestError, exception);
+		}
+	
+#endregion
 
 #region Initialization
 		/// <summary>
@@ -74,11 +101,10 @@ namespace Advant
 									 string abMode, 
 									 Action<string> messageLogger, 
 									 Action<string, Exception, Type> failureLogger, 
-									 Action<string, bool, int, string, string> webRequestLogger)
+									 Action<string, bool, int, string, string> webRequestLogger,
+									 Action<string, int, bool, int, string, string> dataSendingLogger)
         {
-			LogMessageToDTD = messageLogger;
-			LogFailureToDTD = failureLogger;
-			LogWebRequestToDTD = webRequestLogger;
+			_dtdLogger.InitDelegates(messageLogger, failureLogger, webRequestLogger, dataSendingLogger);
 			
             _backend.SetPathBases(analyticsPathBase, registrationPathbase);
 

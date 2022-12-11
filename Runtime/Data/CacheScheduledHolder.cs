@@ -442,19 +442,19 @@ namespace Advant.Data
 				var (eventsSendingResult, propertiesSendingResult, sessionsSendingResult) = 
 					await UniTask.WhenAll(eventsSending, propertiesSending, sessionSending);
 				
-				AnalEventer.LogAdvantDebugDataSending("events", 
+				AdvAnalytics.LogDataSendingToDTD("events", 
 													eventsBatchSize, 
 													eventsSendingResult.IsSuccess, 
 													eventsSendingResult.StatusCode, 
 													eventsSendingResult.RequestError, 
 													eventsSendingResult.ExceptionMessage);
-				AnalEventer.LogAdvantDebugDataSending("properties", 
+				AdvAnalytics.LogDataSendingToDTD("properties", 
 													propertiesBatchSize, 
 													propertiesSendingResult.IsSuccess, 
 													propertiesSendingResult.StatusCode, 
 													propertiesSendingResult.RequestError, 
 													propertiesSendingResult.ExceptionMessage);
-				AnalEventer.LogAdvantDebugDataSending("sessions", 
+				AdvAnalytics.LogDataSendingToDTD("sessions", 
 													sessionsBatchSize, 
 													sessionsSendingResult.IsSuccess, 
 													sessionsSendingResult.StatusCode, 
