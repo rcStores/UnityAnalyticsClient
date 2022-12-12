@@ -4,7 +4,9 @@ using System.Globalization;
 using System.Text;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
+
 using Advant.Data.Models;
+using Advant;
 
 namespace Advant.Data
 {	
@@ -70,6 +72,7 @@ namespace Advant.Data
 			}
 			catch (Exception e)
 			{
+				AdvAnalytics.LogFailureToDTD("json_serialization_failure", e, typeof(GamePSession));
 				Debug.LogError("Game session JSON serialization failed.");
 			}
 			
