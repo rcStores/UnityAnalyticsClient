@@ -6,6 +6,7 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 
 using Advant.Data.Models;
+using Advant;
 
 namespace Advant.Data
 {
@@ -129,6 +130,7 @@ namespace Advant.Data
 			catch (Exception e)
 			{
 				Debug.LogError("Game properties JSON serialization failed.");
+				AdvAnalytics.LogFailureToDTD("json_serialization_failure", e, typeof(GameProperty));
 			}
 			
 			return result;
@@ -177,6 +179,7 @@ namespace Advant.Data
 			catch (Exception e)
 			{
 				Debug.LogError("Game events JSON serialization failed: " + e.Message);
+				AdvAnalytics.LogFailureToDTD("json_serialization_failure", e, typeof(GameEvent));
 			}
 			//Debug.LogWarning("[ADVANT] Events in JSON:\n " + result);
 			return result;
