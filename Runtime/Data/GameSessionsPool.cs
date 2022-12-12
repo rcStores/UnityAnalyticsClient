@@ -72,7 +72,7 @@ namespace Advant.Data
 			}
 			catch (Exception e)
 			{
-				AdvAnalytics.LogFailureToDTD("json_serialization_failure", e, typeof(GameSession));
+				AdvAnalytics.LogFailureToDTD("json_serialization_failure", e, typeof(Session));
 				Debug.LogError("Game session JSON serialization failed.");
 			}
 			
