@@ -50,15 +50,18 @@ namespace Advant
                 if (response.UserId == -1)
                 {
 					Debug.LogWarning("[ADVANAL] User registration failed");
+					AdvAnalytics.LogMessageToDTD("registration_failed");
 					await UniTask.Delay(
 						GET_ID_RETRY_INTERVAL, 
 						false, 
 						PlayerLoopTiming.PostLateUpdate);
                     Log.Info("retry");
 					Debug.LogWarning("[ADVANAL] Retry user registration");
+	
                 }
                 else
                 {
+					AdvAnalytics.LogMessageToDTD("registration_succseeded");
                     _userId = response.UserId;
                     PlayerPrefs.SetInt(USER_ID_PREF, Convert.ToInt32(_userId));
                     _sessionCount = result = response.SessionCount;
