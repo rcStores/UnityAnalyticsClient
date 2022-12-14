@@ -33,12 +33,12 @@ namespace Advant
 
         static AdvAnalytics()
         {
+			_dtdLogger 			= new DTDLogger();
             _backend 			= new Backend();
 			_timeHolder			= new NetworkTimeHolder(_backend);
             _cacheHolder 		= new CacheScheduledHolder(USERS_DATA_TABLE, _backend, _timeHolder);
             _userRegistrator 	= new UserRegistrator(USERS_DATA_TABLE, _backend);
 			_networkTimeCTS 	= new CancellationTokenSource();
-			_dtdLogger 			= new DTDLogger();
         }
 		
 		/// <summary>
@@ -62,12 +62,12 @@ namespace Advant
 		
 		public static void LogFailureToDTD(string failure, Exception exception, Type advInnerType = null)
 		{
-			_dtdLogger.LogFailure(failure, exception, advInnerType);
+			_dtdLogger?.LogFailure(failure, exception, advInnerType);
 		}
 
 		public static void LogMessageToDTD(string message)
 		{
-			_dtdLogger.LogMessage(message);
+			_dtdLogger?.LogMessage(message);
 		}
 
 		public static void LogWebRequestToDTD(string requestName, 
@@ -76,7 +76,7 @@ namespace Advant
 												    string requestError,
 												    string exception)
 		{
-			_dtdLogger.LogWebRequest(requestName, isSuccess, statusCode, requestError, exception);
+			_dtdLogger?.LogWebRequest(requestName, isSuccess, statusCode, requestError, exception);
 		}
 
 		public static void LogDataSendingToDTD(string dataType,
@@ -86,7 +86,7 @@ namespace Advant
 													 string requestError,
 													 string exception)
 		{
-			_dtdLogger.LogDataSending(dataType, batchSize, isSuccess, statusCode, requestError, exception);
+			_dtdLogger?.LogDataSending(dataType, batchSize, isSuccess, statusCode, requestError, exception);
 		}
 	
 #endregion
