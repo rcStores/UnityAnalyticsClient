@@ -294,7 +294,9 @@ namespace Advant.Http
 				
 				if (isCancelled) 
 					result.DownloadHandler = CANCELLED_REQUEST;
-				else 
+				else if (operation.downloadHandler == null)
+					AdvAnalytics.LogFailureToDTD($"empty_download_handler: {path}", e);
+				else
 					result.DownloadHandler = operation.downloadHandler.text;
 				
 				result.IsSuccess = operation.responseCode == 200 || operation.responseCode == 201;
@@ -305,8 +307,9 @@ namespace Advant.Http
 			{
 				result.IsSuccess = false;
 				result.StatusCode = request.responseCode;
-				result.RequestError = operation.error;
+				result.RequestError = request.error;
 				result.ExceptionMessage = e.Message;
+				AdvAnalytics.LogFailureToDTD($"web_request: {path}", e);
 				// if (path == _getCountryEndpoint)
 				// {
 					// Debug.Log($"GetCountry response:\nCode = {request.responseCode}, result = {request.result}, error = {request.error}");
