@@ -295,7 +295,7 @@ namespace Advant.Http
 				if (isCancelled) 
 					result.DownloadHandler = CANCELLED_REQUEST;
 				else if (operation.downloadHandler == null)
-					AdvAnalytics.LogFailureToDTD($"empty_download_handler: {path}", e);
+					AdvAnalytics.LogMessageToDTD($"empty_download_handler: {path}");
 				else
 					result.DownloadHandler = operation.downloadHandler.text;
 				
