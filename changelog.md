@@ -6,7 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.0.3] - 2022-12-12
+
+## [2.0.5] - 2022-12-17
+
+### Fixed
+- NullReferenceException while handling http response.
+
+
+## [2.0.4] - 2022-12-12
 
 ### Fixed
 - Crashes occuring due to invoking DTDLogger's methods before the object is initialized.
