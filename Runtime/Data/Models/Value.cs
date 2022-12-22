@@ -56,7 +56,7 @@ internal struct Value
 		_name = name;
 		_value = value is null ?
 			"null" :
-			$"\"{value.Replace(Environment.NewLine, @"\\n")}\"";
+			$"\"{value.Replace(Environment.NewLine, @"\\n").Replace("\\\"", "\")}\"";
 		_type = EValueType.String;
 	}
 	
