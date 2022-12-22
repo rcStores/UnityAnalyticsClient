@@ -309,7 +309,7 @@ namespace Advant.Http
 				result.StatusCode = request.responseCode;
 				result.RequestError = request.error;
 				result.ExceptionMessage = e.Message;
-				Debug.LogError($"Executing web-request {path} {result.StatusCode}: {requestResult.ExceptionMessage},\n{result.RequestError}");
+				Debug.LogError($"Executing web-request {path} {result.StatusCode}: {result.ExceptionMessage},\n{result.RequestError}");
 				AdvAnalytics.LogFailureToDTD($"web_request: {path}", e);
 				// if (path == _getCountryEndpoint)
 				// {
