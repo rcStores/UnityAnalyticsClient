@@ -54,9 +54,10 @@ internal struct Value
 	public void Set(string name, string value)
 	{
 		_name = name;
+		value = value?.Replace(Environment.NewLine, @"\\n")?.Replace(@"\"", @""");
 		_value = value is null ?
 			"null" :
-			$"\"{value.Replace(Environment.NewLine, @"\\n").Replace("\\\"", "\")}\"";
+			$"\"{}\"";
 		_type = EValueType.String;
 	}
 	
