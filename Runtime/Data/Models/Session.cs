@@ -24,7 +24,7 @@ internal struct Session
 		sb.Append($"{{\"UserId\":{userId}, \"Area\":\"{Area}\"," 
 			+ $"\"SessionStarts\":\"{SessionStart.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\"," 
 			+ $"\"LastActivity\":\"{LastActivity.ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)}\"," 
-			+ $"\"AbMode\":\"{AbMode}\", \"SessionCount\": {SessionCount}, \"IsUnregistered\": {Unregistered.ToString().ToLower()}}},"
-			+ $"\"GameVersion\":\"{GameVersion}\"");
+			+ $"\"AbMode\":\"{AbMode}\", \"SessionCount\": {SessionCount}, \"IsUnregistered\": {Unregistered.ToString().ToLower()},"
+			+ $"\"GameVersion\":\"{GameVersion}\"}}");
 	}
 }
