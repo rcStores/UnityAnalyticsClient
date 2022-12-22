@@ -318,9 +318,9 @@ namespace Advant.Http
 						// Debug.Log($"DownloadHandler: {operation.downloadHandler.text}");
 				// }
 				
-				// File.WriteAllText(
-					// Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
-					// Encoding.UTF8.GetString(request.uploadHandler.data));
+				File.WriteAllText(
+					Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
+					Encoding.UTF8.GetString(request.uploadHandler.data));
 					
 				//throw e;
 			}
