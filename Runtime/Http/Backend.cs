@@ -309,7 +309,7 @@ namespace Advant.Http
 				result.StatusCode = request.responseCode;
 				result.RequestError = request.error;
 				result.ExceptionMessage = e.Message;
-				Debug.LogError($"Executing web-request {path} {result.StatusCode}: {result.ExceptionMessage},\n{result.RequestError}");
+				//Debug.LogError($"Executing web-request {path} {result.StatusCode}: {result.ExceptionMessage},\n{result.RequestError}");
 				AdvAnalytics.LogFailureToDTD($"web_request: {path}", e);
 				// if (path == _getCountryEndpoint)
 				// {
@@ -318,9 +318,9 @@ namespace Advant.Http
 						// Debug.Log($"DownloadHandler: {operation.downloadHandler.text}");
 				// }
 				
-				File.WriteAllText(
-					Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
-					Encoding.UTF8.GetString(request.uploadHandler.data));
+				//File.WriteAllText(
+					//Path.Combine(Application.persistentDataPath, "UploadHandlerData"), 
+					//Encoding.UTF8.GetString(request.uploadHandler.data));
 					
 				//throw e;
 			}
