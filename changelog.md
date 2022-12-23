@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.6] - 2022-12-22
+
+### Fixed
+- JSON session building.
+- String values escaping.
 
 ## [2.0.5] - 2022-12-17
 
