@@ -465,17 +465,17 @@ namespace Advant.Data
 				
 				if (eventsSendingResult.IsSuccess) 
 				{
-					Debug.LogWarning("[ADVANAL] Clear events");
+					//Debug.LogWarning("[ADVANAL] Clear events");
 					_events.FreeFromBeginning(eventsBatchSize);
 				}
 				if (propertiesSendingResult.IsSuccess)
 				{
-					Debug.LogWarning("[ADVANAL] Clear properties");
+					//Debug.LogWarning("[ADVANAL] Clear properties");
 					_properties.FreeFromBeginning(propertiesBatchSize);
 				}
 				if (sessionsSendingResult.IsSuccess)
 				{
-					Debug.LogWarning("[ADVANAL] Clear sessions, batch size = " + sessionsBatchSize);
+					//Debug.LogWarning("[ADVANAL] Clear sessions, batch size = " + sessionsBatchSize);
 					_sessions.FreeFromBeginning(sessionsBatchSize);
 				}
 			}
