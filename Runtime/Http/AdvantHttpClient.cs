@@ -27,7 +27,7 @@ internal interface IHttpClient
 	public UniTask<bool> PutSessionCount(long userId, long sessionCount);
 }	
 	
-internal class AdvantHttpClient : HttpClient
+internal class AdvantHttpClient : HttpClient, IHttpClient
 {
 	private readonly Dictionary<Type, string> _gameDataEndpointsByType = new();
 
