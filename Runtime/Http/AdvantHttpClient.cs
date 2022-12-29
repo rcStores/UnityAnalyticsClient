@@ -72,13 +72,17 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 			result.IsSuccess = response.IsSuccessStatusCode;
 			result.StatusCode = (int)response.StatusCode;
 			result.RequestError = response.ReasonPhrase;
+			
+			Debug.LogInformation($"SendToServerAsync: {result.StatusCode}-{result.RequestError}");
 		}
 		catch (HttpRequestException hre)
 		{
 			result.IsSuccess = false;
 			result.RequestError = "Connection/DNS/certificate/timeout issue";
 			result.ExceptionMessage = $"Message: {hre.Message}\nInner exception message: {hre.InnerException?.Message}";
-
+			
+			Debug.LogInformation($"SendToServerAsync: {result.StatusCode}-{result.RequestError}\n{result.ExceptionMessage}");
+			
 			AdvAnalytics.LogFailureToDTD("send_to_server_failure", hre, typeof(TGameData));
 		}
 		catch (UriFormatException ufe)
@@ -86,6 +90,8 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 			result.IsSuccess = false;
 			result.RequestError = $"{_gameDataEndpointsByType[typeof(TGameData)]} is not correct absolute or relative URI";
 			result.ExceptionMessage = $"Message: {ufe.Message}\nInner exception message: {ufe.InnerException?.Message}";
+			
+			Debug.LogInformation($"SendToServerAsync: {result.StatusCode}-{result.RequestError}\n{result.ExceptionMessage}");
 
 			AdvAnalytics.LogFailureToDTD("send_to_server_failure", ufe, typeof(TGameData));
 		}
@@ -94,6 +100,8 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 			result.IsSuccess = false;
 			result.RequestError = "Request URI must be relative otherwise BaseAddress must be set";
 			result.ExceptionMessage = $"Message: {ioe.Message}\nInner exception message: {ioe.InnerException?.Message}";
+			
+			Debug.LogInformation($"SendToServerAsync: {result.StatusCode}-{result.RequestError}\n{result.ExceptionMessage}");
 
 			AdvAnalytics.LogFailureToDTD("send_to_server_failure", ioe, typeof(TGameData));
 		}
@@ -115,7 +123,7 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 			if (isCancelled)
 				return (true, default);
 			response.EnsureSuccessStatusCode();
-
+			Debug.LogInformation($"GetNetworkTime: {response.StatusCode}-{response.ReasonPhrase}");
 			Advant.AdvAnalytics.LogWebRequestToDTD("get_network_time",
 													response.IsSuccessStatusCode,
 													(int)response.StatusCode,
@@ -132,11 +140,13 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 		catch (HttpRequestException hre)
 		{
 			Advant.AdvAnalytics.LogFailureToDTD("get_time_failure", hre);
+			Debug.LogInformation($"GetNetworkTime: {hre.Message}");
 			return (false, default);
 		}
 		catch (Exception e)
 		{
 			Advant.AdvAnalytics.LogFailureToDTD("get_time_unexpected_failure", e);
+			Debug.LogInformation($"GetNetworkTime: {e.Message}");
 			return (false, default);
 		}
 		finally
@@ -156,15 +166,18 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 													(int)response.StatusCode,
 													response.ReasonPhrase,
 													exception: null);
+			Debug.LogInformation($"GetNetworkTime: {response.StatusCode}-{response.ReasonPhrase}");
 			return Convert.ToBoolean(await response.Content.ReadAsStringAsync());
 		}
 		catch (HttpRequestException hre)
 		{
 			Advant.AdvAnalytics.LogFailureToDTD("get_tester_failure", hre);
+			Debug.LogInformation($"GetTester: {hre.Message}");
 			return false;
 		}
 		catch (Exception e)
 		{
+			Debug.LogInformation($"GetTester: {e.Message}");
 			Advant.AdvAnalytics.LogFailureToDTD("get_tester_unexpected_failure", e);
 			return false;
 		}
@@ -185,15 +198,18 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 													(int)response.StatusCode,
 													response.ReasonPhrase,
 													exception: null);
+			Debug.LogInformation($"GetCountryAsync: {response.StatusCode}-{response.ReasonPhrase}");
 			var jsonNode = JSONNode.Parse(await response.Content.ReadAsStringAsync());
 			return jsonNode["country"];
 		}
 		catch (HttpRequestException hre)
 		{
+			Debug.LogInformation($"GetCountry: {hre.Message}");
 			AdvAnalytics.LogFailureToDTD("get_country", hre);
 		}
 		catch (Exception e)
 		{
+			Debug.LogInformation($"GetCountry: {e.Message}");
 			Advant.AdvAnalytics.LogFailureToDTD("get_country_unexpected_failure", e);
 		}
 		finally
@@ -226,12 +242,14 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 			{
 				result.UserId = -1;
 			}
+			Debug.LogInformation($"GetOrCreateUserId: {response.StatusCode}-{response.ReasonPhrase}");
 
 			//Debug.LogWarning($"[ADVANAL] GetOrCreateUserIdAsync. UserId = {result.UserId}, SessionCount = {result.SessionCount}");
 		}
 		catch (Exception e)
 		{
 			AdvAnalytics.LogFailureToDTD("get_user_id", e);
+			Debug.LogInformation($"GetOrCreateUserId: {e.Message}");
 			result.UserId = -1;
 		}
 		return result;
