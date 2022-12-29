@@ -63,6 +63,13 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 	public async UniTask<DataSendingResult> SendToServerAsync<TGameData>(string json)
 	{
 		var result = new DataSendingResult();
+		if (string.IsNullOrEmpty(json))
+		{
+			result.IsSuccess = true;
+			result.RequestError = "Empty content";
+			return result;
+		}
+		
 		try
 		{
 			var response = await PostAsync(
