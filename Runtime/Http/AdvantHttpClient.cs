@@ -19,7 +19,7 @@ namespace Advant.Http
 internal interface IHttpClient
 {
 	public void SetPathBases(string analytics, string registration);
-	public UniTask<DataSendingResult> SendAnalyticData<TGameData>(string json);
+	public UniTask<DataSendingResult> SendToServerAsync<TGameData>(string json);
 	public UniTask<(bool, DateTime)> GetNetworkTime(CancellationToken token, int timeout = 0);
 	public UniTask<bool> GetTester(long userId);
 	public UniTask<string> GetCountryAsync(int timeout);
@@ -60,7 +60,7 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 
 	#endregion
 
-	public async UniTask<DataSendingResult> SendAnalyticData<TGameData>(string json)
+	public async UniTask<DataSendingResult> SendToServerAsync<TGameData>(string json)
 	{
 		var result = new DataSendingResult();
 		try
