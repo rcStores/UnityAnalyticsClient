@@ -447,19 +447,22 @@ namespace Advant.Data
 													eventsSendingResult.IsSuccess, 
 													eventsSendingResult.StatusCode, 
 													eventsSendingResult.RequestError, 
-													eventsSendingResult.ExceptionMessage);
+													eventsSendingResult.ExceptionMessage,
+													eventsSendingResult.Age);
 				AdvAnalytics.LogDataSendingToDTD("properties", 
 													propertiesBatchSize, 
 													propertiesSendingResult.IsSuccess, 
 													propertiesSendingResult.StatusCode, 
 													propertiesSendingResult.RequestError, 
-													propertiesSendingResult.ExceptionMessage);
+													propertiesSendingResult.ExceptionMessage,
+													propertiesSendingResult.Age);
 				AdvAnalytics.LogDataSendingToDTD("sessions", 
 													sessionsBatchSize, 
 													sessionsSendingResult.IsSuccess, 
 													sessionsSendingResult.StatusCode, 
 													sessionsSendingResult.RequestError, 
-													sessionsSendingResult.ExceptionMessage);
+													sessionsSendingResult.ExceptionMessage,
+													sesseionsSendingResult.Age);
 													
 				//Debug.LogWarning("[ADVANAL] Getting results of data sending...");
 				

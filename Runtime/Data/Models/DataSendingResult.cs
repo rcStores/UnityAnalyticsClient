@@ -8,6 +8,7 @@ public class DataSendingResult
 	public string RequestError { get; set; }
 	public string ExceptionMessage { get; set; }
 	public string DownloadHandler { get; set; }
+	public string Age { get; set; }
 }
 
 }

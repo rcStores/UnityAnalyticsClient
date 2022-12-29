@@ -19,7 +19,7 @@ namespace Advant
 {
     public static class AdvAnalytics 
     {
-        private static readonly Backend 				_backend;
+        private static readonly AdvantHttpClient		_backend;
         private static readonly CacheScheduledHolder 	_cacheHolder;
         private static readonly UserRegistrator 		_userRegistrator;
 		private static readonly NetworkTimeHolder 		_timeHolder;
@@ -84,9 +84,10 @@ namespace Advant
 													 bool isSuccess,
 													 long statusCode,
 													 string requestError,
-													 string exception)
+													 string exception,
+													 string age)
 		{
-			_dtdLogger?.LogDataSending(dataType, batchSize, isSuccess, statusCode, requestError, exception);
+			_dtdLogger?.LogDataSending(dataType, batchSize, isSuccess, statusCode, requestError, exception, age);
 		}
 	
 #endregion

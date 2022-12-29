@@ -17,7 +17,8 @@ internal class DTDLogger
 											   bool isSuccess,
 											   long statusCode,
 											   string requestError,
-											   string exception);
+											   string exception,
+											   string age);
 											   
 	private FailureDelegate _logFailure;
 	private MessageDelegate _logMessage;
@@ -27,7 +28,7 @@ internal class DTDLogger
 	public void InitDelegates(Action<string> messageLogger, 
 							  Action<string, Exception, Type> failureLogger, 
 							  Action<string, bool, long, string, string> webRequestLogger,
-							  Action<string, int, bool, long, string, string> dataSendingLogger)
+							  Action<string, int, bool, long, string, string, string> dataSendingLogger)
 	{
 			_logMessage = new MessageDelegate(messageLogger);
 			_logFailure = new FailureDelegate(failureLogger);
@@ -62,10 +63,11 @@ internal class DTDLogger
 							   bool isSuccess,
 							   long statusCode,
 							   string requestError,
-							   string exception)
+							   string exception,
+							   string age)
 	{
 		if (_logDataSending != null)
-			_logDataSending(dataType, batchSize, isSuccess, statusCode, requestError, exception);
+			_logDataSending(dataType, batchSize, isSuccess, statusCode, requestError, exception, age);
 	}
 							
 }
