@@ -34,7 +34,7 @@ namespace Advant
         static AdvAnalytics()
         {
 			_dtdLogger 			= new DTDLogger();
-            _backend 			= new Backend();
+            _backend 			= new AdvantHttpClient();
 			_timeHolder			= new NetworkTimeHolder(_backend);
             _cacheHolder 		= new CacheScheduledHolder(USERS_DATA_TABLE, _backend, _timeHolder);
             _userRegistrator 	= new UserRegistrator(USERS_DATA_TABLE, _backend);
