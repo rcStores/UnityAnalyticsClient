@@ -19,7 +19,7 @@ namespace Advant
 {
     public static class AdvAnalytics 
     {
-        private static readonly AdvantHttpClient		_backend;
+        private static readonly IHttpClient		_backend;
         private static readonly CacheScheduledHolder 	_cacheHolder;
         private static readonly UserRegistrator 		_userRegistrator;
 		private static readonly NetworkTimeHolder 		_timeHolder;
