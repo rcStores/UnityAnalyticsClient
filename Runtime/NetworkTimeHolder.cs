@@ -17,9 +17,9 @@ internal class NetworkTimeHolder
 	
 	private bool _isFirstInit;
 	
-	private readonly Backend _backend;
+	private readonly IHttpClient _backend;
 	
-	public NetworkTimeHolder(Backend backend)
+	public NetworkTimeHolder(IHttpClient backend)
 	{
 		_backend = backend;
 		_systemInitialTime = DateTime.UtcNow;
