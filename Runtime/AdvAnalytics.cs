@@ -103,7 +103,7 @@ namespace Advant
 									 Action<string> messageLogger, 
 									 Action<string, Exception, Type> failureLogger, 
 									 Action<string, bool, long, string, string> webRequestLogger,
-									 Action<string, int, bool, long, string, string> dataSendingLogger)
+									 Action<string, int, bool, long, string, string, string> dataSendingLogger)
         {
 			_dtdLogger.InitDelegates(messageLogger, failureLogger, webRequestLogger, dataSendingLogger);
 			
