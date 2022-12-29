@@ -224,7 +224,7 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 		var result = new UserIdResponse();
 		try
 		{
-			var response = await PutAsync(_putUserIdEndpoint, new StringContent(dto.ToJson()));
+			var response = await PutAsync(_putUserIdEndpoint, new StringContent(dto.ToJson(), Encoding.UTF8, "application/json"));
 			response.EnsureSuccessStatusCode();
 			Advant.AdvAnalytics.LogWebRequestToDTD("get_user_id",
 												  response.IsSuccessStatusCode,
