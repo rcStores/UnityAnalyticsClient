@@ -26,7 +26,7 @@ namespace Advant.Data
 		private List<Value> 				_globalEventParams		= new List<Value>();
 		private Dictionary<string, int>		_indicesOfGlobalsByName	= new Dictionary<string, int>();
 
-        private readonly Backend 				_backend;
+        private readonly IHttpClient 				_backend;
 		private readonly NetworkTimeHolder 		_timeHolder;		
 		private readonly GamePropertiesPool 	_properties;
         private readonly GameEventsPool 		_events;
@@ -48,7 +48,7 @@ namespace Advant.Data
 		private const int GAME_EVENT_PARAMETER_COUNT 	= 10;
 		private const int SESSION_TIMEOUT				= 10; // in minutes
 
-        public CacheScheduledHolder(string usersTableName, Backend backend, NetworkTimeHolder timeHolder)
+        public CacheScheduledHolder(string usersTableName, IHttpClient backend, NetworkTimeHolder timeHolder)
         {
 			string serializationPath = null;
 // ------------------------------------------------------------------------------------------------------
@@ -462,7 +462,7 @@ namespace Advant.Data
 													sessionsSendingResult.StatusCode, 
 													sessionsSendingResult.RequestError, 
 													sessionsSendingResult.ExceptionMessage,
-													sesseionsSendingResult.Age);
+													sessionsSendingResult.Age);
 													
 				//Debug.LogWarning("[ADVANAL] Getting results of data sending...");
 				
