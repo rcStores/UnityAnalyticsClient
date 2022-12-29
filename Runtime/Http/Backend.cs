@@ -65,7 +65,7 @@ namespace Advant.Http
 
 #region Public request executors
 
-        public async UniTask<DataSendingResult> SendToServerAsync<T>(string data)
+        public async UniTask<DataSendingResult> SendToServerAsync<TGameData>(string data)
         {
             Log.Info("Task runs in thread #" + Thread.CurrentThread);
             if (String.IsNullOrEmpty(data))
@@ -73,7 +73,7 @@ namespace Advant.Http
                 //throw new ArgumentException("The cache is empty");
 			try
 			{
-				return await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(T)], 
+				return await ExecuteWebRequestAsync(_gameDataEndpointsByType[typeof(TGameData)], 
 											 RequestType.POST, 
 											 CancellationToken.None, 
 											 jsonData: data, 
@@ -85,7 +85,7 @@ namespace Advant.Http
 				Debug.LogWarning("[ADVANAL] Error while sending data: " + e.Message);
 				Debug.LogWarning("Stack trace: " + e.StackTrace);
 				Debug.LogWarning("Source: " + e.Source);
-				AdvAnalytics.LogFailureToDTD("send_to_server_failure", e, typeof(T));
+				AdvAnalytics.LogFailureToDTD("send_to_server_failure", e, typeof(TGameData));
 				return new DataSendingResult() { ExceptionMessage = e.Message };
 			}
 			//return true;
