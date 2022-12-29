@@ -12,7 +12,7 @@ namespace Advant
     internal class UserRegistrator
     {
         private readonly string 			_userPropertiesTableName;
-        private readonly Backend 			_backend;
+        private readonly IHttpClient 		_backend;
 
         private long 	_userId;
 		private long 	_sessionCount;
@@ -25,7 +25,7 @@ namespace Advant
         private const string USER_ID_PREF 				= "UserId";
         private const string APP_VERSION_PREF 			= "AppVersion";
 
-        public UserRegistrator(string userPropertiesTableName, Backend backend)
+        public UserRegistrator(string userPropertiesTableName, IHttpClient backend)
         {
             string serializationPath = null;
 #if UNITY_IOS || UNITY_EDITOR
