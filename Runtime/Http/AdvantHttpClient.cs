@@ -13,6 +13,20 @@ using Advant;
 using Advant.Data.Models;
 using Advant.Data;
 
+namespace Advant.Http
+{
+	
+internal interface IHttpClient
+{
+	public void SetPathBases(string analytics, string registration);
+	public UniTask<DataSendingResult> SendAnalyticData<TGameData>(string json);
+	public UniTask<(bool, DateTime)> GetNetworkTime(CancellationToken token, int timeout = 0);
+	public UniTask<bool> GetTester(long userId);
+	public UniTask<string> GetCountryAsync(int timeout);
+	public UniTask<UserIdResponse> GetOrCreateUserIdAsync(RegistrationToken dto);
+	public UniTask<bool> PutSessionCount(long userId, long sessionCount);
+}	
+	
 internal class AdvantHttpClient : HttpClient
 {
 	private readonly Dictionary<Type, string> _gameDataEndpointsByType = new();
@@ -90,7 +104,10 @@ internal class AdvantHttpClient : HttpClient
 	{
 		try
 		{
-			Timeout = TimeSpan.FromSeconds(timeout);
+			Timeout = timeout == 0 ?
+				Timeout :
+				TimeSpan.FromSeconds(timeout);
+				
 			var (isCancelled, response) = await (GetAsync(_getNetworkTimeEndpoint, HttpCompletionOption.ResponseContentRead, token))
 				.AsUniTask()
 				.SuppressCancellationThrow();
@@ -157,7 +174,10 @@ internal class AdvantHttpClient : HttpClient
 	{
 		try
 		{
-
+			Timeout = timeout == 0 ? 
+				Timeout :
+				TimeSpan.FromSeconds(timeout);
+			
 			var response = await GetAsync(_getCountryEndpoint, HttpCompletionOption.ResponseContentRead);
 			response.EnsureSuccessStatusCode();
 			Advant.AdvAnalytics.LogWebRequestToDTD("get_country",
@@ -175,6 +195,10 @@ internal class AdvantHttpClient : HttpClient
 		catch (Exception e)
 		{
 			Advant.AdvAnalytics.LogFailureToDTD("get_country_unexpected_failure", e);
+		}
+		finally
+		{
+			Timeout = System.Threading.Timeout.InfiniteTimeSpan;
 		}
 		return null;
 	}
@@ -235,4 +259,5 @@ internal class AdvantHttpClient : HttpClient
 		}
 		return result;
 	}
+}
 }
