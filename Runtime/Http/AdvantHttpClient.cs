@@ -10,6 +10,7 @@ using System.Threading;
 using UnityEngine;
 
 using Advant.Data.Models;
+using Advant.Data;
 
 public class AdvantHttpClient : HttpClient
 {
