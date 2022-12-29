@@ -12,7 +12,7 @@ using UnityEngine;
 using Advant.Data.Models;
 using Advant.Data;
 
-public class AdvantHttpClient : HttpClient
+internal class AdvantHttpClient : HttpClient
 {
 	private readonly Dictionary<Type, string> _gameDataEndpointsByType = new();
 
