@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -31,8 +32,8 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 {
 	private readonly Dictionary<Type, string> _gameDataEndpointsByType = new();
 	
-	private readonly string _analyticsHost;
-	private readonly string _registrationHost;
+	private string _analyticsHost;
+	private string _registrationHost;
 
 	private string _getTesterEndpoint;
 	private string _getNetworkTimeEndpoint;
