@@ -102,7 +102,7 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 			result.StatusCode = (int)response.StatusCode;
 			result.RequestError = response.ReasonPhrase;
 			
-			//Debug.Log($"SendToServerAsync: {result.StatusCode}-{result.RequestError}");
+			Debug.Log($"SendToServerAsync: {result.StatusCode}-{result.RequestError}");
 		}
 		catch (HttpRequestException hre)
 		{
@@ -110,7 +110,7 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 			result.RequestError = "Connection/DNS/certificate/timeout issue";
 			result.ExceptionMessage = $"Message: {hre.Message}\nInner exception message: {hre.InnerException?.Message}";
 			
-			//Debug.Log($"SendToServerAsync: {result.StatusCode}-{result.RequestError}\n{result.ExceptionMessage}");
+			Debug.Log($"SendToServerAsync: {result.StatusCode}-{result.RequestError}\n{result.ExceptionMessage}");
 			
 			AdvAnalytics.LogFailureToDTD("send_to_server_failure", hre, typeof(TGameData));
 		}
@@ -120,7 +120,7 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 			result.RequestError = $"{_gameDataEndpointsByType[typeof(TGameData)]} is not correct absolute or relative URI";
 			result.ExceptionMessage = $"Message: {ufe.Message}\nInner exception message: {ufe.InnerException?.Message}";
 			
-			//Debug.Log($"SendToServerAsync: {result.StatusCode}-{result.RequestError}\n{result.ExceptionMessage}");
+			Debug.Log($"SendToServerAsync: {result.StatusCode}-{result.RequestError}\n{result.ExceptionMessage}");
 
 			AdvAnalytics.LogFailureToDTD("send_to_server_failure", ufe, typeof(TGameData));
 		}
@@ -130,7 +130,7 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 			result.RequestError = "Request URI must be relative otherwise BaseAddress must be set";
 			result.ExceptionMessage = $"Message: {ioe.Message}\nInner exception message: {ioe.InnerException?.Message}";
 			
-			//Debug.Log($"SendToServerAsync: {result.StatusCode}-{result.RequestError}\n{result.ExceptionMessage}");
+			Debug.Log($"SendToServerAsync: {result.StatusCode}-{result.RequestError}\n{result.ExceptionMessage}");
 
 			AdvAnalytics.LogFailureToDTD("send_to_server_failure", ioe, typeof(TGameData));
 		}
@@ -153,7 +153,7 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 			if (isCancelled)
 				return (true, default);
 			response.EnsureSuccessStatusCode();
-			//Debug.Log($"GetNetworkTime: {response.StatusCode}-{response.ReasonPhrase}");
+			Debug.Log($"GetNetworkTime: {response.StatusCode}-{response.ReasonPhrase}");
 			Advant.AdvAnalytics.LogWebRequestToDTD("get_network_time",
 													response.IsSuccessStatusCode,
 													(int)response.StatusCode,
@@ -170,13 +170,13 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 		catch (HttpRequestException hre)
 		{
 			Advant.AdvAnalytics.LogFailureToDTD("get_time_failure", hre);
-			//Debug.Log($"GetNetworkTime: {hre.Message}");
+			Debug.Log($"GetNetworkTime: {hre.Message}");
 			return (false, default);
 		}
 		catch (Exception e)
 		{
 			Advant.AdvAnalytics.LogFailureToDTD("get_time_unexpected_failure", e);
-			//Debug.Log($"GetNetworkTime: {e.Message}");
+			Debug.Log($"GetNetworkTime: {e.Message}");
 			return (false, default);
 		}
 		finally
@@ -230,18 +230,18 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 													(int)response.StatusCode,
 													response.ReasonPhrase,
 													exception: null);
-			//Debug.Log($"GetCountryAsync: {response.StatusCode}-{response.ReasonPhrase}");
+			Debug.Log($"GetCountryAsync: {response.StatusCode}-{response.ReasonPhrase}");
 			var jsonNode = JSONNode.Parse(await response.Content.ReadAsStringAsync());
 			return jsonNode["country"];
 		}
 		catch (HttpRequestException hre)
 		{
-			//Debug.Log($"GetCountry: {hre.Message}");
+			Debug.Log($"GetCountry: {hre.Message}");
 			AdvAnalytics.LogFailureToDTD("get_country", hre);
 		}
 		catch (Exception e)
 		{
-			//Debug.Log($"GetCountry: {e.Message}");
+			Debug.Log($"GetCountry: {e.Message}");
 			Advant.AdvAnalytics.LogFailureToDTD("get_country_unexpected_failure", e);
 		}
 		finally
@@ -282,7 +282,7 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 		catch (Exception e)
 		{
 			AdvAnalytics.LogFailureToDTD("get_user_id", e);
-			//Debug.Log($"GetOrCreateUserId: {e.Message}");
+			Debug.Log($"GetOrCreateUserId: {e.Message}");
 			result.UserId = -1;
 		}
 		return result;
