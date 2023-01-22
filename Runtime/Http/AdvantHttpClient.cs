@@ -30,32 +30,50 @@ internal interface IHttpClient
 internal class AdvantHttpClient : HttpClient, IHttpClient
 {
 	private readonly Dictionary<Type, string> _gameDataEndpointsByType = new();
+	
+	private readonly _analyticsHost;
+	private readonly _registrationHost;
 
 	private string _getTesterEndpoint;
 	private string _getNetworkTimeEndpoint;
 	private string _getCountryEndpoint;
 	private string _putUserIdEndpoint;
 	private string _putSessionCountEndpoint;
+	
+	// for manual host resolving
+	// https://stackoverflow.com/questions/8999616/httpwebrequest-nameresolutionfailure-exception-in-net-with-mono-on-ubuntu
+	private const string ANALYTIC_IP = "https://37.16.17.239";
+	private const string REGISTRATION_IP = "https://137.66.3.189";
 
-    // todo: client configs in ctor
-	// todo: add unconditional logging of each web request
     public AdvantHttpClient()
     {
 		Timeout = System.Threading.Timeout.InfiniteTimeSpan;
+		
+		// might help to avoid closing connection prematurely
+		// since there could be a mismatch with the backend keep-alive configuration
+		// https://stackoverflow.com/questions/36357943/c-sharp-how-to-set-httpclient-keep-alive-to-false
+		DefaultRequestHeaders.ConnectionClose = true;
+		
+		// The Fly proxy only supports TLSv1.2 and TLSv1.3 with strong ciphers.
+		ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls12; 
+		
 	}
 
 	#region Init
 
 	public void SetPathBases(string analytics, string registration)
 	{
-		_getTesterEndpoint = registration + "/Registration/GetTester";
-		_getNetworkTimeEndpoint = registration + "/Registration/GetNetworkTime";
+		_analyticsHost = analytics.Replace("https://", "");
+		_registrationHost = registration.Replace("https://", "");
+		
+		_getTesterEndpoint = REGISTRATION_IP + "/Registration/GetTester";
+		_getNetworkTimeEndpoint = REGISTRATION_IP + "/Registration/GetNetworkTime";
 		_getCountryEndpoint = "http://ip-api.com/json/"; //"https://ipapi.co/country/";
-		_putUserIdEndpoint = registration + "/Registration/GetOrCreateUserId2";
-		_putSessionCountEndpoint = registration + "/Sessions/PutSessionCount";
-		_gameDataEndpointsByType[typeof(GameProperty)] = analytics + "/AnalyticsData/SendProperties";
-		_gameDataEndpointsByType[typeof(GameEvent)] = analytics + "/AnalyticsData/SendEvents";
-		_gameDataEndpointsByType[typeof(Session)] = registration + "/Sessions/SaveSession";
+		_putUserIdEndpoint = REGISTRATION_IP + "/Registration/GetOrCreateUserId2";
+		_putSessionCountEndpoint = REGISTRATION_IP + "/Sessions/PutSessionCount";
+		_gameDataEndpointsByType[typeof(GameProperty)] = ANALYTIC_IP + "/AnalyticsData/SendProperties";
+		_gameDataEndpointsByType[typeof(GameEvent)] = ANALYTIC_IP + "/AnalyticsData/SendEvents";
+		_gameDataEndpointsByType[typeof(Session)] = REGISTRATION_IP + "/Sessions/SaveSession";
 	}
 
 	#endregion
@@ -72,6 +90,10 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 		
 		try
 		{
+			DefaultRequestHeaders.Host = typeof(TGameData) == typeof(Session) ?
+				_registrationHost :
+				_analyticsHost;
+				
 			var response = await PostAsync(
 				_gameDataEndpointsByType[typeof(TGameData)], new StringContent(json, Encoding.UTF8, "application/json"));
 
@@ -119,6 +141,7 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 	{
 		try
 		{
+			DefaultRequestHeaders.Host = _registrationHost;
 			Timeout = timeout == 0 ?
 				Timeout :
 				TimeSpan.FromSeconds(timeout);
@@ -166,6 +189,7 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 	{
 		try
 		{
+			DefaultRequestHeaders.Host = _registrationHost;
 			var response = await GetAsync(_getTesterEndpoint + $"/{userId}", HttpCompletionOption.ResponseContentRead);
 			response.EnsureSuccessStatusCode();
 			Advant.AdvAnalytics.LogWebRequestToDTD("get_tester",
@@ -194,6 +218,7 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 	{
 		try
 		{
+			DefaultRequestHeaders.Host = null;
 			Timeout = timeout == 0 ? 
 				Timeout :
 				TimeSpan.FromSeconds(timeout);
@@ -231,6 +256,7 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 		var result = new UserIdResponse();
 		try
 		{
+			DefaultRequestHeaders.Host = _registrationHost;
 			var response = await PutAsync(_putUserIdEndpoint, new StringContent(dto.ToJson(), Encoding.UTF8, "application/json"));
 			response.EnsureSuccessStatusCode();
 			Advant.AdvAnalytics.LogWebRequestToDTD("get_user_id",
@@ -267,6 +293,7 @@ internal class AdvantHttpClient : HttpClient, IHttpClient
 		var result = false;
 		try
 		{
+			DefaultRequestHeaders.Host = _registrationHost;
 			var response = await PutAsync(
 				_putSessionCountEndpoint, 
 				new StringContent($"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}", Encoding.UTF8, "application/json"));
