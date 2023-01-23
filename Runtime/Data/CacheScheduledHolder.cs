@@ -425,7 +425,7 @@ namespace Advant.Data
 						
 				_sendingCancellationSource = null;
 					
-				Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
+				//Debug.LogWarning("[ADVANAL] SENDING ANALYTICS DATA");
 				
 				_sessions.RegisterActivity();
 				
@@ -464,21 +464,21 @@ namespace Advant.Data
 													sessionsSendingResult.ExceptionMessage,
 													sessionsSendingResult.Age);
 													
-				Debug.LogWarning("[ADVANAL] Getting results of data sending...");
+				//Debug.LogWarning("[ADVANAL] Getting results of data sending...");
 				
 				if (eventsSendingResult.IsSuccess) 
 				{
-					Debug.LogWarning("[ADVANAL] Clear events");
+					//Debug.LogWarning("[ADVANAL] Clear events");
 					_events.FreeFromBeginning(eventsBatchSize);
 				}
 				if (propertiesSendingResult.IsSuccess)
 				{
-					Debug.LogWarning("[ADVANAL] Clear properties");
+					//Debug.LogWarning("[ADVANAL] Clear properties");
 					_properties.FreeFromBeginning(propertiesBatchSize);
 				}
 				if (sessionsSendingResult.IsSuccess)
 				{
-					Debug.LogWarning("[ADVANAL] Clear sessions, batch size = " + sessionsBatchSize);
+					//Debug.LogWarning("[ADVANAL] Clear sessions, batch size = " + sessionsBatchSize);
 					_sessions.FreeFromBeginning(sessionsBatchSize);
 				}
 			}
