@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [2.0.8] - 2023-01-22
+
+### Added
+- Default headers for http-requests.
+
+
 ## [2.0.7] - 2022-12-29
 
 ### Added
