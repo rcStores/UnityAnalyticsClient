@@ -1,6 +1,6 @@
 {
   "name": "com.advant.analytics",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "displayName": "Advant Analytics",
   "unity": "2021.3",
   "dependencies": {
