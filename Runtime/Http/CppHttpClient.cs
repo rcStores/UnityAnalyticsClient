@@ -37,17 +37,6 @@ public struct InteropResponse
 	int actualBodyLength;
 }
 	
-internal interface IHttpClient
-{
-	public void SetPathBases(string analytics, string registration);
-	public UniTask<DataSendingResult> SendToServerAsync<TGameData>(string json);
-	public UniTask<(bool, DateTime)> GetNetworkTime(CancellationToken token, int timeout = 0);
-	public UniTask<bool> GetTester(long userId);
-	public UniTask<string> GetCountryAsync(int timeout);
-	public UniTask<UserIdResponse> GetOrCreateUserIdAsync(RegistrationToken dto);
-	public UniTask<bool> PutSessionCount(long userId, long sessionCount);
-}	
-	
 internal class CppHttpClient : IHttpClient
 {
 	private readonly Dictionary<Type, string> _gameDataEndpointsByType = new();
@@ -58,7 +47,7 @@ internal class CppHttpClient : IHttpClient
 	private string _putUserIdEndpoint;
 	private string _putSessionCountEndpoint;
 	
-	private IntPtr _core
+	private IntPtr _core;
 
     public CppHttpClient()
     {
@@ -135,12 +124,12 @@ internal class CppHttpClient : IHttpClient
 	{
 		return new InteropResponse
 		{
-			errorMessage = new StringBuilder(1000);
-			errorLength = errorMessage.Capacity;
-			reasonPhrase = new StringBuilder(1000);
-			reasonLength = reasonPhrase.Capacity;
-			body = new StringBuilder(1000);
-			bodyLength = body.Capacity;
+			errorMessage = new StringBuilder(1000),
+			errorLength = errorMessage.Capacity,
+			reasonPhrase = new StringBuilder(1000),
+			reasonLength = reasonPhrase.Capacity,
+			body = new StringBuilder(1000),
+			bodyLength = body.Capacity,
 		};
 	}
 	
