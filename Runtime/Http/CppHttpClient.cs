@@ -126,11 +126,11 @@ internal class CppHttpClient : IHttpClient
 		return new InteropResponse
 		{
 			error = new StringBuilder(1000),
-			errorLength = errorMessage.Capacity,
+			errorLength = 1000,
 			reasonPhrase = new StringBuilder(1000),
-			reasonLength = reasonPhrase.Capacity,
+			reasonLength = 1000,
 			body = new StringBuilder(1000),
-			bodyLength = body.Capacity,
+			bodyLength = 1000,
 		};
 	}
 	
@@ -190,14 +190,14 @@ internal class CppHttpClient : IHttpClient
 													result.IsSuccess,
 													(int)result.StatusCode,
 													result.RequestError,
-													result.RequestMessage);
+													result.ExceptionMessage);
 			
-			DateTime.TryParseExact(GetBody(response),
+			DateTime.TryParseExact(GetBody(output),
 								   "yyyy-MM-ddTHH:mm:ss.fff",
 								   CultureInfo.InvariantCulture,
 								   DateTimeStyles.None,
-								   out DateTime result);
-			return (false, result);
+								   out DateTime dateTime);
+			return (false, dateTime);
 		}
 		catch (Exception e)
 		{
@@ -211,7 +211,7 @@ internal class CppHttpClient : IHttpClient
 	{
 		try
 		{
-			var response = await Task.Run(() => Get(_getTesterEndpoint + $"/{userId}"));
+			var response = await Task.Run(() => Get(_core, _getTesterEndpoint + $"/{userId}"));
 			
 			var result = new DataSendingResult();
 			var output = CreateInteropResponseModel();
@@ -225,9 +225,9 @@ internal class CppHttpClient : IHttpClient
 													result.IsSuccess,
 													(int)result.StatusCode,
 													result.RequestError,
-													result.RequestMessage);
+													result.ExceptionMessage);
 			Debug.Log($"GetNetworkTime: {result.StatusCode}-{result.RequestError}");
-			return Convert.ToBoolean(GetBody(response));
+			return Convert.ToBoolean(GetBody(output));
 		}
 		catch (Exception e)
 		{
@@ -241,7 +241,7 @@ internal class CppHttpClient : IHttpClient
 	{
 		try
 		{
-			var response = await Task.Run(() => Get(_getCountryEndpoint));
+			var response = await Task.Run(() => Get(__core, getCountryEndpoint));
 			
 			var result = new DataSendingResult();
 			var output = CreateInteropResponseModel();
@@ -255,11 +255,11 @@ internal class CppHttpClient : IHttpClient
 													result.IsSuccess,
 													(int)result.StatusCode,
 													result.RequestError,
-													result.RequestMessage);
+													result.ExceptionMessage);
 													
 			Debug.Log($"GetCountryAsync: {result.StatusCode}-{result.RequestError}");
 			
-			var jsonNode = JSONNode.Parse(GetBody(response));
+			var jsonNode = JSONNode.Parse(GetBody(output));
 			return jsonNode["country"];
 		}
 		catch (Exception e)
@@ -275,7 +275,7 @@ internal class CppHttpClient : IHttpClient
 		var userIdResponse = new UserIdResponse();
 		try
 		{
-			var response = await Task.Run(() => Put(_putUserIdEndpoint, dto.ToJson()));
+			var response = await Task.Run(() => Put(__core, _putUserIdEndpoint, dto.ToJson()));
 			
 			var result = new DataSendingResult();
 			var output = CreateInteropResponseModel();
@@ -286,11 +286,11 @@ internal class CppHttpClient : IHttpClient
 												  result.IsSuccess,
 											      (int) result.StatusCode,
 												  result.RequestError,
-												  result.RequestMessage);
+												  result.ExceptionMessage);
 
 			if (result.IsSuccess)
 			{
-				var jsonNode = JSONNode.Parse(GetBody(response));
+				var jsonNode = JSONNode.Parse(GetBody(output));
 				userIdResponse.UserId = jsonNode["userId"];
 				userIdResponse.SessionCount = jsonNode["sessionCount"];
 			}
@@ -313,10 +313,11 @@ internal class CppHttpClient : IHttpClient
 
 	public async UniTask<bool> PutSessionCount(long userId, long sessionCount)
     {
-		var result = false;
+		var success = false;
 		try
 		{
 			var response = await Task.Run(() => Put(
+				_core,
 				_putSessionCountEndpoint, 
 				$"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}"));
 			
@@ -329,14 +330,14 @@ internal class CppHttpClient : IHttpClient
 											result.IsSuccess,
 											(int) result.StatusCode,
 											result.RequestError,
-											result.RequestMessage);
-			result = Convert.ToBoolean(GetBody(response));
+											result.ExceptionMessage);
+			success = Convert.ToBoolean(GetBody(output));
 		}
 		catch (Exception e)
 		{
 			AdvAnalytics.LogFailureToDTD("put_session_count", e);
 		}
-		return result;
+		return success;
 	}
 }
 }
