@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
+using System.Threading.Task;
 using UnityEngine;
 using System.Runtime.InteropServices;
 
@@ -24,7 +25,7 @@ public struct InteropResponse
 	public double elapsedTime;
 	public long redirectCount;
 
-	public StringBuilder errorMessage;
+	public StringBuilder error;
 	public int errorLength;
 	public int actualErrorLength;
 
@@ -115,7 +116,7 @@ internal class CppHttpClient : IHttpClient
 	
 	private string GetBody(InteropResponse response)
 	{
-		return response.actualReasonLength > parsedOutput.reasonLength ?
+		return response.actualReasonLength > response.reasonLength ?
 			null :
 			response.body.ToString(0, response.actualBodyLength);
 	}
@@ -124,7 +125,7 @@ internal class CppHttpClient : IHttpClient
 	{
 		return new InteropResponse
 		{
-			errorMessage = new StringBuilder(1000),
+			error = new StringBuilder(1000),
 			errorLength = errorMessage.Capacity,
 			reasonPhrase = new StringBuilder(1000),
 			reasonLength = reasonPhrase.Capacity,
@@ -156,11 +157,11 @@ internal class CppHttpClient : IHttpClient
 		catch (Exception e)
 		{
 			result.IsSuccess = false;
-			result.ExceptionMessage = $"Message: {ioe.Message}\nInner exception message: {ioe.InnerException?.Message}";
+			result.ExceptionMessage = $"Message: {e.Message}\nInner exception message: {e.InnerException?.Message}";
 			
 			Debug.LogWarning($"SendToServerAsync: {result.ExceptionMessage}");
 
-			AdvAnalytics.LogFailureToDTD("send_to_server_failure", ioe, typeof(TGameData));
+			AdvAnalytics.LogFailureToDTD("send_to_server_failure", e, typeof(TGameData));
 		}
 		return result;
 	}
