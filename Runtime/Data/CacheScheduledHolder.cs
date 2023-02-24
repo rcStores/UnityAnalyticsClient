@@ -26,7 +26,7 @@ namespace Advant.Data
 		private List<Value> 				_globalEventParams		= new List<Value>();
 		private Dictionary<string, int>		_indicesOfGlobalsByName	= new Dictionary<string, int>();
 
-        private readonly IHttpClient 				_backend;
+        private readonly IHttpClient 			_backend;
 		private readonly NetworkTimeHolder 		_timeHolder;		
 		private readonly GamePropertiesPool 	_properties;
         private readonly GameEventsPool 		_events;
