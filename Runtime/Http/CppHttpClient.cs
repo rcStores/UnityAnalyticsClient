@@ -57,22 +57,22 @@ internal class CppHttpClient : IHttpClient
 	
 	#region Import
 	
-	[DllImport("WebRequestsCore.dll")]
+	[DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr CreateCore();
 	
-	[DllImport("Advant/Analytics/WebRequestsCore.dll")]
+	[DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr FreeCore(IntPtr instance);
     
-    [DllImport("Advant/Analytics/WebRequestsCore.dll")]
+    [DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr Post(IntPtr instance, string endpoint, string body);
 	
-    [DllImport("Advant/Analytics/WebRequestsCore.dll")]
+    [DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr Put(IntPtr instance, string endpoint, string body);
     
-    [DllImport("Advant/Analytics/WebRequestsCore.dll")]
+    [DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr Get(IntPtr instance, string endpoint);
 	
-	[DllImport("Advant/Analytics/WebRequestsCore.dll")]
+	[DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern void WriteResponse(IntPtr response, ref InteropResponse output);
 	
 	#endregion
