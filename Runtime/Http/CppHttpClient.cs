@@ -57,22 +57,22 @@ internal class CppHttpClient : IHttpClient
 	
 	#region Import
 	
-	[DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl)]
+	[DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = “CreateCore”)]
     private static extern IntPtr CreateCore();
 	
-	[DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl)]
+	[DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = “FreeCore”)]
     private static extern IntPtr FreeCore(IntPtr instance);
     
-    [DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = “Post”)]
     private static extern IntPtr Post(IntPtr instance, string endpoint, string body);
 	
-    [DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = “Put”)]
     private static extern IntPtr Put(IntPtr instance, string endpoint, string body);
     
-    [DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = “Get”)]
     private static extern IntPtr Get(IntPtr instance, string endpoint);
 	
-	[DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl)]
+	[DllImport("WebRequestsCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = “WriteResponse”)]
     private static extern void WriteResponse(IntPtr response, ref InteropResponse output);
 	
 	#endregion
