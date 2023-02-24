@@ -241,7 +241,7 @@ internal class CppHttpClient : IHttpClient
 	{
 		try
 		{
-			var response = await Task.Run(() => Get(__core, getCountryEndpoint));
+			var response = await Task.Run(() => Get(_core, _getCountryEndpoint));
 			
 			var result = new DataSendingResult();
 			var output = CreateInteropResponseModel();
@@ -275,7 +275,7 @@ internal class CppHttpClient : IHttpClient
 		var userIdResponse = new UserIdResponse();
 		try
 		{
-			var response = await Task.Run(() => Put(__core, _putUserIdEndpoint, dto.ToJson()));
+			var response = await Task.Run(() => Put(_core, _putUserIdEndpoint, dto.ToJson()));
 			
 			var result = new DataSendingResult();
 			var output = CreateInteropResponseModel();
