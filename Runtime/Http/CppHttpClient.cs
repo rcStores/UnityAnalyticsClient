@@ -20,21 +20,21 @@ namespace Advant.Http
 	
 public struct InteropResponse
 {
-	long statusCode;
-	double elapsedTime;
-	long redirectCount;
+	public long statusCode;
+	public double elapsedTime;
+	public long redirectCount;
 
-	StringBuilder errorMessage;
-	int errorLength;
-	int actualErrorLength;
+	public StringBuilder errorMessage;
+	public int errorLength;
+	public int actualErrorLength;
 
-	StringBuilder reasonPhrase;
-	int reasonLength;
-	int actualReasonLength;
+	public StringBuilder reasonPhrase;
+	public int reasonLength;
+	public int actualReasonLength;
 	
-	StringBuilder body;
-	int bodyLength;
-	int actualBodyLength;
+	public StringBuilder body;
+	public int bodyLength;
+	public int actualBodyLength;
 }
 	
 internal class CppHttpClient : IHttpClient
@@ -51,7 +51,7 @@ internal class CppHttpClient : IHttpClient
 
     public CppHttpClient()
     {
-		 _core = createCore();
+		 _core = CreateCore();
 	}
 	
 	#region Import
@@ -101,10 +101,10 @@ internal class CppHttpClient : IHttpClient
 		result.StatusCode = (int)parsedOutput.statusCode;
 			
 		if (parsedOutput.actualErrorLength > parsedOutput.errorLength)
-			result.ExceptionMesssage = "Couldn't show the error message " +
+			result.ExceptionMessage = "Couldn't show the error message " +
 				"because it's longer than allocated capacity";
 		else		
-			result.ExceptionMesssage = parsedOutput.error.ToString(0, parsedOutput.actualErrorLength);
+			result.ExceptionMessage = parsedOutput.error.ToString(0, parsedOutput.actualErrorLength);
 			
 		if (parsedOutput.actualReasonLength > parsedOutput.reasonLength)
 			result.RequestError = "Couldn't show the reason phrase " +
