@@ -60,19 +60,19 @@ internal class CppHttpClient : IHttpClient
 	[DllImport("WebRequestsCore.dll")]
     private static extern IntPtr CreateCore();
 	
-	[DllImport("WebRequestsCore.dll")]
+	[DllImport("Advant/Analytics/WebRequestsCore.dll")]
     private static extern IntPtr FreeCore(IntPtr instance);
     
-    [DllImport("WebRequestsCore.dll")]
+    [DllImport("Advant/Analytics/WebRequestsCore.dll")]
     private static extern IntPtr Post(IntPtr instance, string endpoint, string body);
 	
-    [DllImport("WebRequestsCore.dll")]
+    [DllImport("Advant/Analytics/WebRequestsCore.dll")]
     private static extern IntPtr Put(IntPtr instance, string endpoint, string body);
     
-    [DllImport("WebRequestsCore.dll")]
+    [DllImport("Advant/Analytics/WebRequestsCore.dll")]
     private static extern IntPtr Get(IntPtr instance, string endpoint);
 	
-	[DllImport("WebRequestsCore.dll")]
+	[DllImport("Advant/Analytics/WebRequestsCore.dll")]
     private static extern void WriteResponse(IntPtr response, ref InteropResponse output);
 	
 	#endregion
