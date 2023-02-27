@@ -58,25 +58,25 @@ internal class CppHttpClient : IHttpClient
 		 _core = CreateCore();
 	}
 	
-	static CppHttpClient() // static Constructor
-{
-    var currentPath = Environment.GetEnvironmentVariable("PATH",
-        EnvironmentVariableTarget.Process);
-#if UNITY_EDITOR_32
-    var dllPath = Application.dataPath
-        + Path.DirectorySeparatorChar + "Plugins";
-#elif UNITY_EDITOR_64
-    var dllPath = Application.dataPath
-        + Path.DirectorySeparatorChar + "Plugins";
-#else // Player
-    var dllPath = Application.dataPath
-        + Path.DirectorySeparatorChar + "Plugins";
+	// static CppHttpClient() // static Constructor
+// {
+    // var currentPath = Environment.GetEnvironmentVariable("PATH",
+        // EnvironmentVariableTarget.Process);
+// #if UNITY_EDITOR_32
+    // var dllPath = Application.dataPath
+        // + Path.DirectorySeparatorChar + "Plugins";
+// #elif UNITY_EDITOR_64
+    // var dllPath = Application.dataPath
+        // + Path.DirectorySeparatorChar + "Plugins";
+// #else // Player
+    // var dllPath = Application.dataPath
+        // + Path.DirectorySeparatorChar + "Plugins";
 
-#endif
-    if (currentPath != null && currentPath.Contains(dllPath) == false)
-        Environment.SetEnvironmentVariable("PATH", currentPath + Path.PathSeparator
-            + dllPath, EnvironmentVariableTarget.Process);
-}
+// #endif
+    // if (currentPath != null && currentPath.Contains(dllPath) == false)
+        // Environment.SetEnvironmentVariable("PATH", currentPath + Path.PathSeparator
+            // + dllPath, EnvironmentVariableTarget.Process);
+// }
 	
 	#region Import
 	
