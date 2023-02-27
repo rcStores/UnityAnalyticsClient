@@ -64,14 +64,10 @@ internal class CppHttpClient : IHttpClient
         EnvironmentVariableTarget.Process);
 #if UNITY_EDITOR_32
     var dllPath = Application.dataPath
-        + Path.DirectorySeparatorChar + "SomePath"
-        + Path.DirectorySeparatorChar + "Plugins"
-        + Path.DirectorySeparatorChar + "x86";
+        + Path.DirectorySeparatorChar + "Plugins";
 #elif UNITY_EDITOR_64
     var dllPath = Application.dataPath
-        + Path.DirectorySeparatorChar + "SomePath"
-        + Path.DirectorySeparatorChar + "Plugins"
-        + Path.DirectorySeparatorChar + "x86_64";
+        + Path.DirectorySeparatorChar + "Plugins";
 #else // Player
     var dllPath = Application.dataPath
         + Path.DirectorySeparatorChar + "Plugins";
