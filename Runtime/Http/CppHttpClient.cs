@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEditor;
+//using UnityEditor;
 using System.Runtime.InteropServices;
 
 using Advant;
@@ -40,7 +40,7 @@ public struct InteropResponse
 	public int actualBodyLength;
 }
 
-[InitializeOnLoad]	
+//[InitializeOnLoad]	
 internal class CppHttpClient : IHttpClient
 {
 	private readonly Dictionary<Type, string> _gameDataEndpointsByType = new();
