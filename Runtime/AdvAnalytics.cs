@@ -34,11 +34,13 @@ namespace Advant
         static AdvAnalytics()
         {
 			_dtdLogger 			= new DTDLogger();
-            _backend 			= new CppHttpClient();
+            //_backend 			= new CppHttpClient();
 			_timeHolder			= new NetworkTimeHolder(_backend);
             _cacheHolder 		= new CacheScheduledHolder(USERS_DATA_TABLE, _backend, _timeHolder);
             _userRegistrator 	= new UserRegistrator(USERS_DATA_TABLE, _backend);
 			_networkTimeCTS 	= new CancellationTokenSource();
+			
+			Debug.LogWarning(new PluginWrapper().GetString());
         }
 		
 		/// <summary>
