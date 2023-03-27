@@ -9,6 +9,9 @@ using System;
 using SimpleJSON;
 using Advant.Data.Models;
 using Advant.Data;
+using System.Collections;
+using System.Globalization;
+using System.Text;
 
 using UnityEngine;
 
@@ -16,10 +19,10 @@ namespace Advant.Http
 {
 	public class HttpResponse
     {
-        string data;
-        int code;
-        String message;
-        string error;
+        public string data;
+        public int code;
+        public string message;
+        public string error;
     }
 	
 	internal class CrossPlatformHttpClient : IHttpClient
@@ -57,7 +60,7 @@ namespace Advant.Http
 					(HttpResponse r) => {
 						response = r;
 					});
-				if (response == null) throw Exception("Result of SendToServerAsync is null");
+				if (response == null) throw new Exception("Result of SendToServerAsync is null");
 				
 				var result = new DataSendingResult
 				{
@@ -71,16 +74,16 @@ namespace Advant.Http
 			catch (Exception e)
 			{
 				result.IsSuccess = false;
-				result.ExceptionMessage = $"Message: {ioe.Message}\nInner exception message: {ioe.InnerException?.Message}";
+				result.ExceptionMessage = $"Message: {e.Message}\nInner exception message: {e.InnerException?.Message}";
 			
 				//Debug.LogWarning($"SendToServerAsync: {result.StatusCode}-{result.RequestError}\n{result.ExceptionMessage}");
 				AdvAnalytics.LogFailureToDTD("send_to_server_failure", ioe, typeof(TGameData));
 			}
 			
-			return result;	
+			return Task.FromResult(result).AsUniTask();	
 		}
 		
-		public UniTask<(bool, DateTime)> GetNetworkTime(CancellationToken token, int timeout = 0)
+		public async UniTask<(bool, DateTime)> GetNetworkTime(CancellationToken token, int timeout = 0)
 		{
 			DataSendingResult result = new DataSendingResult();
 			HttpResponse response = null;
@@ -98,12 +101,12 @@ namespace Advant.Http
 					.SuppressCancellationThrow();
 				
 				if (isCancelled)
-					return Task.FromResult((true, default)).AsUniTask();
+					return Task.FromResult(Tuple.Create(true, default)).AsUniTask();
 				
 				if (response == null)  
-					throw Exception("Result of GetNetworkTime is null");
+					throw new Exception("Result of GetNetworkTime is null");
 				else if (response.code != 201 && response.code != 200)
-					throw Exception("GetNetworkTime returned bad status code");
+					throw new Exception("GetNetworkTime returned bad status code");
 				
 				DateTime.TryParseExact(response.data,
 								   "yyyy-MM-ddTHH:mm:ss.fff",
@@ -125,7 +128,7 @@ namespace Advant.Http
 				result.IsSuccess = false;
 				result.ExceptionMessage = $"Message: {e.Message}\nInner exception message: {e.InnerException?.Message}";
 			
-				Debug.LogWarning($"SendToServerAsync: {result.code}-{result.error}\n{result.message}");
+				Debug.LogWarning($"SendToServerAsync: {.Message}");
 				AdvAnalytics.LogFailureToDTD("get_time_failure", e);
 			}
 			
@@ -147,9 +150,9 @@ namespace Advant.Http
 					});
 					
 				if (response == null)  
-					throw Exception("Result of GetNetworkTime is null");
+					throw new Exception("Result of GetNetworkTime is null");
 				else if (response.code != 201 && response.code != 200)
-					throw Exception("GetNetworkTime returned bad status code");
+					throw new Exception("GetNetworkTime returned bad status code");
 #endif
 				
 				Advant.AdvAnalytics.LogWebRequestToDTD("get_tester",
@@ -180,9 +183,9 @@ namespace Advant.Http
 					});
 					
 				if (response == null)  
-					throw Exception("Result of GetCountryAsync is null");
+					throw new Exception("Result of GetCountryAsync is null");
 				else if (response.code != 201 && response.code != 200)
-					throw Exception("GetCountryAsync returned bad status code");
+					throw new Exception("GetCountryAsync returned bad status code");
 #endif
 				
 				Advant.AdvAnalytics.LogWebRequestToDTD("get_country",
@@ -215,9 +218,9 @@ namespace Advant.Http
 					});
 					
 				if (response == null)  
-					throw Exception("Result of GetOrCreateUserIdAsync is null");
+					throw new Exception("Result of GetOrCreateUserIdAsync is null");
 				else if (response.code != 201 && response.code != 200)
-					throw Exception("GetOrCreateUserIdAsync returned bad status code");
+					throw new Exception("GetOrCreateUserIdAsync returned bad status code");
 #endif
 
 				Advant.AdvAnalytics.LogWebRequestToDTD("get_user_id",
@@ -256,9 +259,9 @@ namespace Advant.Http
 					});
 					
 				if (response == null)  
-					throw Exception("Result of PutSessionCount is null");
+					throw new Exception("Result of PutSessionCount is null");
 				else if (response.code != 201 && response.code != 200)
-					throw Exception("PutSessionCount returned bad status code");
+					throw new Exception("PutSessionCount returned bad status code");
 #endif
 					
 				AdvAnalytics.LogWebRequestToDTD("put_session_count",
