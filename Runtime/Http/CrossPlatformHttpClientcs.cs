@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Advant.Http;
 using System;
+using SimpleJSON;
+using Advant.Data.Models;
+using Advant.Data;
 
 using UnityEngine;
 
