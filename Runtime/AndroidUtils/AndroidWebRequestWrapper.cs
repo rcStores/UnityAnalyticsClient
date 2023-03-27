@@ -13,8 +13,6 @@ public static class AndroidWebRequestWrapper
 
 		using var retriever   = new AndroidJavaClass("com.advant.androidutils.AndroidWebRequestExecutor");
 		retriever.CallStatic("executeWebRequest", receiver, "GET", endpoint, null);
-		
-		return result;
 	}
 	
 	public static void PostAsync(string endpoint, string data, System.Action<HttpResponse> cb)
@@ -23,8 +21,6 @@ public static class AndroidWebRequestWrapper
 
 		using var retriever   = new AndroidJavaClass("com.advant.androidutils.AndroidWebRequestExecutor");
 		retriever.CallStatic("executeWebRequest", receiver, "POST", endpoint, data);
-
-		return result;
 	}
 	
 	public static void PutAsync(string endpoint, string data, System.Action<HttpResponse> cb)
@@ -33,13 +29,12 @@ public static class AndroidWebRequestWrapper
 
 		using var retriever   = new AndroidJavaClass("com.advant.androidutils.AndroidWebRequestExecutor");
 		var resultingJavaObj = retriever.CallStatic("executeWebRequest", receiver, "PUT", endpoint, data);
-		
-		return result;
 	}
 
 	private class WebRequestResultReceiver : AndroidJavaProxy
 	{
 		private System.Action<HttpResponse> _cb;
+		
 		public WebRequestResultReceiver(System.Action<HttpResponse> cb) : base("com.advant.androidutils.AndroidWebRequestExecutor$IWebRequestResultReceiver")
 		{
 			_cb = cb;
