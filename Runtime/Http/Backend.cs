@@ -16,7 +16,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Advant.Http
 {
-    internal sealed class Backend : IHttpClient
+    internal sealed class Backend 
     {
         private readonly Dictionary<Type, string> _gameDataEndpointsByType = new Dictionary<Type, string>();
         
