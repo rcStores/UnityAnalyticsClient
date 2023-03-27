@@ -30,7 +30,7 @@ internal interface IHttpClient
 	
 internal class AdvantHttpClient : HttpClient, IHttpClient
 {
-	private readonly Dictionary<Type, string> _gameDataEndpointsByType = new();
+	private readonly Dictionary<Type, string> _gameDataEndpointsByType = new Dictionary<Type, string>();
 	
 	private string _analyticsHost;
 	private string _registrationHost;
