@@ -31,7 +31,7 @@ public static class AndroidWebRequestWrapper
 		var receiver = new WebRequestResultReceiver(cb);
 
 		using var retriever   = new AndroidJavaClass("com.advant.androidutils.AndroidWebRequestExecutor");
-		var resultingJavaObj = retriever.CallStatic("executeWebRequest", receiver, "PUT", endpoint, data);\
+		var resultingJavaObj = retriever.CallStatic("executeWebRequest", receiver, "PUT", endpoint, data);
 		
 		return result;
 	}
