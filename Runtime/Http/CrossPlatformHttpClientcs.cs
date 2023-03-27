@@ -49,7 +49,6 @@ namespace Advant.Http
 		
 		public UniTask<DataSendingResult> SendToServerAsync<TGameData>(string json)
 		{
-			DataSendingResult result = new DataSendingResult();
 			HttpResponse response = null;
 			try
 			{
@@ -77,7 +76,7 @@ namespace Advant.Http
 				result.ExceptionMessage = $"Message: {e.Message}\nInner exception message: {e.InnerException?.Message}";
 			
 				//Debug.LogWarning($"SendToServerAsync: {result.StatusCode}-{result.RequestError}\n{result.ExceptionMessage}");
-				AdvAnalytics.LogFailureToDTD("send_to_server_failure", ioe, typeof(TGameData));
+				AdvAnalytics.LogFailureToDTD("send_to_server_failure", e, typeof(TGameData));
 			}
 			
 			return Task.FromResult(result).AsUniTask();	
@@ -85,7 +84,6 @@ namespace Advant.Http
 		
 		public async UniTask<(bool, DateTime)> GetNetworkTime(CancellationToken token, int timeout = 0)
 		{
-			DataSendingResult result = new DataSendingResult();
 			HttpResponse response = null;
 			try
 			{
@@ -101,7 +99,7 @@ namespace Advant.Http
 					.SuppressCancellationThrow();
 				
 				if (isCancelled)
-					return Task.FromResult(Tuple.Create(true, default)).AsUniTask();
+					return Task.FromResult(Tuple.Create(true, DateTime.MinValue)).AsUniTask();
 				
 				if (response == null)  
 					throw new Exception("Result of GetNetworkTime is null");
@@ -120,7 +118,7 @@ namespace Advant.Http
 													response.message,
 													exception: null);
 													
-				return Task.FromResult((false, result)).AsUniTask();
+				return Task.FromResult(Tuple.Create(false, result)).AsUniTask();
 #endif
 			}
 			catch (Exception e)
@@ -132,7 +130,7 @@ namespace Advant.Http
 				AdvAnalytics.LogFailureToDTD("get_time_failure", e);
 			}
 			
-			return result;
+			return Tuple.Create(false, DateTime.MinValue);
 		}
 		
 		public UniTask<bool> GetTester(long userId)
@@ -173,11 +171,12 @@ namespace Advant.Http
 		
 		public UniTask<string> GetCountryAsync(int timeout)
 		{
+			HttpResponse response = null;
 			try
 			{
 #if UNITY_ANDROID
 				AndroidWebRequestWrapper.GetAsync(
-					_getTesterEndpoint + $"/{userId}",
+					_getCountryEndpoint,
 					(HttpResponse r) => {
 						response = r;
 					});
@@ -200,13 +199,14 @@ namespace Advant.Http
 			{
 				Advant.AdvAnalytics.LogFailureToDTD("get_country_failure", e);
 				Debug.LogWarning($"GetTester: {e.Message}");
-				return Task.FromResult(false).AsUniTask();
+				return Task.FromResult(null).AsUniTask();HttpResponse response = null;
 			}
 		}
 		
 		public UniTask<UserIdResponse> GetOrCreateUserIdAsync(RegistrationToken dto)
 		{
 			var result = new UserIdResponse();
+			HttpResponse response = null;
 			try
 			{
 #if UNITY_ANDROID
@@ -248,6 +248,7 @@ namespace Advant.Http
 		public UniTask<bool> PutSessionCount(long userId, long sessionCount)
 		{
 			var result = false;
+			HttpResponse response = null;
 			try
 			{
 #if UNITY_ANDROID
@@ -269,7 +270,7 @@ namespace Advant.Http
 												response.code,
 												response.message,
 												exception: null);
-				result = Convert.ToBoolean(ёresponse.data);
+				result = Convert.ToBoolean(response.data);
 			}
 			catch (Exception e)
 			{
