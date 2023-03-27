@@ -128,7 +128,7 @@ namespace Advant.Http
 				result.IsSuccess = false;
 				result.ExceptionMessage = $"Message: {e.Message}\nInner exception message: {e.InnerException?.Message}";
 			
-				Debug.LogWarning($"SendToServerAsync: {.Message}");
+				Debug.LogWarning($"SendToServerAsync: {e.Message}");
 				AdvAnalytics.LogFailureToDTD("get_time_failure", e);
 			}
 			
