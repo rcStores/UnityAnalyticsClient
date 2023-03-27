@@ -1,6 +1,7 @@
 using Advant.AndroidUtils;
 using Advant;
 using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -16,7 +17,7 @@ namespace Advant.Http
 	
 	internal class CrossPlatformHttpClient : IHttpClient
 	{
-		private readonly Dictionary<Type, string> _gameDataEndpointsByType = new();
+		private readonly Dictionary<Type, string> _gameDataEndpointsByType = new Dictionary<Type, string>();
 		
 		private string _getTesterEndpoint;
 		private string _getNetworkTimeEndpoint;
@@ -24,7 +25,7 @@ namespace Advant.Http
 		private string _putUserIdEndpoint;
 		private string _putSessionCountEndpoint;
 	
-		public void SetPathBases(string analytics, string registration);
+		public void SetPathBases(string analytics, string registration)
 		{
 			_getTesterEndpoint = registration + "/Registration/GetTester";
 			_getNetworkTimeEndpoint = registration + "/Registration/GetNetworkTime";
@@ -242,7 +243,7 @@ namespace Advant.Http
 #if UNITY_ANDROID
 				AndroidWebRequestWrapper.PutAsync(
 					_putSessionCountEndpoint,
-					$"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}"
+					$"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}",
 					(HttpResponse r) => {
 						response = r;
 					});
