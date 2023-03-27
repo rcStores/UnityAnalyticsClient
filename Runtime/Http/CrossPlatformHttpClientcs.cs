@@ -100,7 +100,7 @@ namespace Advant.Http
 					.SuppressCancellationThrow();
 				
 				if (isCancelled)
-					return Task.FromResult(Tuple.Create(true, DateTime.MinValue)).AsUniTask();
+					return Tuple.Create(true, DateTime.MinValue);
 				
 				if (response == null)  
 					throw new Exception("Result of GetNetworkTime is null");
@@ -119,7 +119,7 @@ namespace Advant.Http
 													response.message,
 													exception: null);
 													
-				return Task.FromResult(Tuple.Create(false, result)).AsUniTask();
+				return Tuple.Create(false, result);
 #endif
 			}
 			catch (Exception e)
@@ -197,7 +197,7 @@ namespace Advant.Http
 			{
 				Advant.AdvAnalytics.LogFailureToDTD("get_country_failure", e);
 				Debug.LogWarning($"GetTester: {e.Message}");
-				return Task.FromResult((string)null).AsUniTask();HttpResponse response = null;
+				return Task.FromResult((string)null).AsUniTask();
 			}
 		}
 		
