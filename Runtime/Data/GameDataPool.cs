@@ -228,7 +228,7 @@ namespace Advant.Data
 			}
 			_pool[_indices[firstIdx]].HasValidTimestamps = true;
 
-			var step = (lastEventTime - firstEventTime) / batchSize;
+			var step = (lastEventTime - firstEventTime).Ticks / batchSize;
 			for (int i = firstIdx + 1; i < firstIdx + batchSize; ++i)
 			{
 				if (isRecalculationNeeded)

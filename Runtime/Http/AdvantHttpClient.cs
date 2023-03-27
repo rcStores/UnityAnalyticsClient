@@ -21,14 +21,14 @@ internal interface IHttpClient
 {
 	public void SetPathBases(string analytics, string registration);
 	public UniTask<DataSendingResult> SendToServerAsync<TGameData>(string json);
-	public UniTask<(bool, DateTime)> GetNetworkTime(CancellationToken token, int timeout = 0);
+	public UniTask<Tuple<bool, DateTime>> GetNetworkTime(CancellationToken token, int timeout = 0);
 	public UniTask<bool> GetTester(long userId);
 	public UniTask<string> GetCountryAsync(int timeout);
 	public UniTask<UserIdResponse> GetOrCreateUserIdAsync(RegistrationToken dto);
 	public UniTask<bool> PutSessionCount(long userId, long sessionCount);
 }	
 	
-internal class AdvantHttpClient : HttpClient, IHttpClient
+internal class AdvantHttpClient : HttpClient
 {
 	private readonly Dictionary<Type, string> _gameDataEndpointsByType = new Dictionary<Type, string>();
 	

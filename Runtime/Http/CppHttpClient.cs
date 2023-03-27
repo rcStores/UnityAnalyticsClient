@@ -41,7 +41,7 @@ public struct InteropResponse
 }
 
 //[InitializeOnLoad]	
-internal class CppHttpClient : IHttpClient
+internal class CppHttpClient 
 {
 	private readonly Dictionary<Type, string> _gameDataEndpointsByType = new Dictionary<Type, string>();
 	

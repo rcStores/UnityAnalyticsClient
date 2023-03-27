@@ -49,6 +49,7 @@ namespace Advant.Http
 		
 		public UniTask<DataSendingResult> SendToServerAsync<TGameData>(string json)
 		{
+			DataSendingResult result = null;
 			HttpResponse response = null;
 			try
 			{
@@ -61,7 +62,7 @@ namespace Advant.Http
 					});
 				if (response == null) throw new Exception("Result of SendToServerAsync is null");
 				
-				var result = new DataSendingResult
+				result = new DataSendingResult
 				{
 					IsSuccess = response.code == 201 || response.code == 200,
 					StatusCode = response.code,
@@ -82,7 +83,7 @@ namespace Advant.Http
 			return Task.FromResult(result).AsUniTask();	
 		}
 		
-		public async UniTask<(bool, DateTime)> GetNetworkTime(CancellationToken token, int timeout = 0)
+		public async UniTask<Tuple<bool, DateTime>> GetNetworkTime(CancellationToken token, int timeout = 0)
 		{
 			HttpResponse response = null;
 			try
@@ -123,10 +124,7 @@ namespace Advant.Http
 			}
 			catch (Exception e)
 			{
-				result.IsSuccess = false;
-				result.ExceptionMessage = $"Message: {e.Message}\nInner exception message: {e.InnerException?.Message}";
-			
-				Debug.LogWarning($"SendToServerAsync: {e.Message}");
+				Debug.LogWarning($"GetNetworkTime: {e.Message}");
 				AdvAnalytics.LogFailureToDTD("get_time_failure", e);
 			}
 			
@@ -193,13 +191,13 @@ namespace Advant.Http
 													response.message,
 													exception: null);
 				Debug.LogWarning($"GetCountryAsync: {response.code}-{response.message}");
-				return Task.FromResult(Convert.ToBoolean(response.data)).AsUniTask();
+				return Task.FromResult(response.data).AsUniTask();
 			}
 			catch (Exception e)
 			{
 				Advant.AdvAnalytics.LogFailureToDTD("get_country_failure", e);
 				Debug.LogWarning($"GetTester: {e.Message}");
-				return Task.FromResult(null).AsUniTask();HttpResponse response = null;
+				return Task.FromResult((string)null).AsUniTask();HttpResponse response = null;
 			}
 		}
 		
