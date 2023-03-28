@@ -17,7 +17,7 @@ public class AndroidWebRequestExecutor {
 		IWebRequestResultReceiver receiver, 
 		String endpoint, 
 		String method, 
-		String data = null) 
+		String data) 
 	{
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler();
