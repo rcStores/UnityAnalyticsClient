@@ -3,7 +3,7 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using Advant.Http;
 
-namespace Advant.AndroidUtils
+namespace AndroidUtils
 {
 public static class AndroidWebRequestWrapper
 {
