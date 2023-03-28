@@ -50,7 +50,7 @@ public class AndroidWebRequestExecutor {
         Optional<String> error;
     }
 	
-	private HttpResponse getRawResponse(String url, String method, String requestBody)
+	private static HttpResponse getRawResponse(String url, String method, String requestBody)
             throws MalformedURLException, IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 
