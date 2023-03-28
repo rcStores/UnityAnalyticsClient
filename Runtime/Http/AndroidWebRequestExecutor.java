@@ -49,7 +49,7 @@ public class AndroidWebRequestExecutor {
             throws MalformedURLException, IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 
-		const String CONTENT_TYPE = "application/json";
+		String CONTENT_TYPE = "application/json";
         connection.setRequestProperty("Content-Type", CONTENT_TYPE);
         connection.setRequestProperty("Connection", "close");
         connection.setRequestMethod(method);
