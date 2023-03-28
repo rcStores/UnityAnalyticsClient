@@ -1,4 +1,4 @@
-using Advant.AndroidUtils;
+using AndroidUtils;
 using Advant;
 using System.Threading;
 using Cysharp.Threading.Tasks;
