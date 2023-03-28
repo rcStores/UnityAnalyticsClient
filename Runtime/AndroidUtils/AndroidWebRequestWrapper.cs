@@ -1,3 +1,4 @@
+#if UNITY_ANDROID
 using System;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
@@ -76,3 +77,4 @@ public static class AndroidWebRequestWrapper
 	}
 }
 }
+#endif
