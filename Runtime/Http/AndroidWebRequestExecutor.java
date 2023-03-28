@@ -74,7 +74,8 @@ public class AndroidWebRequestExecutor {
             try(BufferedReader reader = new BufferedReader(
                     new InputStreamReader(connection.getInputStream(), Charset.forName("utf-8")))) {
                 response.data = Optional.of(reader.lines().collect(Collectors.joining(System.lineSeparator())));
-        }
+			}
+		}
         response.message = connection.getResponseMessage();
         response.code = responseCode;
 
