@@ -63,7 +63,7 @@ public class AndroidWebRequestExecutor {
                 writer.write(requestBody);
             }
         }
-        static HttpResponse response = new HttpResponse();
+        HttpResponse response = new HttpResponse();
 
         int responseCode = connection.getResponseCode();
         if (responseCode != 200 && responseCode != 201) {
