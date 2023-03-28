@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charsets;
+import java.util.stream.Collectors;
 
 public class AndroidWebRequestExecutor {
 
@@ -63,7 +65,7 @@ public class AndroidWebRequestExecutor {
                 writer.write(requestBody);
             }
         }
-        HttpResponse response = new HttpResponse();
+        private static HttpResponse response = new HttpResponse();
 
         int responseCode = connection.getResponseCode();
         if (responseCode != 200 && responseCode != 201) {
