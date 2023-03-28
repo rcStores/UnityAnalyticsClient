@@ -49,6 +49,8 @@ public class AndroidWebRequestExecutor {
         Optional<String> error;
     }
 	
+	private static HttpResponse response;
+	
 	public static HttpResponse getRawResponse(String url, String method, String requestBody)
             throws MalformedURLException, IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
@@ -65,7 +67,7 @@ public class AndroidWebRequestExecutor {
                 writer.write(requestBody);
             }
         }
-        private static HttpResponse response = new HttpResponse();
+        response = new HttpResponse();
 
         int responseCode = connection.getResponseCode();
         if (responseCode != 200 && responseCode != 201) {
