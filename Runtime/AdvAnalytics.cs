@@ -3,7 +3,7 @@ using Advant.Data.Models;
 using Advant.Http;
 using Advant.Logging;
 #if UNITY_ANDROID
-using Advant.AndroidUtils;
+using AndroidUtils;
 #endif
 
 using System;
