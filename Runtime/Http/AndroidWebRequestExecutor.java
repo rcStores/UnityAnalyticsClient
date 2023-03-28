@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.Optional;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.MalformedURLException;
+import java.net.MalformedURLException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -63,7 +63,7 @@ public class AndroidWebRequestExecutor {
                 writer.write(requestBody);
             }
         }
-        HttpResponse response = new HttpResponse();
+        static HttpResponse response = new HttpResponse();
 
         int responseCode = connection.getResponseCode();
         if (responseCode != 200 && responseCode != 201) {
