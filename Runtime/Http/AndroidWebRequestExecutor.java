@@ -4,8 +4,10 @@ import android.content.Context;
 import android.os.Handler;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.Optional;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.MalformedURLException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -45,7 +47,7 @@ public class AndroidWebRequestExecutor {
         Optional<String> error;
     }
 	
-	public HttpResponse getRawResponse(String url, String method, String requestBody)
+	public static HttpResponse getRawResponse(String url, String method, String requestBody)
             throws MalformedURLException, IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 
