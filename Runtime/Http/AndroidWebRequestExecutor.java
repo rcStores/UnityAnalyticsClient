@@ -28,13 +28,18 @@ public class AndroidWebRequestExecutor {
         Handler handler = new Handler();
 
         executor.execute(() -> {
-            //Background work here
-			HttpResponse result = getRawResponse(endpoint, method, data);
+			try {
+				//Background work here
+				HttpResponse result = getRawResponse(endpoint, method, data);
 
-            handler.post(() -> {
-                //UI Thread work here
-                receiver.OnResultReceived(result);
-            });
+				handler.post(() -> {
+					//UI Thread work here
+					receiver.OnResultReceived(result);
+				});
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
         });
     }
    
