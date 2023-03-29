@@ -8,25 +8,36 @@ namespace AndroidUtils
 {
 public static class AndroidWebRequestWrapper
 {
-	public static void GetAsync(string endpoint, System.Action<string, int, string, string> cb)
+	public static void GetAsync(
+		string endpoint, 
+		System.Action<string, int, string, string> cb,
+		System.Action<string> errorCallback)
 	{
-		var receiver = new WebRequestResultReceiver(cb);
+		var receiver = new WebRequestResultReceiver(cb, errorCallback);
 
 		using var retriever   = new AndroidJavaClass("com.advant.androidutils.AndroidWebRequestExecutor");
 		retriever.CallStatic("executeWebRequest", receiver, "GET", endpoint, null);
 	}
 	
-	public static void PostAsync(string endpoint, string data, System.Action<string, int, string, string> cb)
+	public static void PostAsync(
+		string endpoint, 
+		string data, 
+		System.Action<string, int, string, string> cb,
+		System.Action<string> errorCallback)
 	{
-		var receiver = new WebRequestResultReceiver(cb);
+		var receiver = new WebRequestResultReceiver(cb, errorCallback);
 
 		using var retriever   = new AndroidJavaClass("com.advant.androidutils.AndroidWebRequestExecutor");
 		retriever.CallStatic("executeWebRequest", receiver, "POST", endpoint, data);
 	}
 	
-	public static void PutAsync(string endpoint, string data, System.Action<string, int, string, string> cb)
+	public static void PutAsync(
+		string endpoint, 
+		string data, 
+		System.Action<string, int, string, string> cb,
+		System.Action<string> errorCallback)
 	{
-		var receiver = new WebRequestResultReceiver(cb);
+		var receiver = new WebRequestResultReceiver(cb, errorCallback);
 
 		using var retriever   = new AndroidJavaClass("com.advant.androidutils.AndroidWebRequestExecutor");
 		retriever.CallStatic("executeWebRequest", receiver, "PUT", endpoint, data);
@@ -35,10 +46,13 @@ public static class AndroidWebRequestWrapper
 	private class WebRequestResultReceiver : AndroidJavaProxy
 	{
 		private System.Action<string, int, string, string> _cb;
+		private System.Action<string> _errorCallback
 		
-		public WebRequestResultReceiver(System.Action<string, int, string, string> cb) : base("com.advant.androidutils.AndroidWebRequestExecutor$IWebRequestResultReceiver")
+		public WebRequestResultReceiver(
+			System.Action<string, int, string, string> cb, System.Action<string> errorCallback) : base("com.advant.androidutils.AndroidWebRequestExecutor$IWebRequestResultReceiver")
 		{
 			_cb = cb;
+			_errorCallback = errorCallback;
 		}
 
 		/// <summary>
@@ -57,6 +71,13 @@ public static class AndroidWebRequestWrapper
 				OnResponseReceived(data, code, message, error);
 				return null;
 			}
+			else if (methodName == "OnError" && 
+				args.Length > 0 && 
+				args[0] is string error)
+			{
+				OnError(error);
+				return null;
+			}
 			try
 			{
 				return base.Invoke(methodName, args);
@@ -72,12 +93,24 @@ public static class AndroidWebRequestWrapper
 		{
 			_cb?.Invoke(data, code, message, error);
 		}
+		
+		public void OnError(string error)
+		{
+			_errorCallback?.Invoke(error);
+		}
 
 		//Dummy method, because for some reason this signature is called by proxy.
 		//That throws exception if there is no such method.
 		public void OnResponseReceived(AndroidJavaObject obj)
 		{
 			Debug.Log("OnResponseReceived(AndroidJavaObject) called");
+		}
+		
+		//Dummy method, because for some reason this signature is called by proxy.
+		//That throws exception if there is no such method.
+		public void OnError(AndroidJavaObject obj)
+		{
+			Debug.Log("OnError(AndroidJavaObject) called");
 		}
 	}
 }
