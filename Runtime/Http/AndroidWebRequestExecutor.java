@@ -26,7 +26,7 @@ public class AndroidWebRequestExecutor {
 	{
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler();
-
+		System.out.println("test");
         executor.execute(() -> {
 			try {
 				//Background work here
