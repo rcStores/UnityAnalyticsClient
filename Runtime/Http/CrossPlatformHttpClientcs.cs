@@ -110,7 +110,7 @@ namespace Advant.Http
 								error = error
 							};
 						},
-					(string error) => Debug.LogWarning(error))),
+						(string error) => Debug.LogWarning(error)),
 					token)
 					.AsUniTask()
 					.SuppressCancellationThrow();
