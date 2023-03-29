@@ -34,7 +34,7 @@ public class AndroidWebRequestExecutor {
 
 				handler.post(() -> {
 					//UI Thread work here
-					receiver.OnResultReceived(result);
+					receiver.OnResultReceived(result.data, result.code, result.message, result.error);
 				});
 			}
 			catch (Exception e) {
@@ -44,7 +44,7 @@ public class AndroidWebRequestExecutor {
     }
    
     public interface IWebRequestResultReceiver {
-        void OnResultReceived(HttpResponse result);
+        void OnResultReceived(String data, int code, String message, String error);
     }
 
     public class HttpResponse
