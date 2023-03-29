@@ -185,7 +185,7 @@ namespace Advant.Http
 			{
 				Advant.AdvAnalytics.LogFailureToDTD("get_tester_failure", e);
 				Debug.LogWarning($"GetTester: {e.Message}");
-				false;
+				return false;
 			}
 		}
 		
