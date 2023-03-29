@@ -16,6 +16,14 @@ import java.nio.charset.Charset;
 import java.util.stream.Collectors;
 import java.io.OutputStreamWriter;
 
+public class HttpResponse
+{
+	Optional<String> data;
+    int code;
+    String message;
+    Optional<String> error;
+}
+	
 public class AndroidWebRequestExecutor {
 
     public static void executeWebRequest(
@@ -40,14 +48,6 @@ public class AndroidWebRequestExecutor {
    
     public interface IWebRequestResultReceiver {
         void OnResultReceived(HttpResponse result);
-    }
-
-    public class HttpResponse
-    {
-        Optional<String> data;
-        int code;
-        String message;
-        Optional<String> error;
     }
 	
 	static HttpResponse response;
