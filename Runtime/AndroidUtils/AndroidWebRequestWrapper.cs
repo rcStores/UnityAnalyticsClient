@@ -49,7 +49,8 @@ public static class AndroidWebRequestWrapper
 		private System.Action<string> _errorCallback;
 		
 		public WebRequestResultReceiver(
-			System.Action<string, int, string, string> cb, System.Action<string> errorCallback) : base("com.advant.androidutils.AndroidWebRequestExecutor$IWebRequestResultReceiver")
+			System.Action<string, int, string, string> cb, System.Action<string> errorCallback) 
+				: base("com.advant.androidutils.AndroidWebRequestExecutor$IWebRequestResultReceiver")
 		{
 			_cb = cb;
 			_errorCallback = errorCallback;
