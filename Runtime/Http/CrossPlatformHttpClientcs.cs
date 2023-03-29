@@ -66,7 +66,8 @@ namespace Advant.Http
 							message = message,
 							error = error
 						};
-					}))
+					},
+					(string error) => Debug.LogWarning(error)))
 					.AsUniTask();
 				if (response == null) throw new Exception("Result of SendToServerAsync is null");
 				
@@ -108,7 +109,8 @@ namespace Advant.Http
 								message = message,
 								error = error
 							};
-						}),
+						},
+					(string error) => Debug.LogWarning(error))),
 					token)
 					.AsUniTask()
 					.SuppressCancellationThrow();
@@ -164,7 +166,8 @@ namespace Advant.Http
 							message = message,
 							error = error
 						};
-					}))
+					},
+					(string error) => Debug.LogWarning(error)))
 					.AsUniTask();
 					
 				if (response == null)  
@@ -206,7 +209,8 @@ namespace Advant.Http
 							message = message,
 							error = error
 						};
-					}))
+					},
+					(string error) => Debug.LogWarning(error)))
 					.AsUniTask();
 					
 				if (response == null)  
@@ -250,7 +254,8 @@ namespace Advant.Http
 							message = message,
 							error = error
 						};
-					}))
+					},
+					(string error) => Debug.LogWarning(error)))
 					.AsUniTask();
 					
 				if (response == null)  
@@ -300,7 +305,8 @@ namespace Advant.Http
 							message = message,
 							error = error
 						};
-					}))
+					},
+					(string error) => Debug.LogWarning(error)))
 					.AsUniTask();
 					
 				if (response == null)  
