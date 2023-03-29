@@ -8,7 +8,7 @@ namespace AndroidUtils
 {
 public static class AndroidWebRequestWrapper
 {
-	public static void GetAsync(string endpoint, System.Action<string, string, int, string> cb)
+	public static void GetAsync(string endpoint, System.Action<string, int, string, string> cb)
 	{
 		var receiver = new WebRequestResultReceiver(cb);
 
@@ -16,7 +16,7 @@ public static class AndroidWebRequestWrapper
 		retriever.CallStatic("executeWebRequest", receiver, "GET", endpoint, null);
 	}
 	
-	public static void PostAsync(string endpoint, string data, System.Action<string, string, int, string> cb)
+	public static void PostAsync(string endpoint, string data, System.Action<string, int, string, string> cb)
 	{
 		var receiver = new WebRequestResultReceiver(cb);
 
@@ -24,7 +24,7 @@ public static class AndroidWebRequestWrapper
 		retriever.CallStatic("executeWebRequest", receiver, "POST", endpoint, data);
 	}
 	
-	public static void PutAsync(string endpoint, string data, System.Action<string, string, int, string> cb)
+	public static void PutAsync(string endpoint, string data, System.Action<string, int, string, string> cb)
 	{
 		var receiver = new WebRequestResultReceiver(cb);
 
@@ -34,9 +34,9 @@ public static class AndroidWebRequestWrapper
 
 	private class WebRequestResultReceiver : AndroidJavaProxy
 	{
-		private System.Action<string, string, int, string> _cb;
+		private System.Action<string, int, string, string> _cb;
 		
-		public WebRequestResultReceiver(System.Action<string, string, int, string> cb) : base("com.advant.androidutils.AndroidWebRequestExecutor$IWebRequestResultReceiver")
+		public WebRequestResultReceiver(System.Action<string, int, string, string> cb) : base("com.advant.androidutils.AndroidWebRequestExecutor$IWebRequestResultReceiver")
 		{
 			_cb = cb;
 		}
