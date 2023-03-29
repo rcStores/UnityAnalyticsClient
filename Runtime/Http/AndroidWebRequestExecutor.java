@@ -42,7 +42,14 @@ public class AndroidWebRequestExecutor {
 				});
 			}
 			catch (Exception e) {
-				e.printStackTrace();
+				handler.post(() -> {
+					//UI Thread work here
+					receiver.OnResultReceived(
+						null, 
+						0, 
+						null, 
+						e.toString();
+				});
 			}
         });
     }
