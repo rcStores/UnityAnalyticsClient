@@ -50,15 +50,18 @@ namespace Advant.Http
 		public UniTask<DataSendingResult> SendToServerAsync<TGameData>(string json)
 		{
 			DataSendingResult result = null;
-			HttpResponse response = null;
+			HttpResponse response = new HttpResponse();
 			try
 			{
 #if UNITY_ANDROID
 				AndroidWebRequestWrapper.PostAsync(
 					_gameDataEndpointsByType[typeof(TGameData)],
 					json,
-					(HttpResponse r) => {
-						response = r;
+					(string data, int code, string message, string error) => {
+						response.code = code;
+						response.data = data:
+						response.message = message;
+						response.error = error;
 					});
 				if (response == null) throw new Exception("Result of SendToServerAsync is null");
 				
@@ -92,8 +95,11 @@ namespace Advant.Http
 				var isCancelled = await Task.Run(
 					() => AndroidWebRequestWrapper.GetAsync(
 						_getNetworkTimeEndpoint,
-						(HttpResponse r) => {
-							response = r;
+						(string data, int code, string message, string error) => {
+							response.code = code;
+							response.data = data:
+							response.message = message;
+							response.error = error;;
 						}),
 					token)
 					.AsUniTask()
@@ -141,8 +147,11 @@ namespace Advant.Http
 #if UNITY_ANDROID
 				AndroidWebRequestWrapper.GetAsync(
 					_getNetworkTimeEndpoint,
-					(HttpResponse r) => {
-						response = r;
+					(string data, int code, string message, string error) => {
+						response.code = code;
+						response.data = data:
+						response.message = message;
+						response.error = error;
 					});
 					
 				if (response == null)  
@@ -175,8 +184,11 @@ namespace Advant.Http
 #if UNITY_ANDROID
 				AndroidWebRequestWrapper.GetAsync(
 					_getCountryEndpoint,
-					(HttpResponse r) => {
-						response = r;
+					(string data, int code, string message, string error) => {
+						response.code = code;
+						response.data = data:
+						response.message = message;
+						response.error = error;
 					});
 					
 				if (response == null)  
@@ -211,8 +223,11 @@ namespace Advant.Http
 				AndroidWebRequestWrapper.PutAsync(
 					_putUserIdEndpoint,
 					dto.ToJson(),
-					(HttpResponse r) => {
-						response = r;
+					(string data, int code, string message, string error) => {
+						response.code = code;
+						response.data = data:
+						response.message = message;
+						response.error = error;
 					});
 					
 				if (response == null)  
@@ -253,8 +268,11 @@ namespace Advant.Http
 				AndroidWebRequestWrapper.PutAsync(
 					_putSessionCountEndpoint,
 					$"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}",
-					(HttpResponse r) => {
-						response = r;
+					(string data, int code, string message, string error) => {
+						response.code = code;
+						response.data = data:
+						response.message = message;
+						response.error = error;
 					});
 					
 				if (response == null)  
