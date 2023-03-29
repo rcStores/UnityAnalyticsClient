@@ -8,7 +8,7 @@ namespace AndroidUtils
 {
 public static class AndroidWebRequestWrapper
 {
-	public static void GetAsync(string endpoint, System.Action<HttpResponse> cb)
+	public static void GetAsync(string endpoint, System.Action<string, string, int, string> cb)
 	{
 		var receiver = new WebRequestResultReceiver(cb);
 
@@ -16,7 +16,7 @@ public static class AndroidWebRequestWrapper
 		retriever.CallStatic("executeWebRequest", receiver, "GET", endpoint, null);
 	}
 	
-	public static void PostAsync(string endpoint, string data, System.Action<HttpResponse> cb)
+	public static void PostAsync(string endpoint, string data, System.Action<string, string, int, string> cb)
 	{
 		var receiver = new WebRequestResultReceiver(cb);
 
@@ -24,7 +24,7 @@ public static class AndroidWebRequestWrapper
 		retriever.CallStatic("executeWebRequest", receiver, "POST", endpoint, data);
 	}
 	
-	public static void PutAsync(string endpoint, string data, System.Action<HttpResponse> cb)
+	public static void PutAsync(string endpoint, string data, System.Action<string, string, int, string> cb)
 	{
 		var receiver = new WebRequestResultReceiver(cb);
 
@@ -34,9 +34,9 @@ public static class AndroidWebRequestWrapper
 
 	private class WebRequestResultReceiver : AndroidJavaProxy
 	{
-		private System.Action<HttpResponse> _cb;
+		private System.Action<string, string, int, string> _cb;
 		
-		public WebRequestResultReceiver(System.Action<HttpResponse> cb) : base("com.advant.androidutils.AndroidWebRequestExecutor$IWebRequestResultReceiver")
+		public WebRequestResultReceiver(System.Action<string, string, int, string> cb) : base("com.advant.androidutils.AndroidWebRequestExecutor$IWebRequestResultReceiver")
 		{
 			_cb = cb;
 		}
@@ -47,9 +47,14 @@ public static class AndroidWebRequestWrapper
 		/// </summary>
 		public override AndroidJavaObject Invoke(string methodName, object[] args)
 		{
-			if (methodName == "OnResponseReceived" && args.Length > 0 && args[0] is HttpResponse output)
+			if (methodName == "OnResponseReceived" && 
+				args.Length > 0 && 
+				args[0] is string data && 
+				args[1] is int code
+				args[2] is string message
+				args[3] is string error)
 			{
-				OnResponseReceived(output);
+				OnResponseReceived(data, code, message, error);
 				return null;
 			}
 			try
@@ -63,9 +68,9 @@ public static class AndroidWebRequestWrapper
 			}
 		}
 
-		public void OnResponseReceived(HttpResponse output)
+		public void OnResponseReceived(string data, int code, string message, string error)
 		{
-			_cb?.Invoke(output);
+			_cb?.Invoke(data, code, message, error);
 		}
 
 		//Dummy method, because for some reason this signature is called by proxy.
