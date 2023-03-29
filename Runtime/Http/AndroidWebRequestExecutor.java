@@ -34,7 +34,11 @@ public class AndroidWebRequestExecutor {
 
 				handler.post(() -> {
 					//UI Thread work here
-					receiver.OnResultReceived(result.data, result.code, result.message, result.error);
+					receiver.OnResultReceived(
+						result.data.orElse(null), 
+						result.code.orElse(null), 
+						result.message.orElse(null), 
+						result.error.orElse(null));
 				});
 			}
 			catch (Exception e) {
