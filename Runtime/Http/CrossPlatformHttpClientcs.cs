@@ -88,7 +88,7 @@ namespace Advant.Http
 				AdvAnalytics.LogFailureToDTD("send_to_server_failure", e, typeof(TGameData));
 			}
 			
-			return Task.FromResult(result).AsUniTask();	
+			return result;	
 		}
 		
 		public async UniTask<Tuple<bool, DateTime>> GetNetworkTime(CancellationToken token, int timeout = 0)
@@ -179,13 +179,13 @@ namespace Advant.Http
 													response.message,
 													exception: null);
 				Debug.LogWarning($"GetTester: {response.code}-{response.message}");
-				return Task.FromResult(Convert.ToBoolean(response.data)).AsUniTask();
+				return Convert.ToBoolean(response.data);
 			}
 			catch (Exception e)
 			{
 				Advant.AdvAnalytics.LogFailureToDTD("get_tester_failure", e);
 				Debug.LogWarning($"GetTester: {e.Message}");
-				return Task.FromResult(false).AsUniTask();
+				false;
 			}
 		}
 		
@@ -221,13 +221,13 @@ namespace Advant.Http
 													response.message,
 													exception: null);
 				Debug.LogWarning($"GetCountryAsync: {response.code}-{response.message}");
-				return Task.FromResult(response.data).AsUniTask();
+				return response.data;
 			}
 			catch (Exception e)
 			{
 				Advant.AdvAnalytics.LogFailureToDTD("get_country_failure", e);
 				Debug.LogWarning($"GetTester: {e.Message}");
-				return Task.FromResult((string)null).AsUniTask();
+				return null;
 			}
 		}
 		
@@ -278,7 +278,7 @@ namespace Advant.Http
 				Debug.Log($"GetOrCreateUserId: {e.Message}");
 				result.UserId = -1;
 			}
-			return Task.FromResult(result).AsUniTask();
+			return result;
 		}
 		
 		public async UniTask<bool> PutSessionCount(long userId, long sessionCount)
@@ -320,7 +320,7 @@ namespace Advant.Http
 			{
 				AdvAnalytics.LogFailureToDTD("put_session_count", e);
 			}
-			return Task.FromResult(result).AsUniTask();
+			return result;
 		}
 	}
 }
