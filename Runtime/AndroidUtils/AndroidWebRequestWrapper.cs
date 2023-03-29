@@ -73,9 +73,9 @@ public static class AndroidWebRequestWrapper
 			}
 			else if (methodName == "OnError" && 
 				args.Length > 0 && 
-				args[0] is string error)
+				args[0] is string errorMsg)
 			{
-				OnError(error);
+				OnError(errorMsg);
 				return null;
 			}
 			try
