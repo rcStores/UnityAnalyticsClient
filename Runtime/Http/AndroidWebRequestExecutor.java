@@ -26,7 +26,7 @@ public class AndroidWebRequestExecutor {
 	{
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler();
-		System.out.println("test");
+		
         executor.execute(() -> {
 			try {
 				//Background work here
@@ -44,11 +44,7 @@ public class AndroidWebRequestExecutor {
 			catch (Exception e) {
 				handler.post(() -> {
 					//UI Thread work here
-					receiver.OnResultReceived(
-						null, 
-						0, 
-						null, 
-						e.toString());
+					receiver.OnError(e.toString());
 				});
 			}
         });
@@ -56,6 +52,7 @@ public class AndroidWebRequestExecutor {
    
     public interface IWebRequestResultReceiver {
         void OnResultReceived(String data, int code, String message, String error);
+		void OnResultError(String error);
     }
 
     public class HttpResponse
