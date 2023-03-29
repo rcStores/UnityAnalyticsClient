@@ -164,7 +164,7 @@ namespace Advant
         {
 			Debug.LogWarning($"executing web request");
 			await Task.Run(
-				() => AndroidWebRequestExecutor.GetAsync(
+				() => AndroidWebRequestWrapper.GetAsync(
 					http://ip-api.com/json/,
 					(string data, int code, string message, string error) =>
 						Debug.LogWarning($"ip-api: {data}")))
