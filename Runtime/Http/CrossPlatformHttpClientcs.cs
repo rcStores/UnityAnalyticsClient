@@ -59,7 +59,7 @@ namespace Advant.Http
 					json,
 					(string data, int code, string message, string error) => {
 						response.code = code;
-						response.data = data:
+						response.data = data;
 						response.message = message;
 						response.error = error;
 					});
@@ -97,7 +97,7 @@ namespace Advant.Http
 						_getNetworkTimeEndpoint,
 						(string data, int code, string message, string error) => {
 							response.code = code;
-							response.data = data:
+							response.data = data;
 							response.message = message;
 							response.error = error;;
 						}),
@@ -149,7 +149,7 @@ namespace Advant.Http
 					_getNetworkTimeEndpoint,
 					(string data, int code, string message, string error) => {
 						response.code = code;
-						response.data = data:
+						response.data = data;
 						response.message = message;
 						response.error = error;
 					});
@@ -186,7 +186,7 @@ namespace Advant.Http
 					_getCountryEndpoint,
 					(string data, int code, string message, string error) => {
 						response.code = code;
-						response.data = data:
+						response.data = data;
 						response.message = message;
 						response.error = error;
 					});
@@ -225,7 +225,7 @@ namespace Advant.Http
 					dto.ToJson(),
 					(string data, int code, string message, string error) => {
 						response.code = code;
-						response.data = data:
+						response.data = data;
 						response.message = message;
 						response.error = error;
 					});
@@ -270,7 +270,7 @@ namespace Advant.Http
 					$"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}",
 					(string data, int code, string message, string error) => {
 						response.code = code;
-						response.data = data:
+						response.data = data;
 						response.message = message;
 						response.error = error;
 					});
