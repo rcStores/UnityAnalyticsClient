@@ -50,7 +50,7 @@ namespace Advant.Http
 		public UniTask<DataSendingResult> SendToServerAsync<TGameData>(string json)
 		{
 			DataSendingResult result = null;
-			HttpResponse response = new HttpResponse();
+			HttpResponse response = null;
 			try
 			{
 #if UNITY_ANDROID
@@ -58,10 +58,13 @@ namespace Advant.Http
 					_gameDataEndpointsByType[typeof(TGameData)],
 					json,
 					(string data, int code, string message, string error) => {
-						response.code = code;
-						response.data = data;
-						response.message = message;
-						response.error = error;
+						response = new HttpResponse
+						{
+							code = code,
+							data = data,
+							message = message,
+							error = error
+						};
 					});
 				if (response == null) throw new Exception("Result of SendToServerAsync is null");
 				
@@ -96,10 +99,13 @@ namespace Advant.Http
 					() => AndroidWebRequestWrapper.GetAsync(
 						_getNetworkTimeEndpoint,
 						(string data, int code, string message, string error) => {
-							response.code = code;
-							response.data = data;
-							response.message = message;
-							response.error = error;;
+							response = new HttpResponse
+							{
+								code = code,
+								data = data,
+								message = message,
+								error = error
+							};
 						}),
 					token)
 					.AsUniTask()
@@ -111,7 +117,7 @@ namespace Advant.Http
 				if (response == null)  
 					throw new Exception("Result of GetNetworkTime is null");
 				else if (response.code != 201 && response.code != 200)
-					throw new Exception("GetNetworkTime returned bad status code");
+					throw new Exception($"GetNetworkTime returned bad status code {response.code}");
 				
 				DateTime.TryParseExact(response.data,
 								   "yyyy-MM-ddTHH:mm:ss.fff",
@@ -148,16 +154,19 @@ namespace Advant.Http
 				AndroidWebRequestWrapper.GetAsync(
 					_getNetworkTimeEndpoint,
 					(string data, int code, string message, string error) => {
-						response.code = code;
-						response.data = data;
-						response.message = message;
-						response.error = error;
+						response = new HttpResponse
+						{
+							code = code,
+							data = data,
+							message = message,
+							error = error
+						};
 					});
 					
 				if (response == null)  
 					throw new Exception("Result of GetNetworkTime is null");
 				else if (response.code != 201 && response.code != 200)
-					throw new Exception("GetNetworkTime returned bad status code");
+					throw new Exception($"GetNetworkTime returned bad status code {response.code}");
 #endif
 				
 				Advant.AdvAnalytics.LogWebRequestToDTD("get_tester",
@@ -185,16 +194,19 @@ namespace Advant.Http
 				AndroidWebRequestWrapper.GetAsync(
 					_getCountryEndpoint,
 					(string data, int code, string message, string error) => {
-						response.code = code;
-						response.data = data;
-						response.message = message;
-						response.error = error;
+						response = new HttpResponse
+						{
+							code = code,
+							data = data,
+							message = message,
+							error = error
+						};
 					});
 					
 				if (response == null)  
 					throw new Exception("Result of GetCountryAsync is null");
 				else if (response.code != 201 && response.code != 200)
-					throw new Exception("GetCountryAsync returned bad status code");
+					throw new Exception($"GetCountryAsync returned bad status code {response.code}");
 #endif
 				
 				Advant.AdvAnalytics.LogWebRequestToDTD("get_country",
@@ -224,16 +236,19 @@ namespace Advant.Http
 					_putUserIdEndpoint,
 					dto.ToJson(),
 					(string data, int code, string message, string error) => {
-						response.code = code;
-						response.data = data;
-						response.message = message;
-						response.error = error;
+						response = new HttpResponse
+						{
+							code = code,
+							data = data,
+							message = message,
+							error = error
+						};
 					});
 					
 				if (response == null)  
 					throw new Exception("Result of GetOrCreateUserIdAsync is null");
 				else if (response.code != 201 && response.code != 200)
-					throw new Exception("GetOrCreateUserIdAsync returned bad status code");
+					throw new Exception($"GetOrCreateUserIdAsync returned bad status code {response.code}");
 #endif
 
 				Advant.AdvAnalytics.LogWebRequestToDTD("get_user_id",
@@ -269,16 +284,19 @@ namespace Advant.Http
 					_putSessionCountEndpoint,
 					$"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}",
 					(string data, int code, string message, string error) => {
-						response.code = code;
-						response.data = data;
-						response.message = message;
-						response.error = error;
+						response = new HttpResponse
+						{
+							code = code,
+							data = data,
+							message = message,
+							error = error
+						};
 					});
 					
 				if (response == null)  
 					throw new Exception("Result of PutSessionCount is null");
 				else if (response.code != 201 && response.code != 200)
-					throw new Exception("PutSessionCount returned bad status code");
+					throw new Exception($"PutSessionCount returned bad status code: {response.code}");
 #endif
 					
 				AdvAnalytics.LogWebRequestToDTD("put_session_count",
