@@ -168,7 +168,7 @@ namespace Advant
 					"http://ip-api.com/json/",
 					(string data, int code, string message, string error) =>
 						Debug.LogWarning($"ip-api: {data}"),
-					(string error) => Debug.LogWarning(error))
+					(string error) => Debug.LogWarning(error)))
 			.AsUniTask();
 					
 			var ((isGettingTimeCancelled, initialTime), dbSessionCount) = await UniTask.WhenAll(
