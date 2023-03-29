@@ -47,14 +47,15 @@ namespace Advant.Http
 			_gameDataEndpointsByType[typeof(Session)] = analytics + "/Sessions/SaveSession";
 		}
 		
-		public UniTask<DataSendingResult> SendToServerAsync<TGameData>(string json)
+		public async UniTask<DataSendingResult> SendToServerAsync<TGameData>(string json)
 		{
 			DataSendingResult result = null;
 			HttpResponse response = null;
 			try
 			{
 #if UNITY_ANDROID
-				AndroidWebRequestWrapper.PostAsync(
+				await Task.Run(
+					() => AndroidWebRequestWrapper.PostAsync(
 					_gameDataEndpointsByType[typeof(TGameData)],
 					json,
 					(string data, int code, string message, string error) => {
@@ -65,7 +66,8 @@ namespace Advant.Http
 							message = message,
 							error = error
 						};
-					});
+					}))
+					.AsUniTask();
 				if (response == null) throw new Exception("Result of SendToServerAsync is null");
 				
 				result = new DataSendingResult
@@ -143,7 +145,7 @@ namespace Advant.Http
 			return Tuple.Create(false, DateTime.MinValue);
 		}
 		
-		public UniTask<bool> GetTester(long userId)
+		public async UniTask<bool> GetTester(long userId)
 		{
 			DataSendingResult result = new DataSendingResult();
 			HttpResponse response = null;
@@ -151,7 +153,8 @@ namespace Advant.Http
 			try
 			{
 #if UNITY_ANDROID
-				AndroidWebRequestWrapper.GetAsync(
+				await Task.Run(
+					() => AndroidWebRequestWrapper.GetAsync(
 					_getNetworkTimeEndpoint,
 					(string data, int code, string message, string error) => {
 						response = new HttpResponse
@@ -161,7 +164,8 @@ namespace Advant.Http
 							message = message,
 							error = error
 						};
-					});
+					}))
+					.AsUniTask();
 					
 				if (response == null)  
 					throw new Exception("Result of GetNetworkTime is null");
@@ -185,13 +189,14 @@ namespace Advant.Http
 			}
 		}
 		
-		public UniTask<string> GetCountryAsync(int timeout)
+		public async UniTask<string> GetCountryAsync(int timeout)
 		{
 			HttpResponse response = null;
 			try
 			{
 #if UNITY_ANDROID
-				AndroidWebRequestWrapper.GetAsync(
+				await Task.Run(
+					() => AndroidWebRequestWrapper.GetAsync(
 					_getCountryEndpoint,
 					(string data, int code, string message, string error) => {
 						response = new HttpResponse
@@ -201,7 +206,8 @@ namespace Advant.Http
 							message = message,
 							error = error
 						};
-					});
+					}))
+					.AsUniTask();
 					
 				if (response == null)  
 					throw new Exception("Result of GetCountryAsync is null");
@@ -225,14 +231,15 @@ namespace Advant.Http
 			}
 		}
 		
-		public UniTask<UserIdResponse> GetOrCreateUserIdAsync(RegistrationToken dto)
+		public async UniTask<UserIdResponse> GetOrCreateUserIdAsync(RegistrationToken dto)
 		{
 			var result = new UserIdResponse();
 			HttpResponse response = null;
 			try
 			{
 #if UNITY_ANDROID
-				AndroidWebRequestWrapper.PutAsync(
+				await Task.Run(
+					() => AndroidWebRequestWrapper.PutAsync(
 					_putUserIdEndpoint,
 					dto.ToJson(),
 					(string data, int code, string message, string error) => {
@@ -243,7 +250,8 @@ namespace Advant.Http
 							message = message,
 							error = error
 						};
-					});
+					}))
+					.AsUniTask();
 					
 				if (response == null)  
 					throw new Exception("Result of GetOrCreateUserIdAsync is null");
@@ -273,14 +281,15 @@ namespace Advant.Http
 			return Task.FromResult(result).AsUniTask();
 		}
 		
-		public UniTask<bool> PutSessionCount(long userId, long sessionCount)
+		public async UniTask<bool> PutSessionCount(long userId, long sessionCount)
 		{
 			var result = false;
 			HttpResponse response = null;
 			try
 			{
 #if UNITY_ANDROID
-				AndroidWebRequestWrapper.PutAsync(
+				await Task.Run(
+					() => AndroidWebRequestWrapper.PutAsync(
 					_putSessionCountEndpoint,
 					$"{{\"UserId\":{userId},\"SessionCount\":{sessionCount}}}",
 					(string data, int code, string message, string error) => {
@@ -291,7 +300,8 @@ namespace Advant.Http
 							message = message,
 							error = error
 						};
-					});
+					}))
+					.AsUniTask();
 					
 				if (response == null)  
 					throw new Exception("Result of PutSessionCount is null");
