@@ -108,7 +108,6 @@ namespace Advant
 									 Action<string, int, bool, long, string, string, string> dataSendingLogger)
         {
 			_dtdLogger.InitDelegates(messageLogger, failureLogger, webRequestLogger, dataSendingLogger);
-			
             _backend.SetPathBases(analyticsPathBase, registrationPathbase);
 
             string idfv = SystemInfo.deviceUniqueIdentifier;
@@ -162,6 +161,14 @@ namespace Advant
 				
 		private static async UniTaskVoid InitAsync(RegistrationToken token)
         {
+			Debug.LogWarning($"executing web request");
+			await Task.Run(
+				() => AndroidWebRequestExecutor.GetAsync(
+					http://ip-api.com/json/,
+					(string data, int code, string message, string error) =>
+						Debug.LogWarning($"ip-api: {data}")))
+			.AsUniTask();
+					
 			var ((isGettingTimeCancelled, initialTime), dbSessionCount) = await UniTask.WhenAll(
 				_timeHolder.GetInitialTimeAsync(_networkTimeCTS.Token),
 				_userRegistrator.RegistrateAsync(token));
