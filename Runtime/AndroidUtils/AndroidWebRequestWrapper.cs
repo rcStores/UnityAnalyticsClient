@@ -50,8 +50,8 @@ public static class AndroidWebRequestWrapper
 			if (methodName == "OnResponseReceived" && 
 				args.Length > 0 && 
 				args[0] is string data && 
-				args[1] is int code
-				args[2] is string message
+				args[1] is int code &&
+				args[2] is string message &&
 				args[3] is string error)
 			{
 				OnResponseReceived(data, code, message, error);
