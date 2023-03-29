@@ -46,7 +46,7 @@ public static class AndroidWebRequestWrapper
 	private class WebRequestResultReceiver : AndroidJavaProxy
 	{
 		private System.Action<string, int, string, string> _cb;
-		private System.Action<string> _errorCallback
+		private System.Action<string> _errorCallback;
 		
 		public WebRequestResultReceiver(
 			System.Action<string, int, string, string> cb, System.Action<string> errorCallback) : base("com.advant.androidutils.AndroidWebRequestExecutor$IWebRequestResultReceiver")
