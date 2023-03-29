@@ -22,7 +22,7 @@ public class AndroidWebRequestExecutor {
 		IWebRequestResultReceiver receiver, 
 		String endpoint, 
 		String method, 
-		String data) 
+		String data) throws MalformedURLException, IOException
 	{
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler();
