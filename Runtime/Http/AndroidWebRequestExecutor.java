@@ -74,7 +74,7 @@ public class AndroidWebRequestExecutor {
 
 		String CONTENT_TYPE = "application/json";
         connection.setRequestProperty("Content-Type", CONTENT_TYPE);
-        connection.setRequestProperty("Connection", "close");
+        //connection.setRequestProperty("Connection", "close");
         connection.setRequestMethod(method);
 
         if (requestBody != null) {
