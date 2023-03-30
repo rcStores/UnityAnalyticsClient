@@ -49,7 +49,7 @@ public class AndroidWebRequestExecutor {
 			catch (Exception e) {
 				handler.post(() -> {
 					//UI Thread work here
-					Log.w("Unity", $"error {e.toString(}");
+					Log.w("Unity", String.format("error %s", e.toString()));
 					receiver.OnError(e.toString());
 				});
 			}
