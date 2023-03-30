@@ -15,6 +15,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.stream.Collectors;
 import java.io.OutputStreamWriter;
+import android.util.Log;
 
 public class AndroidWebRequestExecutor {
 
@@ -24,26 +25,31 @@ public class AndroidWebRequestExecutor {
 		String method, 
 		String data) throws MalformedURLException, IOException
 	{
+		Log.w("Unity", "start request execution");
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler();
-		
+		Log.w("Unity", "invoke executor");
         executor.execute(() -> {
 			try {
 				//Background work here
+				Log.w("Unity", "getting response");
 				HttpResponse result = getRawResponse(endpoint, method, data);
-
+				Log.w("Unity", "process response");
 				handler.post(() -> {
 					//UI Thread work here
+					Log.w("Unity", "invoke callback");
 					receiver.OnResponseReceived(
 						result.data.orElse(null), 
 						result.code, 
 						result.message, 
 						result.error.orElse(null));
+					Log.w("Unity", "dto is initialized");
 				});
 			}
 			catch (Exception e) {
 				handler.post(() -> {
 					//UI Thread work here
+					Log.w("Unity", $"error {e.toString(}");
 					receiver.OnError(e.toString());
 				});
 			}
