@@ -29,8 +29,7 @@ public class AndroidWebRequestExecutor {
 		Log.w("Unity", "start request execution");
         ExecutorService executor = Executors.newSingleThreadExecutor();
 		Looper.prepare();
-		Looper.loop();
-        Handler handler = new Handler();
+        Handler handler = new Handler(Looper.myLooper());
 		Log.w("Unity", "invoke executor");
         executor.execute(() -> {
 			try {
