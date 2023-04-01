@@ -16,6 +16,7 @@ import java.nio.charset.Charset;
 import java.util.stream.Collectors;
 import java.io.OutputStreamWriter;
 import android.util.Log;
+import android.os.Looper;
 
 public class AndroidWebRequestExecutor {
 
@@ -27,6 +28,8 @@ public class AndroidWebRequestExecutor {
 	{
 		Log.w("Unity", "start request execution");
         ExecutorService executor = Executors.newSingleThreadExecutor();
+		Looper.prepare();
+		Looper.loop();
         Handler handler = new Handler();
 		Log.w("Unity", "invoke executor");
         executor.execute(() -> {
