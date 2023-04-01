@@ -74,7 +74,9 @@ public class AndroidWebRequestExecutor {
 	private static HttpResponse getRawResponse(String url, String method, String requestBody)
             throws MalformedURLException, IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-
+		
+		Log.w("Unity", "set request headers");
+		
 		String CONTENT_TYPE = "application/json";
         connection.setRequestProperty("Content-Type", CONTENT_TYPE);
         //connection.setRequestProperty("Connection", "close");
@@ -82,29 +84,35 @@ public class AndroidWebRequestExecutor {
 
         if (requestBody != null) {
             connection.setDoOutput(true);
-
+			Log.w("Unity", "set request body to post/put");
             try (OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream())) {
                 writer.write(requestBody);
             }
         }
+		Log.w("Unity", "initialize response object");
         response = new AndroidWebRequestExecutor().new HttpResponse();
-
+		
+		Log.w("Unity", "connection.getResponseCode()");
+		
         int responseCode = connection.getResponseCode();
         if (responseCode != 200 && responseCode != 201) {
+			Log.w("Unity", "processing failure");
             try(BufferedReader reader = new BufferedReader(
                     new InputStreamReader(connection.getErrorStream(), Charset.forName("utf-8")))) {
                 response.error = Optional.of(reader.lines().collect(Collectors.joining(System.lineSeparator())));
             }
         }
         else {
+			Log.w("Unity", "processing success");
             try(BufferedReader reader = new BufferedReader(
                     new InputStreamReader(connection.getInputStream(), Charset.forName("utf-8")))) {
                 response.data = Optional.of(reader.lines().collect(Collectors.joining(System.lineSeparator())));
 			}
 		}
+		Log.w("Unity", "getting response message");
         response.message = connection.getResponseMessage();
         response.code = responseCode;
-
+		Log.w("Unity", "returning response");
         return response;
     }
 }
