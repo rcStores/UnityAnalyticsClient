@@ -13,6 +13,7 @@ public static class AndroidWebRequestWrapper
 		System.Action<string, int, string, string> cb,
 		System.Action<string> errorCallback)
 	{
+		Debug.Log($"Attach current thread result: {AndroidJNI.AttachCurrentThread()}");
 		var receiver = new WebRequestResultReceiver(cb, errorCallback);
 
 		using var retriever   = new AndroidJavaClass("com.advant.androidutils.AndroidWebRequestExecutor");
